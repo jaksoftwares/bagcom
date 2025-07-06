@@ -3,7 +3,8 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Search, ShoppingBag, Users, Shield, TrendingUp } from 'lucide-react';
+import { Search, ShoppingBag, Users, Shield, TrendingUp, } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Hero() {
   return (
@@ -52,25 +53,33 @@ export default function Hero() {
               </Button>
             </div>
           </div>
-
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-8 sm:mb-12 lg:mb-16 px-4 sm:px-0">
-            <Button 
-              size="lg" 
-              variant="secondary" 
-              className="px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold shadow-lg hover:shadow-xl transition-all w-full sm:w-auto"
-            >
-              <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-              Start Buying
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold bg-white/10 text-white border-white/30 hover:bg-white/20 backdrop-blur-sm shadow-lg w-full sm:w-auto"
-            >
-              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-              Start Selling
-            </Button>
+            <Link href="/products" passHref legacyBehavior>
+              <a>
+                <Button 
+                  size="lg" 
+                  variant="secondary" 
+                  className="px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold shadow-lg hover:shadow-xl transition-all w-full sm:w-auto"
+                >
+                  <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                  Start Buying
+                </Button>
+              </a>
+            </Link>
+            
+            <Link href="/dashboard" passHref legacyBehavior>
+              <a>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold bg-white/10 text-white border-white/30 hover:bg-white/20 backdrop-blur-sm shadow-lg w-full sm:w-auto"
+                >
+                  <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                  Start Selling
+                </Button>
+              </a>
+            </Link>
           </div>
 
           {/* Stats
