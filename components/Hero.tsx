@@ -73,7 +73,7 @@ export default function Hero() {
             </Button>
           </div>
 
-          {/* Stats */}
+          {/* Stats
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-xs sm:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-0">
             <div className="text-center bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/20">
               <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-white/20 rounded-full mb-3 sm:mb-4">
@@ -98,7 +98,7 @@ export default function Hero() {
               <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">100%</h3>
               <p className="text-blue-100 font-medium text-sm sm:text-base">Secure Transactions</p>
             </div>
-          </div>
+          </div> */}
 
           {/* Trust Indicators */}
           <div className="mt-8 sm:mt-12 lg:mt-16">
