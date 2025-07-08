@@ -40,6 +40,7 @@ export interface Product {
   reasonForSelling?: string;
 }
 
+// Enhanced sample products with more variety and regional distribution
 export const sampleProducts: Product[] = [
   {
     id: 1,
@@ -88,6 +89,144 @@ export const sampleProducts: Product[] = [
     yearPurchased: '2023',
     reasonForSelling: 'Graduating and moving out'
   },
+  {
+    id: 4,
+    title: 'Queen Size Bed with Mattress',
+    description: 'Comfortable queen size bed with quality mattress. Perfect for student accommodation. The wooden frame is sturdy and the mattress provides excellent support for a good night\'s sleep.',
+    price: 15000,
+    originalPrice: 25000,
+    commission: 1500,
+    images: [
+      'https://images.pexels.com/photos/1743229/pexels-photo-1743229.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/1743229/pexels-photo-1743229.jpeg?auto=compress&cs=tinysrgb&w=800'
+    ],
+    seller: {
+      id: 'seller4',
+      name: 'Grace Akinyi',
+      rating: 4.3,
+      totalSales: 12,
+      joinedDate: '2023-10-05',
+      isVerified: true
+    },
+    location: {
+      area: 'Juja Town, Opposite Gate C',
+      campus: 'Near Campus'
+    },
+    category: 'furniture',
+    subcategory: 'beds',
+    condition: 'Good',
+    timePosted: '3 days ago',
+    likes: 18,
+    views: 203,
+    features: ['Queen size', 'Firm mattress', 'Wooden frame', 'Storage space'],
+    specifications: {
+      'Bed Size': 'Queen (150cm x 200cm)',
+      'Mattress Type': 'Firm Support',
+      'Frame Material': 'Solid Wood',
+      'Storage': 'Under-bed storage',
+      'Assembly Required': 'Yes'
+    },
+    availability: 'Available',
+    deliveryOptions: ['Campus Delivery', 'Pickup'],
+    paymentMethods: ['M-Pesa', 'Cash'],
+    tags: ['bed', 'mattress', 'furniture', 'bedroom', 'queen'],
+    negotiable: true,
+    brand: 'ComfortSleep',
+    yearPurchased: '2022',
+    reasonForSelling: 'Moving to smaller accommodation'
+  },
+  {
+    id: 5,
+    title: 'Engineering Textbooks Collection',
+    description: 'Complete set of engineering textbooks for 2nd and 3rd year students. Includes notes and solved examples. All books are in good readable condition with minimal highlighting.',
+    price: 3500,
+    originalPrice: 8000,
+    commission: 350,
+    images: [
+      'https://images.pexels.com/photos/159866/books-book-pages-read-literature-159866.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/159866/books-book-pages-read-literature-159866.jpeg?auto=compress&cs=tinysrgb&w=800'
+    ],
+    seller: {
+      id: 'seller5',
+      name: 'Peter Ochieng',
+      rating: 4.0,
+      totalSales: 8,
+      joinedDate: '2023-11-12',
+      isVerified: false
+    },
+    location: {
+      area: 'Library Area, Main Campus',
+      campus: 'Main Campus'
+    },
+    category: 'books',
+    subcategory: 'textbooks',
+    condition: 'Fair',
+    timePosted: '1 week ago',
+    likes: 7,
+    views: 78,
+    features: ['15 textbooks', 'Engineering subjects', 'Good condition', 'Notes included'],
+    specifications: {
+      'Number of Books': '15',
+      'Subjects': 'Mathematics, Physics, Engineering',
+      'Year Level': '2nd & 3rd Year',
+      'Condition': 'Good readable condition',
+      'Notes': 'Handwritten notes included'
+    },
+    availability: 'Available',
+    deliveryOptions: ['Campus Delivery', 'Pickup'],
+    paymentMethods: ['M-Pesa', 'Cash'],
+    tags: ['books', 'textbooks', 'engineering', 'education', 'study'],
+    negotiable: true,
+    yearPurchased: '2022',
+    reasonForSelling: 'Completed the courses'
+  },
+  {
+    id: 6,
+    title: 'Samsung Microwave Oven (23L)',
+    description: 'Barely used microwave oven with all original accessories and manual. Perfect for student cooking needs. Features digital display and multiple cooking presets.',
+    price: 6800,
+    originalPrice: 12000,
+    commission: 680,
+    images: [
+      'https://images.pexels.com/photos/4252137/pexels-photo-4252137.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/4252137/pexels-photo-4252137.jpeg?auto=compress&cs=tinysrgb&w=800'
+    ],
+    seller: {
+      id: 'seller6',
+      name: 'Sarah Muthoni',
+      rating: 4.7,
+      totalSales: 19,
+      joinedDate: '2023-06-18',
+      isVerified: true
+    },
+    location: {
+      area: 'Hostels Block C, Room 156',
+      campus: 'Main Campus'
+    },
+    category: 'kitchen',
+    subcategory: 'appliances',
+    condition: 'Excellent',
+    timePosted: '4 days ago',
+    likes: 15,
+    views: 134,
+    features: ['23L capacity', 'Digital display', 'Auto cook menus', 'Child lock'],
+    specifications: {
+      'Capacity': '23 Liters',
+      'Power': '800W',
+      'Display': 'Digital LED',
+      'Presets': '8 Auto Cook Menus',
+      'Safety': 'Child Lock Feature'
+    },
+    availability: 'Available',
+    deliveryOptions: ['Campus Delivery', 'Pickup'],
+    paymentMethods: ['M-Pesa', 'Cash', 'Bank Transfer'],
+    tags: ['microwave', 'kitchen', 'appliance', 'samsung', 'cooking'],
+    negotiable: false,
+    brand: 'Samsung',
+    yearPurchased: '2024',
+    warranty: '1 year remaining',
+    reasonForSelling: 'Moving out of hostel'
+  }
   {
     id: 2,
     title: 'Gas Cylinder (13kg) with 2-Burner Cooker',

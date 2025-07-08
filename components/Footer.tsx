@@ -12,12 +12,12 @@ export default function Footer() {
           <div className="space-y-3 sm:space-y-4 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center space-x-2">
               <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-600 to-green-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">JB</span>
+                <span className="text-white font-bold text-sm">BC</span>
               </div>
-              <span className="text-lg sm:text-xl font-bold">JKUATBagCom</span>
+              <span className="text-lg sm:text-xl font-bold">BagCom</span>
             </div>
             <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-              The premier marketplace for JKUAT students to buy and sell second-hand items safely and conveniently.
+              Your trusted marketplace for both new and second-hand products. Connect with sellers and buyers in your area for safe, convenient transactions.
             </p>
             <div className="flex space-x-3 sm:space-x-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
@@ -34,22 +34,22 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Quick Links</h3>
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Marketplace</h3>
             <ul className="space-y-2">
-              <li><Link href="/products" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">All Products</Link></li>
+              <li><Link href="/products" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">Second-Hand Products</Link></li>
+              <li><Link href="/new-products" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">New Products</Link></li>
               <li><Link href="/categories" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">Categories</Link></li>
               <li><Link href="/sellers" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">Top Sellers</Link></li>
-              <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">About Us</Link></li>
             </ul>
           </div>
 
           {/* Customer Service */}
           <div>
-            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Customer Service</h3>
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Support</h3>
             <ul className="space-y-2">
               <li><Link href="/help" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">Help Center</Link></li>
               <li><Link href="/shipping" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">Shipping Info</Link></li>
-              <li><Link href="/returns" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">Returns</Link></li>
+              <li><Link href="/returns" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">Returns & Refunds</Link></li>
               <li><Link href="/contact" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">Contact Us</Link></li>
             </ul>
           </div>
@@ -60,7 +60,7 @@ export default function Footer() {
             <div className="space-y-2 sm:space-y-3">
               <div className="flex items-start space-x-3">
                 <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-400 text-sm sm:text-base">JKUAT Main Campus, Juja</span>
+                <span className="text-gray-400 text-sm sm:text-base">Kenya, East Africa</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
@@ -68,7 +68,7 @@ export default function Footer() {
               </div>
               <div className="flex items-start space-x-3">
                 <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-400 text-sm sm:text-base break-all">support@jkuatbagcom.com</span>
+                <span className="text-gray-400 text-sm sm:text-base break-all">support@bagcom.com</span>
               </div>
             </div>
           </div>
@@ -77,7 +77,7 @@ export default function Footer() {
         <div className="border-t border-gray-800 mt-8 sm:mt-10 lg:mt-12 pt-6 sm:pt-8">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
             <p className="text-gray-400 text-xs sm:text-sm text-center sm:text-left">
-              © 2024 JKUATBagCom. All rights reserved.
+              © 2024 BagCom Marketplace. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-6">
               <Link href="/privacy" className="text-gray-400 hover:text-white text-xs sm:text-sm transition-colors">

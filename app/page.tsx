@@ -5,6 +5,8 @@ import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import CategorySection from '@/components/CategorySection';
 import FeaturedProducts from '@/components/FeaturedProducts';
+import NewProductsSection from '@/components/NewProductsSection';
+import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 
 export default function Home() {
@@ -17,6 +19,8 @@ export default function Home() {
       <Hero />
       <CategorySection />
       <FeaturedProducts />
+      <NewProductsSection />
+      <CTASection />
       <Footer />
     </div>
   );

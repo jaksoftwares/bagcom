@@ -5,6 +5,18 @@ import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { categories } from '@/lib/categories';
 
+// Category images mapping
+const categoryImages = {
+  'furniture': 'https://images.pexels.com/photos/1957477/pexels-photo-1957477.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'electronics': 'https://images.pexels.com/photos/205421/pexels-photo-205421.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'kitchen': 'https://images.pexels.com/photos/4252137/pexels-photo-4252137.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'clothing': 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'books': 'https://images.pexels.com/photos/159866/books-book-pages-read-literature-159866.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'sports': 'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'transport': 'https://images.pexels.com/photos/100582/pexels-photo-100582.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'personal-care': 'https://images.pexels.com/photos/3685530/pexels-photo-3685530.jpeg?auto=compress&cs=tinysrgb&w=600'
+};
+
 export default function CategorySection() {
   return (
     <section className="py-8 sm:py-12 lg:py-16 bg-white">
@@ -21,16 +33,26 @@ export default function CategorySection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {categories.map((category) => (
             <Link key={category.id} href={`/category/${category.id}`}>
-              <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer h-full">
-                <CardContent className="p-4 sm:p-5 lg:p-6">
-                  <div className="flex items-start justify-between mb-3 sm:mb-4">
-                    <div className={`p-2 sm:p-3 rounded-lg ${category.color}`}>
-                      <div className="h-5 w-5 sm:h-6 sm:w-6" />
-                    </div>
-                    <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+              <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer h-full overflow-hidden">
+                <div className="relative">
+                  <img 
+                    src={categoryImages[category.id as keyof typeof categoryImages]} 
+                    alt={category.name}
+                    className="w-full h-32 sm:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors"></div>
+                  <div className="absolute top-3 right-3">
+                    <ArrowRight className="h-5 w-5 text-white group-hover:translate-x-1 transition-transform" />
                   </div>
-                  
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 line-clamp-2">
+                  <div className="absolute bottom-3 left-3">
+                    <div className={`p-2 rounded-lg ${category.color} bg-opacity-90`}>
+                      <div className="h-4 w-4" />
+                    </div>
+                  </div>
+                </div>
+                
+                <CardContent className="p-4 sm:p-5">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
                     {category.name}
                   </h3>
                   

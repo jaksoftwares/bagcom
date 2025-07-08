@@ -32,7 +32,7 @@ export default function AuthModal({ isOpen, onClose, mode, onAuth }: AuthModalPr
       setLoading(false);
       toast({
         title: mode === 'login' ? 'Login Successful' : 'Account Created',
-        description: `Welcome to JKUATBagCom!`,
+        description: `Welcome to BagCom Marketplace!`,
       });
       onAuth(userRole);
       onClose();
@@ -44,7 +44,7 @@ export default function AuthModal({ isOpen, onClose, mode, onAuth }: AuthModalPr
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {mode === 'login' ? 'Login to JKUATBagCom' : 'Create Account'}
+            {mode === 'login' ? 'Login to BagCom' : 'Join BagCom Marketplace'}
           </DialogTitle>
         </DialogHeader>
         
@@ -90,11 +90,11 @@ export default function AuthModal({ isOpen, onClose, mode, onAuth }: AuthModalPr
               <RadioGroup value={userRole} onValueChange={(value) => setUserRole(value as 'seller' | 'buyer')}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="buyer" id="buyer" />
-                  <Label htmlFor="buyer">Buyer - I want to buy items</Label>
+                  <Label htmlFor="buyer">Buyer - I want to buy products</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="seller" id="seller" />
-                  <Label htmlFor="seller">Seller - I want to sell items</Label>
+                  <Label htmlFor="seller">Seller - I want to sell products</Label>
                 </div>
               </RadioGroup>
             </div>

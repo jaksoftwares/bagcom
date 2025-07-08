@@ -26,6 +26,29 @@ import Link from 'next/link';
 import { sampleProducts } from '@/lib/products';
 import { categories, getAllSubcategories } from '@/lib/categories';
 
+// Enhanced regions for better filtering
+const regions = [
+  'All Regions',
+  'Nairobi County',
+  'Kiambu County', 
+  'Machakos County',
+  'Kajiado County',
+  'Murang\'a County',
+  'Nyeri County',
+  'Kirinyaga County',
+  'Nakuru County',
+  'Mombasa County',
+  'Kisumu County',
+  'Eldoret',
+  'Thika',
+  'Ruiru',
+  'Kikuyu',
+  'Limuru',
+  'Juja',
+  'Athi River',
+  'Kitengela'
+];
+
 export default function Products() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<'admin' | 'seller' | 'buyer'>('buyer');
@@ -36,6 +59,7 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all');
   const [selectedCondition, setSelectedCondition] = useState<string>('all');
+  const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const toggleLike = (id: number) => {
@@ -46,23 +70,25 @@ export default function Products() {
     );
   };
 
-  // Filter products based on selected criteria
+  // Enhanced filter logic with region filtering
   const filteredProducts = sampleProducts.filter(product => {
     const totalPrice = product.price + product.commission;
     const matchesPrice = totalPrice >= priceRange[0] && totalPrice <= priceRange[1];
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
     const matchesSubcategory = selectedSubcategory === 'all' || product.subcategory === selectedSubcategory;
     const matchesCondition = selectedCondition === 'all' || product.condition === selectedCondition;
+    const matchesRegion = selectedRegion === 'all' || selectedRegion === 'All Regions' || 
+      product.location.area.toLowerCase().includes(selectedRegion.toLowerCase()) ||
+      product.location.campus.toLowerCase().includes(selectedRegion.toLowerCase());
     const matchesSearch = searchQuery === '' || 
       product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    return matchesPrice && matchesCategory && matchesSubcategory && matchesCondition && matchesSearch;
+    return matchesPrice && matchesCategory && matchesSubcategory && matchesCondition && matchesRegion && matchesSearch;
   });
 
   const conditions = ['All', 'Excellent', 'Very Good', 'Good', 'Fair'];
-  const locations = ['All', 'Main Campus', 'Hostels Block A', 'Hostels Block B', 'Hostels Block C', 'Off-campus', 'Juja Town'];
   const sortOptions = ['Newest', 'Price: Low to High', 'Price: High to Low', 'Most Popular', 'Highest Rated'];
   const allSubcategories = getAllSubcategories();
 
@@ -73,8 +99,13 @@ export default function Products() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
         {/* Header */}
         <div className="mb-6 lg:mb-8">
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">All Products</h1>
-          <p className="text-gray-600">Browse through {filteredProducts.length} available items</p>
+          <div className="flex items-center gap-4 mb-4">
+            <Badge className="bg-blue-100 text-blue-800 px-3 py-1">
+              🔄 Second-Hand Marketplace
+            </Badge>
+          </div>
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Second-Hand Products</h1>
+          <p className="text-gray-600">Browse through {filteredProducts.length} pre-owned items from trusted sellers</p>
         </div>
 
         {/* Search and Filters */}
@@ -83,7 +114,7 @@ export default function Products() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search products..."
+                placeholder="Search second-hand products..."
                 className="pl-10 py-3"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -135,11 +166,11 @@ export default function Products() {
             </div>
           </div>
 
-          {/* Filters Panel */}
+          {/* Enhanced Filters Panel */}
           {showFilters && (
             <Card className="mb-6">
               <CardContent className="p-4 lg:p-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -185,6 +216,20 @@ export default function Products() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Region</label>
+                    <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select region" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {regions.map(region => (
+                          <SelectItem key={region} value={region.toLowerCase()}>{region}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -209,12 +254,16 @@ export default function Products() {
                       setSelectedCategory('all');
                       setSelectedSubcategory('all');
                       setSelectedCondition('all');
+                      setSelectedRegion('all');
                       setPriceRange([0, 100000]);
                       setSearchQuery('');
                     }}
                   >
                     Clear Filters
                   </Button>
+                  <div className="text-sm text-gray-600 flex items-center">
+                    Showing {filteredProducts.length} of {sampleProducts.length} products
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -233,6 +282,7 @@ export default function Products() {
               setSelectedCategory('all');
               setSelectedSubcategory('all');
               setSelectedCondition('all');
+              setSelectedRegion('all');
               setPriceRange([0, 100000]);
               setSearchQuery('');
             }}>
@@ -257,7 +307,7 @@ export default function Products() {
                       }`}
                     />
                     
-                    <Badge className="absolute top-2 left-2 bg-green-500 text-white shadow-lg">
+                    <Badge className="absolute top-2 left-2 bg-blue-500 text-white shadow-lg">
                       {product.condition}
                     </Badge>
                     

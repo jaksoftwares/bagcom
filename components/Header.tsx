@@ -41,11 +41,11 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
             <div className="flex items-center min-w-0">
               <Link href="/" className="flex items-center space-x-2 sm:space-x-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 via-blue-700 to-green-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-                  <span className="text-white font-bold text-sm sm:text-lg">JB</span>
+                  <span className="text-white font-bold text-sm sm:text-lg">BC</span>
                 </div>
                 <div className="hidden xs:block min-w-0">
-                  <span className="text-base sm:text-xl font-bold text-gray-900 truncate">JKUATBagCom</span>
-                  <p className="text-xs text-gray-500 -mt-1 hidden sm:block">Student Marketplace</p>
+                  <span className="text-base sm:text-xl font-bold text-gray-900 truncate">BagCom</span>
+                  <p className="text-xs text-gray-500 -mt-1 hidden sm:block">Marketplace</p>
                 </div>
               </Link>
             </div>
@@ -71,7 +71,10 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-1 xl:space-x-2">
               <Link href="/products" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
-                Products
+                Second-Hand
+              </Link>
+              <Link href="/new-products" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                New Products
               </Link>
               <Link href="/categories" className="px-2 xl:px-3 py-2 text-sm xl:text-base text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
                 Categories
@@ -217,7 +220,14 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                 className="flex items-center py-2.5 sm:py-3 px-3 sm:px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all text-base"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Products
+                Second-Hand Products
+              </Link>
+              <Link 
+                href="/new-products" 
+                className="flex items-center py-2.5 sm:py-3 px-3 sm:px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all text-base"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                New Products
               </Link>
               <Link 
                 href="/categories" 
