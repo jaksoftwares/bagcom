@@ -226,7 +226,7 @@ export const sampleProducts: Product[] = [
     yearPurchased: '2024',
     warranty: '1 year remaining',
     reasonForSelling: 'Moving out of hostel'
-  }
+  },
   {
     id: 2,
     title: 'Gas Cylinder (13kg) with 2-Burner Cooker',
