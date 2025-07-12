@@ -137,7 +137,7 @@ export default function FeaturedProducts() {
             Featured Products
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-xl sm:max-w-2xl mx-auto px-4 sm:px-0">
-            Discover the best deals from fellow JKUAT students
+            Discover the best deals from our top-rated sellers. Find quality second-hand items at great prices, perfect for students and budget-conscious shoppers.
           </p>
         </div>
 
