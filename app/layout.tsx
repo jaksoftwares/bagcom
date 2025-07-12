@@ -6,8 +6,8 @@ import { Toaster } from '@/components/ui/toaster';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'JKUATBagCom - Student Marketplace',
-  description: 'Buy and sell second-hand items at JKUAT',
+  title: 'BagCom - Marketplace',
+  description: 'Buy and sell second-hand items ',
 };
 
 export default function RootLayout({
