@@ -105,7 +105,7 @@ export default function BuyerOrderTrackingPage() {
             <ChevronRight className="h-3 w-3" />
             <span className="text-primary">Track Order</span>
           </div>
-          <h1 className="text-4xl font-black tracking-tighter text-gray-900">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
             Order #{order.order_number}
           </h1>
           <p className="text-gray-500 font-medium">Placed on {new Date(order.created_at).toLocaleDateString(undefined, { dateStyle: 'long' })}</p>
@@ -133,9 +133,9 @@ export default function BuyerOrderTrackingPage() {
             <div className={`h-2 w-full ${order.status === 'COMPLETED' ? 'bg-green-500' : 'bg-primary'}`} />
             <CardContent className="p-8">
               <div className="flex flex-col md:flex-row justify-between gap-8">
-                <div className="space-y-6 flex-1">
+                <div className="space-y-1 flex-1">
                   <div className="space-y-1">
-                    <h2 className="text-2xl font-black text-gray-900 leading-tight">
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-900 leading-tight">
                       {ORDER_STATUS_STEPS[currentStepIndex]?.label || 'In Progress'}
                     </h2>
                     <p className="text-sm text-gray-500 font-medium">
@@ -159,7 +159,7 @@ export default function BuyerOrderTrackingPage() {
                             {isDone ? <CheckCircle2 className="h-4 w-4" /> : <div className="h-1.5 w-1.5 rounded-full bg-gray-200" />}
                           </div>
                           <div className="space-y-0.5">
-                            <p className={`text-sm font-black uppercase tracking-tight transition-colors ${
+                            <p className={`text-sm font-bold uppercase tracking-tight transition-colors ${
                               isDone ? 'text-gray-900' : 'text-gray-400'
                             }`}>
                               {step.label}
@@ -267,7 +267,7 @@ export default function BuyerOrderTrackingPage() {
                      </div>
                   </div>
                   <div>
-                     <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Seller Identity</p>
+                     <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">Seller Identity</p>
                      <p className="text-sm font-bold">{sellerName}</p>
                   </div>
                </div>

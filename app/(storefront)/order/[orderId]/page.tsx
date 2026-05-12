@@ -98,7 +98,7 @@ export default function GuestOrderTrackingPage() {
                 <Package className="h-8 w-8" />
               </div>
               <div className="space-y-1 text-center md:text-left">
-                <h1 className="text-2xl font-black tracking-tight text-gray-900">Track Order #{order.order_number}</h1>
+                <h1 className="text-2xl font-bold tracking-tight text-gray-900">Track Order #{order.order_number}</h1>
                 <p className="text-sm font-medium text-gray-500">
                   {order.status === 'COMPLETED' ? 'Your order has been completed.' : 'Your order is being processed securely.'}
                 </p>
@@ -137,7 +137,7 @@ export default function GuestOrderTrackingPage() {
                             {isDone ? <CheckCircle2 className="h-4 w-4" /> : <div className="h-1.5 w-1.5 rounded-full bg-gray-200" />}
                           </div>
                           <div className="space-y-1">
-                            <h3 className={`text-base font-black tracking-tight uppercase transition-colors ${
+                            <h3 className={`text-base font-bold tracking-tight uppercase transition-colors ${
                               isDone ? 'text-gray-900' : 'text-gray-400'
                             }`}>
                               {step.label}
@@ -188,13 +188,13 @@ export default function GuestOrderTrackingPage() {
                {order.status !== 'COMPLETED' && (
                  <div className="bg-primary rounded-3xl p-8 text-white shadow-2xl shadow-primary/20 space-y-6">
                     <div>
-                       <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Verification Identity</p>
+                       <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Verification Identity</p>
                        <h3 className="text-xl font-bold mt-1">Proof of Delivery</h3>
                     </div>
                     
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 flex items-center justify-between">
                        <div>
-                          <p className="text-3xl font-black tracking-[0.2em] font-mono">
+                          <p className="text-3xl font-bold tracking-[0.2em] font-mono">
                              {order.delivery_code || '---'}
                           </p>
                        </div>
