@@ -102,148 +102,148 @@ export default function AdminFinancials() {
 
   return (
     <AdminLayout>
-      <div className="space-y-12">
+      <div className="space-y-10">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                <span>Admin</span>
-               <ChevronRight className="h-3 w-3 opacity-30" />
+               <ChevronRight className="h-3 w-3 opacity-50" />
                <span className="text-primary">Financial Governance</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.1]">
-              Escrow <span className="text-primary/80">& Clearing</span>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+              Escrow <span className="text-slate-500">& Clearing</span>
             </h1>
-            <p className="text-base text-slate-400 font-medium max-w-xl leading-relaxed">
+            <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
               Real-time oversight of platform liquidity and escrow transactions. Execute emergency overrides and reconciliation audits.
             </p>
           </div>
-          <div className="flex gap-4">
-             <Button variant="outline" className="border-white/5 bg-white/5 hover:bg-white/10 font-bold text-[11px] uppercase tracking-widest h-14 px-8 rounded-2xl transition-all">
-                <Download className="h-4 w-4 mr-3 opacity-50" /> Audit Trail
+          <div className="flex gap-3">
+             <Button variant="outline" className="border-slate-200 bg-white hover:bg-slate-50 font-bold text-[11px] uppercase tracking-wider h-11 px-6 rounded-lg transition-all">
+                <Download className="h-4 w-4 mr-2 opacity-60" /> Audit Trail
              </Button>
           </div>
         </div>
 
         {/* Financial High-Level Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="bg-slate-900/40 border-white/5 p-10 relative overflow-hidden group rounded-[2.5rem] shadow-2xl">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="bg-white border-slate-200 p-8 relative overflow-hidden group rounded-xl shadow-sm">
             <div className="relative z-10 space-y-4">
-              <div className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
-                 <Lock className="h-6 w-6" />
+              <div className="h-11 w-11 bg-slate-50 rounded-lg flex items-center justify-center text-slate-600 border border-slate-100">
+                 <Lock className="h-5 w-5" />
               </div>
               <div className="space-y-1">
-                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Active Protection Pool</p>
-                 <h3 className="text-3xl font-bold text-white tracking-tight">KSh {stats.activeEscrow.toLocaleString()}</h3>
+                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Protection Pool</p>
+                 <h3 className="text-3xl font-bold text-slate-900 tracking-tight">KSh {stats.activeEscrow.toLocaleString()}</h3>
               </div>
             </div>
-            <div className="absolute -bottom-6 -right-6 opacity-5 group-hover:scale-125 transition-transform duration-700">
-               <Lock className="h-28 w-28 text-white" />
+            <div className="absolute -bottom-4 -right-4 opacity-[0.03] group-hover:scale-110 transition-transform duration-500">
+               <Lock className="h-24 w-24 text-slate-900" />
             </div>
           </Card>
           
-          <Card className="bg-slate-900/40 border-white/5 p-10 relative overflow-hidden group rounded-[2.5rem] shadow-2xl">
+          <Card className="bg-white border-slate-200 p-8 relative overflow-hidden group rounded-xl shadow-sm">
             <div className="relative z-10 space-y-4">
-              <div className="h-12 w-12 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-400 border border-emerald-500/20">
-                 <TrendingUp className="h-6 w-6" />
+              <div className="h-11 w-11 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 border border-emerald-100">
+                 <TrendingUp className="h-5 w-5" />
               </div>
               <div className="space-y-1">
-                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Platform Net Yield</p>
-                 <h3 className="text-3xl font-bold text-white tracking-tight">KSh {stats.platformYield.toLocaleString()}</h3>
+                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Platform Net Yield</p>
+                 <h3 className="text-3xl font-bold text-slate-900 tracking-tight">KSh {stats.platformYield.toLocaleString()}</h3>
               </div>
             </div>
-            <div className="absolute -bottom-6 -right-6 opacity-5 group-hover:scale-125 transition-transform duration-700">
-               <TrendingUp className="h-28 w-28 text-white" />
+            <div className="absolute -bottom-4 -right-4 opacity-[0.03] group-hover:scale-110 transition-transform duration-500">
+               <TrendingUp className="h-24 w-24 text-slate-900" />
             </div>
           </Card>
 
-          <Card className="bg-slate-900/40 border-white/5 p-10 relative overflow-hidden group rounded-[2.5rem] shadow-2xl">
+          <Card className="bg-white border-slate-200 p-8 relative overflow-hidden group rounded-xl shadow-sm">
             <div className="relative z-10 space-y-4">
-              <div className="h-12 w-12 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 border border-amber-500/20">
-                 <ArrowRightLeft className="h-6 w-6" />
+              <div className="h-11 w-11 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600 border border-amber-100">
+                 <ArrowRightLeft className="h-5 w-5" />
               </div>
               <div className="space-y-1">
-                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Settlement Queue</p>
-                 <h3 className="text-3xl font-bold text-white tracking-tight">{stats.settlementQueue} <span className="text-sm font-medium text-slate-500 ml-2">Transfers</span></h3>
+                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Settlement Queue</p>
+                 <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{stats.settlementQueue} <span className="text-sm font-medium text-slate-400 ml-2">Transfers</span></h3>
               </div>
             </div>
-            <div className="absolute -bottom-6 -right-6 opacity-5 group-hover:scale-125 transition-transform duration-700">
-               <ArrowRightLeft className="h-28 w-28 text-white" />
+            <div className="absolute -bottom-4 -right-4 opacity-[0.03] group-hover:scale-110 transition-transform duration-500">
+               <ArrowRightLeft className="h-24 w-24 text-slate-900" />
             </div>
           </Card>
         </div>
 
         {/* Ledger Section */}
-        <div className="space-y-8">
-          <div className="flex justify-between items-center">
-            <div className="space-y-1">
-               <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Financial Log</p>
-               <h2 className="text-2xl font-bold text-white tracking-tight">Escrow Transaction Ledger</h2>
+        <div className="space-y-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="space-y-0.5">
+               <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Financial Log</p>
+               <h2 className="text-xl font-bold text-slate-900 tracking-tight">Escrow Transaction Ledger</h2>
             </div>
-            <div className="relative w-80 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 group-focus-within:text-primary transition-colors" />
+            <div className="relative w-full md:w-80 group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-600 transition-colors" />
               <Input 
                 placeholder="Search by Order ID..." 
-                className="pl-12 bg-white/5 border-white/5 h-12 rounded-xl text-xs font-medium focus-visible:ring-primary/20 transition-all"
+                className="pl-11 bg-white border-slate-200 h-11 rounded-lg text-sm font-medium focus:border-slate-300 shadow-sm transition-all"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
 
-          <Card className="bg-slate-900/40 border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden">
+          <Card className="bg-white border-slate-200 shadow-sm rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-slate-950/50 border-b border-white/5">
+                <thead className="bg-slate-50 border-b border-slate-100">
                   <tr>
-                    <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Reference</th>
-                    <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Value</th>
-                    <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Lifecycle State</th>
-                    <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Last Resolution</th>
-                    <th className="px-8 py-6 text-right text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Override Engine</th>
+                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Reference</th>
+                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Value</th>
+                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Lifecycle State</th>
+                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Last Resolution</th>
+                    <th className="px-6 py-4 text-right text-[11px] font-bold uppercase tracking-wider text-slate-400">Operations</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-slate-50">
                   {escrowList.length === 0 ? (
-                    <tr><td colSpan={5} className="px-8 py-16 text-center text-slate-500 font-bold uppercase tracking-[0.2em] italic">No active escrow transactions detected.</td></tr>
+                    <tr><td colSpan={5} className="px-6 py-16 text-center text-slate-400 font-bold uppercase tracking-wider italic">No active escrow transactions detected.</td></tr>
                   ) : (
                     escrowList.map((item) => (
-                      <tr key={item.id} className="hover:bg-white/5 transition-all duration-300 group">
-                        <td className="px-8 py-6">
-                          <p className="text-sm font-bold text-white group-hover:text-primary transition-colors">#{item.order?.order_number || '---'}</p>
-                          <p className="text-[10px] font-mono font-bold text-slate-500 uppercase mt-1">REF: {item.id.slice(0, 8)}</p>
+                      <tr key={item.id} className="hover:bg-slate-50 transition-all duration-200 group">
+                        <td className="px-6 py-5">
+                          <p className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">#{item.order?.order_number || '---'}</p>
+                          <p className="text-[10px] font-mono font-bold text-slate-400 uppercase mt-1 tracking-tighter">REF: {item.id.slice(0, 8)}</p>
                         </td>
-                        <td className="px-8 py-6 text-sm font-black text-white">
+                        <td className="px-6 py-5 text-sm font-bold text-slate-900">
                           KSh {item.amount.toLocaleString()}
                         </td>
-                        <td className="px-8 py-6">
+                        <td className="px-6 py-5">
                           {getEscrowBadge(item.escrow_status)}
                         </td>
-                        <td className="px-8 py-6">
-                           <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
-                              <History className="h-3.5 w-3.5 opacity-40" />
+                        <td className="px-6 py-5">
+                           <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400">
+                              <History className="h-3.5 w-3.5 opacity-60" />
                               {item.released_at ? new Date(item.released_at).toLocaleDateString(undefined, { dateStyle: 'medium' }) : 'Pending Clearance'}
                            </div>
                         </td>
-                        <td className="px-8 py-6 text-right">
-                           <div className="flex justify-end gap-3">
+                        <td className="px-6 py-5 text-right">
+                           <div className="flex justify-end gap-2">
                              <Button 
                                onClick={() => handleOverride(item.id, 'FORCE_RELEASE')}
                                variant="ghost" 
                                size="icon" 
-                               className="h-10 w-10 text-rose-400 hover:bg-rose-500/10 rounded-xl"
+                               className="h-9 w-9 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
                                title="Force Unlock"
                              >
-                               <Unlock className="h-4.5 w-4.5" />
+                               <Unlock className="h-4 w-4" />
                              </Button>
                              <Button 
                                onClick={() => handleOverride(item.id, 'FREEZE')}
                                variant="ghost" 
                                size="icon" 
-                               className="h-10 w-10 text-amber-500 hover:bg-amber-500/10 rounded-xl"
+                               className="h-9 w-9 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg"
                                title="Freeze Asset"
                              >
-                               <AlertTriangle className="h-4.5 w-4.5" />
+                               <AlertTriangle className="h-4 w-4" />
                              </Button>
                            </div>
                         </td>

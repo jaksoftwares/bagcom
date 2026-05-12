@@ -63,40 +63,40 @@ export default function ProductModeration() {
 
   return (
     <AdminLayout>
-      <div className="space-y-12">
+      <div className="space-y-10">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                <span>Admin</span>
-               <ChevronRight className="h-3 w-3 opacity-30" />
+               <ChevronRight className="h-3 w-3 opacity-50" />
                <span className="text-primary">Product Moderation</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.1]">
-              Inventory <span className="text-primary/80">Curation</span>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+              Inventory <span className="text-slate-500">Curation</span>
             </h1>
-            <p className="text-base text-slate-400 font-medium max-w-xl leading-relaxed">
+            <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
               Maintain marketplace quality by reviewing new listings. Ensure all products meet Bagcom's safety and authenticity standards.
             </p>
           </div>
-          <div className="flex items-center gap-4 bg-primary/10 border border-primary/20 px-6 py-3 rounded-[1.5rem] shadow-xl shadow-primary/5">
-             <ShoppingBag className="h-5 w-5 text-primary" />
-             <span className="text-[11px] font-black text-primary uppercase tracking-[0.1em]">{products.length} Active Listings</span>
+          <div className="flex items-center gap-3 bg-white border border-slate-200 px-5 py-2.5 rounded-xl shadow-sm">
+             <ShoppingBag className="h-4 w-4 text-primary" />
+             <span className="text-[11px] font-bold text-slate-900 uppercase tracking-wide">{products.length} Active Listings</span>
           </div>
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-900/40 p-4 rounded-[2rem] border border-white/5 shadow-2xl">
-           <div className="relative w-full md:w-96 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 group-focus-within:text-primary transition-colors" />
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+           <div className="relative w-full md:w-80 group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-600 transition-colors" />
               <Input 
                 placeholder="Search products or sellers..." 
-                className="pl-12 pr-6 bg-white/5 border-white/5 h-12 rounded-xl focus-visible:ring-primary/20 text-sm font-medium transition-all"
+                className="pl-11 pr-4 bg-slate-50 border-slate-200 h-11 rounded-lg focus:bg-white focus:border-slate-300 text-sm font-medium transition-all"
               />
            </div>
-           <div className="flex items-center gap-4">
-              <Button variant="ghost" className="rounded-xl font-bold text-xs gap-2 text-slate-400 hover:text-white">
-                 <Filter className="h-4 w-4" /> Filter by Status
+           <div className="flex items-center gap-3 w-full md:w-auto">
+              <Button variant="ghost" className="rounded-lg font-bold text-xs gap-2 text-slate-500 hover:text-slate-900 hover:bg-slate-50 w-full md:w-auto">
+                 <Filter className="h-4 w-4" /> Filter Listings
               </Button>
            </div>
         </div>
@@ -107,75 +107,77 @@ export default function ProductModeration() {
             <Loader2 className="h-8 w-8 animate-spin text-primary/40" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {products.map((product) => (
-              <Card key={product.id} className="bg-slate-900/40 border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden group hover:border-primary/20 transition-all duration-500">
-                <div className="relative aspect-[16/10] bg-slate-950">
+              <Card key={product.id} className="bg-white border-slate-200 shadow-sm rounded-xl overflow-hidden group hover:border-slate-300 transition-all duration-300">
+                <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
                    <img 
                      src={product.images?.[0]?.image_url || 'https://via.placeholder.com/400x250'} 
-                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
                      alt={product.title}
                    />
-                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
-                   <div className="absolute top-6 right-6">
-                      <Badge className={`${product.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'} border px-3 py-1 font-bold text-[9px] uppercase tracking-widest rounded-full`}>
+                   <div className="absolute top-4 right-4">
+                      <Badge className={`${product.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} border-none px-2.5 py-1 font-bold text-[9px] uppercase tracking-wider rounded-md shadow-sm`}>
                         {product.status}
                       </Badge>
                    </div>
-                   <div className="absolute bottom-6 left-6 right-6">
-                      <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1">{product.category?.name || 'Uncategorized'}</p>
-                      <h3 className="text-xl font-bold text-white leading-tight line-clamp-1">{product.title}</h3>
+                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-900/60 to-transparent">
+                      <p className="text-[10px] font-bold text-white/80 uppercase tracking-wider mb-0.5">{product.category?.name || 'Uncategorized'}</p>
+                      <h3 className="text-lg font-bold text-white leading-tight line-clamp-1">{product.title}</h3>
                    </div>
                 </div>
 
-                <CardContent className="p-8 space-y-8">
+                <CardContent className="p-6 space-y-6">
                    <div className="flex justify-between items-end">
-                      <div className="space-y-1">
-                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Market Value</p>
-                         <p className="text-2xl font-black text-white tracking-tighter text-shadow">KSh {product.price.toLocaleString()}</p>
+                      <div className="space-y-0.5">
+                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Market Value</p>
+                         <p className="text-2xl font-bold text-slate-900 tracking-tight">KSh {product.price.toLocaleString()}</p>
                       </div>
-                      <Badge variant="outline" className="border-white/5 text-slate-500 font-bold text-[9px] px-3 py-1 rounded-lg">
+                      <Badge variant="outline" className="border-slate-100 bg-slate-50 text-slate-500 font-bold text-[9px] px-2.5 py-0.5 rounded-md">
                          {product.condition}
                       </Badge>
                    </div>
 
-                   <div className="space-y-4 py-6 border-t border-white/5">
-                      <div className="flex items-center gap-4">
-                         <div className="h-8 w-8 bg-slate-800 rounded-lg flex items-center justify-center">
-                            <User className="h-4 w-4 text-slate-400" />
+                   <div className="space-y-3 pt-5 border-t border-slate-50">
+                      <div className="flex items-center gap-3">
+                         <div className="h-8 w-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                            <User className="h-4 w-4 text-slate-500" />
                          </div>
                          <div className="space-y-0.5">
-                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest leading-none">Seller Record</p>
-                            <p className="text-xs text-white font-bold">{product.seller?.first_name} {product.seller?.last_name}</p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">Seller Record</p>
+                            <p className="text-xs text-slate-900 font-bold">{product.seller?.first_name} {product.seller?.last_name}</p>
                          </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                         <div className="h-8 w-8 bg-slate-800 rounded-lg flex items-center justify-center">
-                            <Clock className="h-4 w-4 text-slate-400" />
+                      <div className="flex items-center gap-3">
+                         <div className="h-8 w-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                            <Clock className="h-4 w-4 text-slate-500" />
                          </div>
                          <div className="space-y-0.5">
-                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest leading-none">Submission Time</p>
-                            <p className="text-xs text-slate-400 font-medium">{new Date(product.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' })}</p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">Submission Time</p>
+                            <p className="text-xs text-slate-500 font-medium">{new Date(product.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' })}</p>
                          </div>
                       </div>
                    </div>
 
-                   <div className="grid grid-cols-3 gap-3">
+                   <div className="grid grid-cols-3 gap-2 pt-2">
                       <Button 
                         onClick={() => moderateProduct(product.id, 'ACTIVE')}
-                        className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white font-bold text-[10px] uppercase tracking-widest h-12 rounded-xl border-none transition-all"
+                        variant="outline"
+                        className="bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white border-none font-bold text-[10px] uppercase tracking-wider h-10 rounded-lg transition-all"
                       >
                          Approve
                       </Button>
                       <Button 
                         onClick={() => moderateProduct(product.id, 'FLAGGED')}
-                        className="bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-white font-bold text-[10px] uppercase tracking-widest h-12 rounded-xl border-none transition-all"
+                        variant="outline"
+                        className="bg-amber-50 text-amber-600 hover:bg-amber-600 hover:text-white border-none font-bold text-[10px] uppercase tracking-wider h-10 rounded-lg transition-all"
                       >
                          Flag
                       </Button>
                       <Button 
                         onClick={() => moderateProduct(product.id, 'REJECTED')}
-                        className="bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white font-bold text-[10px] uppercase tracking-widest h-12 rounded-xl border-none transition-all"
+                        variant="outline"
+                        className="bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white border-none font-bold text-[10px] uppercase tracking-wider h-10 rounded-lg transition-all"
                       >
                          Reject
                       </Button>

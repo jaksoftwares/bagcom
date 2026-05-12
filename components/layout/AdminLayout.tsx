@@ -104,35 +104,35 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#0F172A] text-slate-200 selection:bg-primary selection:text-white font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-primary selection:text-white font-sans">
       {/* Sidebar */}
       <aside 
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-[#1E293B] border-r border-white/5 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="h-full flex flex-col">
           {/* Logo Section */}
-          <div className="p-8 flex items-center justify-center border-b border-white/5">
-            <Logo variant="dark" className="h-8 w-auto" />
+          <div className="p-8 flex items-center justify-center border-b border-slate-100">
+            <Logo variant="default" className="h-8 w-auto" />
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-8 space-y-1.5 overflow-y-auto custom-scrollbar">
-            <p className="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">Core Management</p>
+          <nav className="flex-1 px-4 py-8 space-y-1 overflow-y-auto custom-scrollbar">
+            <p className="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Core Management</p>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[13px] font-bold transition-all duration-200 group ${
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 group ${
                     isActive 
-                      ? 'bg-primary text-white shadow-lg shadow-primary/20' 
-                      : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                      ? 'bg-slate-900 text-white shadow-sm' 
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                   }`}
                 >
-                  <item.icon className={`h-4.5 w-4.5 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-primary'}`} />
+                  <item.icon className={`h-4.5 w-4.5 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-900'}`} />
                   {item.name}
                   {isActive && <ChevronRight className="ml-auto h-3.5 w-3.5 opacity-50" />}
                 </Link>
@@ -141,17 +141,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </nav>
 
           {/* User Profile Footer */}
-          <div className="p-6 border-t border-white/5 bg-slate-900/50">
-            <div className="flex items-center gap-3 mb-6 p-2 rounded-2xl bg-white/5 border border-white/5">
-              <div className="h-10 w-10 bg-slate-800 rounded-xl border border-white/10 flex items-center justify-center font-bold text-primary text-xs shadow-inner">
+          <div className="p-6 border-t border-slate-100 bg-slate-50/50">
+            <div className="flex items-center gap-3 mb-6 p-2 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <div className="h-9 w-9 bg-slate-100 rounded-lg flex items-center justify-center font-bold text-slate-700 text-xs shadow-inner">
                 {admin?.first_name?.[0]}{admin?.last_name?.[0]}
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-bold text-white truncate leading-tight">{admin?.first_name} {admin?.last_name}</p>
-                <p className="text-[9px] font-black text-primary uppercase tracking-[0.15em] mt-1">{admin?.role}</p>
+                <p className="text-xs font-bold text-slate-900 truncate leading-tight">{admin?.first_name} {admin?.last_name}</p>
+                <p className="text-[10px] font-bold text-primary uppercase tracking-wide mt-0.5">{admin?.role}</p>
               </div>
             </div>
-            <Button variant="ghost" className="w-full justify-start text-rose-400 hover:text-rose-300 hover:bg-rose-400/10 font-bold text-xs gap-3 rounded-xl transition-all">
+            <Button variant="ghost" className="w-full justify-start text-slate-500 hover:text-rose-600 hover:bg-rose-50 font-bold text-xs gap-3 rounded-lg transition-all">
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>
           </div>
@@ -161,39 +161,39 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main Content */}
       <div className={`transition-all duration-300 ${isSidebarOpen ? 'lg:pl-72' : 'lg:pl-0'}`}>
         {/* Top Header */}
-        <header className="sticky top-0 z-40 bg-[#0F172A]/80 backdrop-blur-md border-b border-white/5 h-20 flex items-center justify-between px-8">
+        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200 h-16 flex items-center justify-between px-8">
           <div className="flex items-center gap-6">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="lg:hidden text-slate-400"
+              className="lg:hidden text-slate-500"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <div className="hidden md:flex items-center gap-3 bg-white/5 border border-white/5 px-4 py-2.5 rounded-2xl w-80 group focus-within:w-96 focus-within:border-primary/50 transition-all duration-300">
-              <Search className="h-4 w-4 text-slate-500 group-focus-within:text-primary" />
+            <div className="hidden md:flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2 rounded-lg w-80 group focus-within:w-96 focus-within:bg-white focus-within:border-slate-300 transition-all duration-300">
+              <Search className="h-4 w-4 text-slate-400 group-focus-within:text-slate-600" />
               <input 
                 type="text" 
-                placeholder="Search command..." 
-                className="bg-transparent border-none text-[13px] outline-none w-full placeholder:text-slate-500 font-medium text-white"
+                placeholder="Search resources..." 
+                className="bg-transparent border-none text-sm outline-none w-full placeholder:text-slate-400 font-medium text-slate-900"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 mr-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-              <div className="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-              Live Monitor
+            <div className="hidden sm:flex items-center gap-2 mr-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <div className="h-1.5 w-1.5 bg-emerald-500 rounded-full" />
+              Live System
             </div>
-            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-white/5 rounded-xl h-10 w-10">
+            <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg h-9 w-9">
               <Bell className="h-5 w-5" />
             </Button>
           </div>
         </header>
 
         {/* Dynamic Page Content */}
-        <main className="p-8 max-w-[1600px] mx-auto animate-in fade-in duration-500">
+        <main className="p-8 max-w-[1400px] mx-auto animate-in fade-in duration-500">
           {children}
         </main>
       </div>
