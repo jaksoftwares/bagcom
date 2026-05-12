@@ -55,7 +55,7 @@ export default function RaiseDisputePage() {
         const disputableStatuses = ['PAYMENT_SUCCESS', 'DELIVERED', 'HELD_IN_ESCROW', 'OUT_FOR_DELIVERY'];
         if (!disputableStatuses.includes(data.order.status)) {
           toast({ title: "This order is not eligible for a dispute in its current state", variant: "destructive" });
-          router.push(`/order/${orderId}`);
+          router.push(`/buyer/orders/${orderId}`);
           return;
         }
 
@@ -96,7 +96,7 @@ export default function RaiseDisputePage() {
       const data = await res.json();
       if (data.success) {
         toast({ title: "Dispute raised successfully", description: "Our team will review your case within 24-48 hours." });
-        router.push(`/order/${orderId}`);
+        router.push(`/buyer/orders/${orderId}`);
       } else {
         throw new Error(data.error || "Failed to raise dispute");
       }
@@ -116,10 +116,10 @@ export default function RaiseDisputePage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-8">
-        <Link href={`/order/${orderId}`}>
-          <Button variant="ghost" size="sm" className="mb-6 gap-2">
-            <ArrowLeft className="h-4 w-4" /> Back to Order
+    <div className="max-w-3xl mx-auto py-8 px-4">
+        <Link href={`/buyer/orders/${orderId}`}>
+          <Button variant="ghost" size="sm" className="mb-6 gap-2 text-gray-500 font-bold hover:text-primary transition-colors">
+            <ArrowLeft className="h-4 w-4" /> Back to Dashboard
           </Button>
         </Link>
 
@@ -129,8 +129,8 @@ export default function RaiseDisputePage() {
               <ShieldAlert className="h-8 w-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Raise a Dispute</h1>
-              <p className="text-gray-600">Tell us what went wrong. Your funds are protected in escrow while we investigate.</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">Raise a Dispute</h1>
+              <p className="text-gray-500 font-medium">Tell us what went wrong. Your funds are protected in escrow while we investigate.</p>
             </div>
           </div>
 
@@ -209,7 +209,7 @@ export default function RaiseDisputePage() {
                     "Submit Dispute Case"
                   )}
                 </Button>
-                <Link href={`/order/${orderId}`} className="flex-1">
+                <Link href={`/buyer/orders/${orderId}`} className="flex-1">
                   <Button variant="outline" className="w-full h-14 text-lg font-bold border-gray-200">
                     Go Back
                   </Button>

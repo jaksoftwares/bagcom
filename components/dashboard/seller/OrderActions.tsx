@@ -75,12 +75,24 @@ export function OrderActions({ order, onUpdate }: OrderActionsProps) {
     }
   };
 
-  const markAsDelivered = async () => {
-    // In a real flow, this might just notify the buyer to get ready
-    toast({ 
-      title: "Status Updated", 
-      description: "Buyer has been notified that the item is out for delivery." 
-    });
+  const updateStatus = async (newStatus: string) => {
+    try {
+      const res = await fetch('/api/orders/update-status', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: order.id, status: newStatus })
+      });
+      
+      if (res.ok) {
+        toast({ 
+          title: "Status Updated", 
+          description: `Order marked as ${newStatus.replace('_', ' ')}. Buyer has been notified via email.` 
+        });
+        onUpdate();
+      }
+    } catch (error) {
+      toast({ title: "Failed to update status", variant: "destructive" });
+    }
   };
 
   return (
@@ -91,10 +103,16 @@ export function OrderActions({ order, onUpdate }: OrderActionsProps) {
       </Button>
 
       {order.status === 'PAYMENT_SUCCESS' && (
-        <Button size="sm" className="gap-2 font-bold h-9 bg-blue-600 hover:bg-blue-700" onClick={markAsDelivered}>
-          <Package className="h-4 w-4" />
-          Mark as Delivered
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" className="gap-2 font-bold h-9 border-blue-100 text-blue-600 hover:bg-blue-50" onClick={() => updateStatus('PRODUCT_LOCKED')}>
+            <ShieldCheck className="h-4 w-4" />
+            Reserve Item
+          </Button>
+          <Button size="sm" className="gap-2 font-bold h-9 bg-blue-600 hover:bg-blue-700" onClick={() => updateStatus('OUT_FOR_DELIVERY')}>
+            <Package className="h-4 w-4" />
+            Mark Out for Delivery
+          </Button>
+        </div>
       )}
 
       {(order.status === 'PAYMENT_SUCCESS' || order.status === 'DELIVERED') && (

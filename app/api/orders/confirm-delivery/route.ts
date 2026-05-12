@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { MpesaService } from '@/services/mpesa';
+import { sendEmail, EmailTemplates } from '@/lib/mail';
 
 
 /**
@@ -102,6 +103,55 @@ export async function POST(request: Request) {
       } catch (error) {
         console.error('Automated B2C Payout failed:', error);
       }
+    }
+
+    // 7. Send Notifications (Email)
+    try {
+      const { data: orderData } = await supabase
+        .from('orders')
+        .select(`
+          order_number,
+          seller_receivable,
+          product:products(title),
+          buyer:users!orders_buyer_id_fkey(email, first_name),
+          seller:users!orders_seller_id_fkey(email, first_name)
+        `)
+        .eq('id', orderId)
+        .single();
+
+      if (orderData) {
+        const { order_number, seller_receivable, product, buyer, seller } = orderData as any;
+
+        // Notify Buyer of Completion
+        if (buyer?.email) {
+          const buyerTemplate = EmailTemplates.orderCompletedBuyer(
+            buyer.first_name || 'Customer',
+            order_number,
+            product?.title || 'Your Item'
+          );
+          await sendEmail({
+            to: buyer.email,
+            subject: buyerTemplate.subject,
+            html: buyerTemplate.html
+          });
+        }
+
+        // Notify Seller of Payout
+        if (seller?.email) {
+          const sellerTemplate = EmailTemplates.payoutInitiatedSeller(
+            seller.first_name || 'Seller',
+            seller_receivable.toLocaleString(),
+            order_number
+          );
+          await sendEmail({
+            to: seller.email,
+            subject: sellerTemplate.subject,
+            html: sellerTemplate.html
+          });
+        }
+      }
+    } catch (mailError) {
+      console.error('Completion Mail Error:', mailError);
     }
 
     return NextResponse.json({ 

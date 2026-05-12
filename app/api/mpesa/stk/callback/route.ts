@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { sendEmail, EmailTemplates } from '@/lib/mail';
 
 
 /**
@@ -76,6 +77,58 @@ export async function POST(request: Request) {
             escrow_status: 'HELD_IN_ESCROW',
             held_at: now
           });
+        // 4. Send Notifications (Email)
+        try {
+          const { data: orderData } = await supabase
+            .from('orders')
+            .select(`
+              order_number,
+              delivery_code,
+              total_amount,
+              product:products(title),
+              buyer:users!orders_buyer_id_fkey(email, first_name),
+              seller:users!orders_seller_id_fkey(email, first_name)
+            `)
+            .eq('id', transaction.order_id)
+            .single();
+
+          if (orderData) {
+            const { order_number, delivery_code, total_amount, product, buyer, seller } = orderData as any;
+            
+            // Notify Buyer
+            if (buyer?.email) {
+              const buyerTemplate = EmailTemplates.orderConfirmation(
+                buyer.first_name || 'Customer',
+                order_number,
+                product?.title || 'Your Item',
+                total_amount.toLocaleString(),
+                delivery_code
+              );
+              await sendEmail({
+                to: buyer.email,
+                subject: buyerTemplate.subject,
+                html: buyerTemplate.html
+              });
+            }
+
+            // Notify Seller
+            if (seller?.email) {
+              const sellerTemplate = EmailTemplates.newOrderForSeller(
+                seller.first_name || 'Seller',
+                order_number,
+                product?.title || 'Your Item',
+                total_amount.toLocaleString()
+              );
+              await sendEmail({
+                to: seller.email,
+                subject: sellerTemplate.subject,
+                html: sellerTemplate.html
+              });
+            }
+          }
+        } catch (mailError) {
+          console.error('Callback Mail Error:', mailError);
+        }
       }
 
 
