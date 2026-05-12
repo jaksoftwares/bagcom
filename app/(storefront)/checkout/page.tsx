@@ -53,7 +53,7 @@ function CheckoutContent() {
   useEffect(() => {
     if (paymentStatus === 'SUCCESS') {
       setAwaitingPayment(false);
-      router.push(`/order/${orderId}`);
+      router.push(`/buyer/orders/${orderId}`);
     } else if (paymentStatus === 'CANCELLED') {
       setAwaitingPayment(false);
       setIsProcessing(false);
