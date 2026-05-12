@@ -200,7 +200,7 @@ export default function BuyerDashboard() {
                                 {order.status.replace('_', ' ')}
                               </Badge>
                             </div>
-                            <Link href={`/order/${order.id}`}>
+                            <Link href={`/buyer/orders/${order.id}`}>
                               <Button variant="ghost" size="sm">
                                 <Eye className="h-4 w-4 mr-2" />
                                 Details

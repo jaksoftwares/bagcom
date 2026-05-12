@@ -174,7 +174,7 @@ export default function BuyerOrdersPage() {
                     </div>
                     <div>
                       <p className="text-gray-500 font-medium text-right uppercase tracking-tight">Order #{order.order_number}</p>
-                      <Link href={`/order/${order.id}`} className="text-primary font-bold hover:underline">View Order Details</Link>
+                      <Link href={`/buyer/orders/${order.id}`} className="text-primary font-bold hover:underline">View Order Details</Link>
                     </div>
                   </div>
                   <CardContent className="p-6">
@@ -208,7 +208,7 @@ export default function BuyerOrdersPage() {
                       </div>
                       
                       <div className="flex flex-col gap-2 min-w-[180px]">
-                        <Link href={`/order/${order.id}`} className="w-full">
+                        <Link href={`/buyer/orders/${order.id}`} className="w-full">
                           <Button className="w-full h-10 font-bold">Track Package</Button>
                         </Link>
                         <Button variant="outline" className="w-full h-10 font-bold gap-2">
