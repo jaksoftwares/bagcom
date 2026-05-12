@@ -110,13 +110,13 @@ export default function SupportTickets() {
             <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                <span>Admin</span>
                <ChevronRight className="h-3 w-3 opacity-50" />
-               <span className="text-primary">Support Desk</span>
+               <span className="text-primary">Tickets</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              Ticket <span className="text-slate-500">Management</span>
+              Support Tickets
             </h1>
             <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Resolve user inquiries and platform issues. Maintain high service levels by tracking response times and resolution rates.
+              Manage and resolve customer support requests.
             </p>
           </div>
           <div className="flex items-center gap-3 bg-white border border-slate-200 px-5 py-2.5 rounded-xl shadow-sm">
@@ -145,7 +145,7 @@ export default function SupportTickets() {
                            <Badge variant="outline" className={`border-slate-100 text-[10px] font-bold uppercase ${ticket.priority === 'HIGH' ? 'text-rose-500 bg-rose-50' : 'text-slate-500 bg-slate-50'}`}>
                               {ticket.priority} Priority
                            </Badge>
-                           <span className="text-[11px] font-mono text-slate-400 font-bold ml-auto uppercase tracking-tighter">TKT-#{ticket.id.slice(0,8)}</span>
+                           <span className="text-[11px] font-mono text-slate-400 font-bold ml-auto uppercase tracking-tighter"># {ticket.id.slice(0,8)}</span>
                         </div>
                         
                         <div className="space-y-1">
@@ -171,21 +171,21 @@ export default function SupportTickets() {
                      </div>
 
                      <div className="lg:w-56 space-y-3 flex flex-col justify-center border-l border-slate-100 pl-8">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center mb-1">Resolution Hub</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center mb-1">Actions</p>
                         <Button 
                           onClick={() => updateTicket(ticket.id, 'IN_PROGRESS')}
                           disabled={ticket.status === 'IN_PROGRESS'}
                           variant="outline" 
                           className="w-full border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-[11px] uppercase tracking-wider h-10 rounded-lg transition-all"
                         >
-                           Mark In-Progress
+                           In Progress
                         </Button>
                         <Button 
                           onClick={() => updateTicket(ticket.id, 'RESOLVED')}
                           disabled={ticket.status === 'RESOLVED'}
                           className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] uppercase tracking-wider h-10 rounded-lg shadow-sm transition-all"
                         >
-                           Resolve Issue
+                           Resolve
                         </Button>
                         <Button 
                           onClick={() => {
@@ -195,7 +195,7 @@ export default function SupportTickets() {
                           variant="ghost" 
                           className="w-full text-slate-500 hover:text-slate-900 font-bold text-[11px] uppercase tracking-wider h-10 rounded-lg transition-all"
                         >
-                           Open Case Chat
+                           Open Chat
                         </Button>
                      </div>
                   </div>
@@ -226,7 +226,7 @@ export default function SupportTickets() {
 
                        <div className="flex gap-3">
                           <Input 
-                            placeholder="Type your response..." 
+                            placeholder="Type a message..." 
                             className="bg-white border-slate-200 h-11 rounded-lg text-sm text-slate-900 focus:border-slate-300 shadow-sm"
                             value={reply}
                             onChange={(e) => setReply(e.target.value)}

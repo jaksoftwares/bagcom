@@ -81,10 +81,10 @@ export default function SellerVerifications() {
                <span className="text-primary">Verifications</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              Merchant <span className="text-slate-500">Onboarding</span>
+              Seller Verifications
             </h1>
             <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Review and vet new merchant applications. Quality control is the cornerstone of the Bagcom trust ecosystem.
+              Review and approve new seller accounts.
             </p>
           </div>
           <div className="flex items-center gap-3 bg-white border border-slate-200 px-5 py-2.5 rounded-xl shadow-sm">
@@ -119,88 +119,88 @@ export default function SellerVerifications() {
                           <Store className="h-7 w-7" />
                         </div>
                         <div className="space-y-1">
-                          <h3 className="text-2xl font-bold text-slate-900 tracking-tight group-hover:text-primary transition-colors">{seller.business_name || "Individual Merchant"}</h3>
-                          <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-slate-500">
-                            <span className="flex items-center gap-2 bg-slate-50 px-2.5 py-1 rounded-md"><User className="h-3 w-3" /> {seller.first_name} {seller.last_name}</span>
-                            <span className="flex items-center gap-2 bg-slate-50 px-2.5 py-1 rounded-md"><Mail className="h-3 w-3" /> {seller.email}</span>
+                            <h3 className="text-2xl font-bold text-slate-900 tracking-tight group-hover:text-primary transition-colors">{seller.business_name || "New Seller"}</h3>
+                            <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-slate-500">
+                              <span className="flex items-center gap-2 bg-slate-50 px-2.5 py-1 rounded-md"><User className="h-3 w-3" /> {seller.first_name} {seller.last_name}</span>
+                              <span className="flex items-center gap-2 bg-slate-50 px-2.5 py-1 rounded-md"><Mail className="h-3 w-3" /> {seller.email}</span>
+                            </div>
                           </div>
                         </div>
+                        <Badge className="bg-amber-50 text-amber-600 border-none px-3 py-1 font-bold uppercase text-[9px] tracking-wider rounded-full">Requires Review</Badge>
                       </div>
-                      <Badge className="bg-amber-50 text-amber-600 border-none px-3 py-1 font-bold uppercase text-[9px] tracking-wider rounded-full">Requires Review</Badge>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <div className="p-5 bg-slate-50 border border-slate-100 rounded-xl space-y-2">
+                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                             <FileText className="h-3.5 w-3.5" /> ID Number
+                           </p>
+                           <p className="text-lg font-bold text-slate-900 font-mono tracking-wider">{seller.id_number || 'N/A'}</p>
+                        </div>
+                        <div className="p-5 bg-slate-50 border border-slate-100 rounded-xl space-y-2">
+                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                             <Phone className="h-3.5 w-3.5" /> Phone
+                           </p>
+                           <p className="text-lg font-bold text-slate-900">{seller.phone_number || 'N/A'}</p>
+                        </div>
+                        <div className="p-5 bg-slate-50 border border-slate-100 rounded-xl space-y-2">
+                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                             <MapPin className="h-3.5 w-3.5" /> City
+                           </p>
+                           <p className="text-lg font-bold text-slate-900">{seller.city || 'N/A'}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="p-6 bg-slate-50 border border-slate-100 rounded-xl space-y-5">
+                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                           <Store className="h-3.5 w-3.5" /> Business Details
+                         </p>
+                         <div className="space-y-4">
+                            <div className="space-y-1">
+                               <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Categories</p>
+                               <p className="text-base text-slate-900 font-bold leading-relaxed">{seller.planned_categories}</p>
+                            </div>
+                            <div className="h-px bg-slate-200/50" />
+                            <div className="space-y-1">
+                               <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Description</p>
+                               <p className="text-sm text-slate-600 font-medium leading-relaxed italic">"{seller.store_description}"</p>
+                            </div>
+                            <div className="h-px bg-slate-200/50" />
+                            <div className="flex items-center gap-3">
+                               <div className="h-9 w-9 bg-white border border-slate-200 rounded-lg flex items-center justify-center">
+                                  <MapPin className="h-4 w-4 text-slate-500" />
+                               </div>
+                               <div className="space-y-0.5">
+                                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Address</p>
+                                  <p className="text-xs text-slate-900 font-bold">{seller.physical_address}</p>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                      <div className="p-5 bg-slate-50 border border-slate-100 rounded-xl space-y-2">
-                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                           <FileText className="h-3.5 w-3.5" /> Identity Reference
-                         </p>
-                         <p className="text-lg font-bold text-slate-900 font-mono tracking-wider">{seller.id_number || 'N/A'}</p>
-                      </div>
-                      <div className="p-5 bg-slate-50 border border-slate-100 rounded-xl space-y-2">
-                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                           <Phone className="h-3.5 w-3.5" /> M-Pesa Contact
-                         </p>
-                         <p className="text-lg font-bold text-slate-900">{seller.phone_number || 'N/A'}</p>
-                      </div>
-                      <div className="p-5 bg-slate-50 border border-slate-100 rounded-xl space-y-2">
-                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                           <MapPin className="h-3.5 w-3.5" /> Registered City
-                         </p>
-                         <p className="text-lg font-bold text-slate-900">{seller.city || 'N/A'}</p>
+                    <div className="p-8 lg:w-1/3 bg-slate-50/50 flex flex-col justify-center gap-3 border-t lg:border-t-0 lg:border-l border-slate-100">
+                      <Button 
+                        className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold h-12 rounded-lg gap-2 shadow-sm text-sm transition-all"
+                        onClick={() => handleAction(seller.id, 'APPROVE')}
+                        disabled={processingId === seller.id}
+                      >
+                        {processingId === seller.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+                        Approve
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        className="w-full border-slate-200 bg-white text-rose-600 hover:bg-rose-50 hover:text-rose-700 font-bold h-12 rounded-lg gap-2 text-sm transition-all"
+                        onClick={() => handleAction(seller.id, 'REJECT')}
+                        disabled={processingId === seller.id}
+                      >
+                        <XCircle className="h-4 w-4" /> Reject
+                      </Button>
+                      <div className="pt-2 text-center">
+                         <Button variant="link" className="text-slate-400 hover:text-slate-900 font-bold text-[11px] uppercase tracking-wider gap-2 transition-all">
+                           Full Profile <ExternalLink className="h-3 w-3" />
+                         </Button>
                       </div>
                     </div>
-                    
-                    <div className="p-6 bg-slate-50 border border-slate-100 rounded-xl space-y-5">
-                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                         <Store className="h-3.5 w-3.5" /> Operational Profile
-                       </p>
-                       <div className="space-y-4">
-                          <div className="space-y-1">
-                             <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Inventory Focus</p>
-                             <p className="text-base text-slate-900 font-bold leading-relaxed">{seller.planned_categories}</p>
-                          </div>
-                          <div className="h-px bg-slate-200/50" />
-                          <div className="space-y-1">
-                             <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Business Pitch</p>
-                             <p className="text-sm text-slate-600 font-medium leading-relaxed italic">"{seller.store_description}"</p>
-                          </div>
-                          <div className="h-px bg-slate-200/50" />
-                          <div className="flex items-center gap-3">
-                             <div className="h-9 w-9 bg-white border border-slate-200 rounded-lg flex items-center justify-center">
-                                <MapPin className="h-4 w-4 text-slate-500" />
-                             </div>
-                             <div className="space-y-0.5">
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Physical Hub</p>
-                                <p className="text-xs text-slate-900 font-bold">{seller.physical_address}</p>
-                             </div>
-                          </div>
-                       </div>
-                    </div>
-                  </div>
-
-                  <div className="p-8 lg:w-1/3 bg-slate-50/50 flex flex-col justify-center gap-3 border-t lg:border-t-0 lg:border-l border-slate-100">
-                    <Button 
-                      className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold h-12 rounded-lg gap-2 shadow-sm text-sm transition-all"
-                      onClick={() => handleAction(seller.id, 'APPROVE')}
-                      disabled={processingId === seller.id}
-                    >
-                      {processingId === seller.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                      Approve Store
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-slate-200 bg-white text-rose-600 hover:bg-rose-50 hover:text-rose-700 font-bold h-12 rounded-lg gap-2 text-sm transition-all"
-                      onClick={() => handleAction(seller.id, 'REJECT')}
-                      disabled={processingId === seller.id}
-                    >
-                      <XCircle className="h-4 w-4" /> Deny Access
-                    </Button>
-                    <div className="pt-2 text-center">
-                       <Button variant="link" className="text-slate-400 hover:text-slate-900 font-bold text-[11px] uppercase tracking-wider gap-2 transition-all">
-                         View Full Audit <ExternalLink className="h-3 w-3" />
-                       </Button>
-                    </div>
-                  </div>
                 </div>
               </Card>
             ))}

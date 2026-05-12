@@ -49,7 +49,7 @@ export default function AdminSettings() {
         body: JSON.stringify({ settings })
       });
       if (res.ok) {
-        toast({ title: "Settings Saved", description: "Global protocol updated successfully." });
+        toast({ title: "Settings Saved", description: "Settings updated successfully." });
       }
     } catch (e) {
       toast({ title: "Save failed", variant: "destructive" });
@@ -74,13 +74,13 @@ export default function AdminSettings() {
             <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                <span>Admin</span>
                <ChevronRight className="h-3 w-3 opacity-50" />
-               <span className="text-primary">System Configuration</span>
+               <span className="text-primary">Settings</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              Platform <span className="text-slate-500">Protocol</span>
+              System Settings
             </h1>
             <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Configure global parameters, security protocols, and integration hooks. These settings affect all marketplace participants.
+              Manage platform settings and security.
             </p>
           </div>
           <Button 
@@ -89,7 +89,7 @@ export default function AdminSettings() {
             className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] uppercase tracking-wider h-11 px-6 rounded-lg shadow-sm transition-all"
           >
              {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />} 
-             Commit Changes
+             Save
           </Button>
         </div>
 
@@ -97,12 +97,12 @@ export default function AdminSettings() {
            {/* Navigation Sidebar */}
            <div className="space-y-2">
               {[
-                { name: 'General Protocol', icon: Settings, active: true },
-                { name: 'Security & Access', icon: Shield },
-                { name: 'Notification Hooks', icon: Bell },
-                { name: 'Regional Locales', icon: Globe },
-                { name: 'Database Integrity', icon: Database },
-                { name: 'API & Webhooks', icon: Zap },
+                { name: 'General', icon: Settings, active: true },
+                { name: 'Security', icon: Shield },
+                { name: 'Notifications', icon: Bell },
+                { name: 'Localization', icon: Globe },
+                { name: 'Database', icon: Database },
+                { name: 'API', icon: Zap },
               ].map((item) => (
                 <Button 
                   key={item.name}
@@ -127,8 +127,8 @@ export default function AdminSettings() {
                 <Card className="bg-white border-slate-200 p-8 rounded-xl shadow-sm">
                   <div className="space-y-8">
                       <div className="space-y-0.5">
-                        <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Global Parameters</p>
-                        <h3 className="text-xl font-bold text-slate-900 tracking-tight">Marketplace Logic</h3>
+                        <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Global Settings</p>
+                        <h3 className="text-xl font-bold text-slate-900 tracking-tight">General Settings</h3>
                       </div>
 
                       <div className="space-y-4">
@@ -145,7 +145,7 @@ export default function AdminSettings() {
 
                         <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
                             <div className="space-y-0.5">
-                              <Label className="text-sm font-bold text-slate-900">Auto-Escrow Release</Label>
+                              <Label className="text-sm font-bold text-slate-900">Auto-Release</Label>
                               <p className="text-[11px] text-slate-500 font-medium">Release funds automatically after period of delivery.</p>
                             </div>
                             <Switch 
@@ -156,7 +156,7 @@ export default function AdminSettings() {
 
                         <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
                             <div className="space-y-0.5">
-                              <Label className="text-sm font-bold text-slate-900">Merchant Self-Vetting</Label>
+                              <Label className="text-sm font-bold text-slate-900">Self-Vetting</Label>
                               <p className="text-[11px] text-slate-500 font-medium">Allow low-value sales without full KYC approval.</p>
                             </div>
                             <Switch 
@@ -176,8 +176,8 @@ export default function AdminSettings() {
                        <h3 className="text-xl font-bold text-slate-900 tracking-tight">Danger Zone</h3>
                     </div>
                     <div className="p-4 bg-rose-50 rounded-lg border border-rose-100 flex items-center justify-between">
-                       <p className="text-xs text-rose-700 font-bold">Purge Transaction Cache</p>
-                       <Button variant="outline" className="border-rose-200 bg-white text-rose-600 hover:bg-rose-50 hover:text-rose-700 font-bold text-[10px] uppercase tracking-wider h-9 px-4 rounded-md">Execute Purge</Button>
+                       <p className="text-xs text-rose-700 font-bold">Clear Cache</p>
+                       <Button variant="outline" className="border-rose-200 bg-white text-rose-600 hover:bg-rose-50 hover:text-rose-700 font-bold text-[10px] uppercase tracking-wider h-9 px-4 rounded-md">Clear</Button>
                     </div>
                  </div>
               </Card>

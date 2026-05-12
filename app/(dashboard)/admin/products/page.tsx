@@ -70,13 +70,13 @@ export default function ProductModeration() {
             <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                <span>Admin</span>
                <ChevronRight className="h-3 w-3 opacity-50" />
-               <span className="text-primary">Product Moderation</span>
+               <span className="text-primary">Products</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              Inventory <span className="text-slate-500">Curation</span>
+              Product Listings
             </h1>
             <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Maintain marketplace quality by reviewing new listings. Ensure all products meet Bagcom's safety and authenticity standards.
+              Review and moderate marketplace listings.
             </p>
           </div>
           <div className="flex items-center gap-3 bg-white border border-slate-200 px-5 py-2.5 rounded-xl shadow-sm">
@@ -90,13 +90,13 @@ export default function ProductModeration() {
            <div className="relative w-full md:w-80 group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-600 transition-colors" />
               <Input 
-                placeholder="Search products or sellers..." 
+                placeholder="Search..." 
                 className="pl-11 pr-4 bg-slate-50 border-slate-200 h-11 rounded-lg focus:bg-white focus:border-slate-300 text-sm font-medium transition-all"
               />
            </div>
            <div className="flex items-center gap-3 w-full md:w-auto">
               <Button variant="ghost" className="rounded-lg font-bold text-xs gap-2 text-slate-500 hover:text-slate-900 hover:bg-slate-50 w-full md:w-auto">
-                 <Filter className="h-4 w-4" /> Filter Listings
+                 <Filter className="h-4 w-4" /> Filter
               </Button>
            </div>
         </div>
@@ -130,7 +130,7 @@ export default function ProductModeration() {
                 <CardContent className="p-6 space-y-6">
                    <div className="flex justify-between items-end">
                       <div className="space-y-0.5">
-                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Market Value</p>
+                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Price</p>
                          <p className="text-2xl font-bold text-slate-900 tracking-tight">KSh {product.price.toLocaleString()}</p>
                       </div>
                       <Badge variant="outline" className="border-slate-100 bg-slate-50 text-slate-500 font-bold text-[9px] px-2.5 py-0.5 rounded-md">
@@ -144,7 +144,7 @@ export default function ProductModeration() {
                             <User className="h-4 w-4 text-slate-500" />
                          </div>
                          <div className="space-y-0.5">
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">Seller Record</p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">Seller</p>
                             <p className="text-xs text-slate-900 font-bold">{product.seller?.first_name} {product.seller?.last_name}</p>
                          </div>
                       </div>
@@ -153,7 +153,7 @@ export default function ProductModeration() {
                             <Clock className="h-4 w-4 text-slate-500" />
                          </div>
                          <div className="space-y-0.5">
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">Submission Time</p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">Added</p>
                             <p className="text-xs text-slate-500 font-medium">{new Date(product.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' })}</p>
                          </div>
                       </div>

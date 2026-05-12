@@ -51,7 +51,7 @@ export default function AdminDashboard() {
 
   const topStats = [
     { 
-      title: 'Gross Merchandise Value', 
+      title: 'Total Sales', 
       value: `KSh ${stats?.financials?.total_gmv_completed?.toLocaleString() || 0}`, 
       icon: DollarSign, 
       trend: '+14.2%', 
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
       bg: 'bg-emerald-400/5' 
     },
     { 
-      title: 'Platform Commission', 
+      title: 'Total Earnings', 
       value: `KSh ${stats?.financials?.total_commission_earned?.toLocaleString() || 0}`, 
       icon: Zap, 
       trend: '+8.1%', 
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
       bg: 'bg-primary/5' 
     },
     { 
-      title: 'Active User Base', 
+      title: 'Active Users', 
       value: stats?.counts?.totalUsers || 0, 
       icon: Users, 
       trend: 'Verified', 
@@ -75,19 +75,19 @@ export default function AdminDashboard() {
       bg: 'bg-sky-400/5' 
     },
     { 
-      title: 'Verification Queue', 
+      title: 'New Sellers', 
       value: stats?.counts?.pendingSellerCount || 0, 
       icon: ShieldCheck, 
-      trend: 'Awaiting Review', 
+      trend: 'Reviewing', 
       color: 'text-amber-400', 
       bg: 'bg-amber-400/5',
       href: '/admin/verifications'
     },
     { 
-      title: 'Active Disputes', 
+      title: 'Open Disputes', 
       value: stats?.counts?.activeDisputes || 0, 
       icon: ShieldAlert, 
-      trend: 'Actionable', 
+      trend: 'Action Required', 
       color: 'text-rose-400', 
       bg: 'bg-rose-400/5' 
     },
@@ -105,19 +105,18 @@ export default function AdminDashboard() {
                <span className="text-primary">Overview</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              Command <span className="text-slate-500">Center</span>
+              Dashboard
             </h1>
             <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Real-time platform governance and financial oversight. Monitor transaction health and merchant activity.
+              Overview of platform activity, sales, and system status.
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="border-slate-200 bg-white hover:bg-slate-50 font-bold text-[11px] uppercase tracking-wider h-11 px-6 rounded-lg transition-all">
-              <Download className="h-4 w-4 mr-2 opacity-60" /> Data Export
-            </Button>
-            <Button className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] uppercase tracking-wider h-11 px-6 rounded-lg shadow-sm transition-all">
-               Run Reconciliation
-            </Button>
+            <Link href="/admin/logs">
+              <Button variant="outline" className="border-slate-200 bg-white hover:bg-slate-50 font-bold text-[11px] uppercase tracking-wider h-11 px-6 rounded-lg transition-all">
+                <Download className="h-4 w-4 mr-2 opacity-60" /> Export
+              </Button>
+            </Link>
           </div>
         </div>
 
@@ -151,8 +150,8 @@ export default function AdminDashboard() {
           <div className="lg:col-span-2 space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                 <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Transaction Registry</p>
-                 <h2 className="text-xl font-bold text-slate-900 tracking-tight">Live Platform Activity</h2>
+                 <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Recent Activity</p>
+                 <h2 className="text-xl font-bold text-slate-900 tracking-tight">Recent Sales</h2>
               </div>
               <Link href="/admin/financials">
                  <Button variant="ghost" className="text-slate-500 hover:text-slate-900 font-bold text-xs gap-2 transition-colors">View All <ArrowRight className="h-3.5 w-3.5" /></Button>
@@ -164,10 +163,10 @@ export default function AdminDashboard() {
                 <table className="w-full text-left">
                   <thead className="bg-slate-50 border-b border-slate-100">
                     <tr>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Reference</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Item Details</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Customer</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-right">Value</th>
+                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Order</th>
+                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Product</th>
+                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Buyer</th>
+                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-right">Amount</th>
                       <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">Status</th>
                     </tr>
                   </thead>
@@ -204,16 +203,16 @@ export default function AdminDashboard() {
           {/* System Health / Sidebar */}
           <div className="space-y-8">
             <div className="space-y-1">
-               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Operational Health</p>
-               <h2 className="text-xl font-bold text-slate-900 tracking-tight">System Status</h2>
+               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">System Health</p>
+               <h2 className="text-xl font-bold text-slate-900 tracking-tight">Status</h2>
             </div>
             
             <Card className="bg-white border-slate-200 p-6 space-y-6 rounded-xl shadow-sm">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="space-y-1">
-                     <p className="text-sm font-bold text-slate-900">M-PESA B2C Node</p>
-                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Payout Liquidity</p>
+                     <p className="text-sm font-bold text-slate-900">M-Pesa Payouts</p>
+                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Payout Balance</p>
                   </div>
                   <Badge className="bg-emerald-50 text-emerald-600 border-none px-2.5 py-0.5 font-bold text-[9px] uppercase tracking-wide">Active</Badge>
                 </div>
@@ -232,7 +231,7 @@ export default function AdminDashboard() {
                 <div className="flex justify-between items-center">
                   <div className="space-y-1">
                      <p className="text-sm font-bold text-slate-900">Escrow Ledger</p>
-                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Financial Integrity</p>
+                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Verified</p>
                   </div>
                   <Badge className="bg-emerald-50 text-emerald-600 border-none px-2.5 py-0.5 font-bold text-[9px] uppercase tracking-wide">Verified</Badge>
                 </div>
@@ -242,30 +241,30 @@ export default function AdminDashboard() {
               </div>
 
               <Button className="w-full bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-900 font-bold text-[11px] uppercase tracking-wider h-11 rounded-lg transition-all">
-                Access Audit Logs <ChevronRight className="ml-2 h-3.5 w-3.5 opacity-60" />
+                View Logs <ChevronRight className="ml-2 h-3.5 w-3.5 opacity-60" />
               </Button>
             </Card>
 
             {/* Platform Announcement Tool */}
             <Card className="bg-white border-slate-200 p-6 space-y-5 rounded-xl shadow-sm">
                <div className="space-y-1">
-                  <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Communication Hub</p>
+                  <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Communication</p>
                   <h2 className="text-lg font-bold text-slate-900 tracking-tight">Broadcast Message</h2>
                </div>
                
                <div className="space-y-3">
                   <input 
                     id="broadcast-title"
-                    placeholder="Announcement Title" 
+                    placeholder="Title" 
                     className="w-full bg-slate-50 border border-slate-200 h-10 px-4 rounded-lg text-xs text-slate-900 focus:bg-white focus:border-slate-300 outline-none transition-all"
                   />
                   <textarea 
                     id="broadcast-body"
-                    placeholder="Message to all users..." 
+                    placeholder="Message..." 
                     rows={3}
                     className="w-full bg-slate-50 border border-slate-200 p-4 rounded-lg text-xs text-slate-900 focus:bg-white focus:border-slate-300 outline-none transition-all resize-none"
                   />
-                  <Button 
+                    <Button 
                     onClick={async () => {
                       const title = (document.getElementById('broadcast-title') as HTMLInputElement).value;
                       const body = (document.getElementById('broadcast-body') as HTMLTextAreaElement).value;
@@ -278,17 +277,17 @@ export default function AdminDashboard() {
                           body: JSON.stringify({ broadcast: true, title, body })
                         });
                         if (res.ok) {
-                          toast({ title: "Broadcast Sent", description: "Message is live on user feeds." });
+                          toast({ title: "Broadcast Sent", description: "Message is live." });
                           (document.getElementById('broadcast-title') as HTMLInputElement).value = '';
                           (document.getElementById('broadcast-body') as HTMLTextAreaElement).value = '';
                         }
                       } catch (e) {
-                        toast({ title: "Failed to broadcast", variant: "destructive" });
+                        toast({ title: "Error", description: "Failed to send.", variant: "destructive" });
                       }
                     }}
                     className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] uppercase tracking-wider h-11 rounded-lg transition-all"
                   >
-                     <Zap className="h-4 w-4 mr-2" /> Push to All Feeds
+                     Send Broadcast
                   </Button>
                </div>
             </Card>
@@ -300,14 +299,14 @@ export default function AdminDashboard() {
                    <ShieldCheck className="h-6 w-6 text-white" />
                 </div>
                 <div className="space-y-1">
-                   <h3 className="text-xl font-bold text-white tracking-tight">Escrow Oversight</h3>
+                   <h3 className="text-xl font-bold text-white tracking-tight">Escrow Summary</h3>
                    <p className="text-sm text-slate-400 leading-relaxed font-medium">
-                     Protecting <span className="text-white font-bold">KSh {stats?.financials?.total_currently_in_escrow?.toLocaleString() || 0}</span> in active trades. 
+                     Total Escrow: <span className="text-white font-bold">KSh {stats?.financials?.total_currently_in_escrow?.toLocaleString() || 0}</span> 
                    </p>
                 </div>
                 <Link href="/admin/financials">
                    <Button variant="link" className="text-white font-bold text-xs p-0 uppercase tracking-wider group-hover:underline transition-all">
-                     Investigate Escrow <ChevronRight className="h-3.5 w-3.5 ml-1" />
+                     View Details <ChevronRight className="h-3.5 w-3.5 ml-1" />
                    </Button>
                 </Link>
               </div>

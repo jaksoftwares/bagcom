@@ -84,15 +84,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }, [router]);
 
   const navItems = [
-    { name: 'Overview', href: '/admin', icon: LayoutDashboard },
-    { name: 'User Management', href: '/admin/users', icon: Users },
-    { name: 'Seller Verifications', href: '/admin/verifications', icon: ShieldCheck },
-    { name: 'Product Moderation', href: '/admin/products', icon: ShoppingBag },
-    { name: 'Dispute Center', href: '/admin/disputes', icon: ShieldAlert },
-    { name: 'Support Desk', href: '/admin/tickets', icon: MessageCircle },
-    { name: 'Financials & Escrow', href: '/admin/financials', icon: CreditCard },
+    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Users', href: '/admin/users', icon: Users },
+    { name: 'Verifications', href: '/admin/verifications', icon: ShieldCheck },
+    { name: 'Products', href: '/admin/products', icon: ShoppingBag },
+    { name: 'Disputes', href: '/admin/disputes', icon: ShieldAlert },
+    { name: 'Tickets', href: '/admin/tickets', icon: MessageCircle },
+    { name: 'Financials', href: '/admin/financials', icon: CreditCard },
     { name: 'Audit Logs', href: '/admin/logs', icon: History },
-    { name: 'System Settings', href: '/admin/settings', icon: Settings },
+    { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];
 
   if (isLoading) {
@@ -119,7 +119,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-8 space-y-1 overflow-y-auto custom-scrollbar">
-            <p className="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Core Management</p>
+            <p className="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Navigation</p>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -152,7 +152,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </div>
             </div>
             <Button variant="ghost" className="w-full justify-start text-slate-500 hover:text-rose-600 hover:bg-rose-50 font-bold text-xs gap-3 rounded-lg transition-all">
-              <LogOut className="h-4 w-4" /> Sign Out
+              <LogOut className="h-4 w-4" /> Logout
             </Button>
           </div>
         </div>
@@ -175,7 +175,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <Search className="h-4 w-4 text-slate-400 group-focus-within:text-slate-600" />
               <input 
                 type="text" 
-                placeholder="Search resources..." 
+                placeholder="Search..." 
                 className="bg-transparent border-none text-sm outline-none w-full placeholder:text-slate-400 font-medium text-slate-900"
               />
             </div>
@@ -184,7 +184,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex items-center gap-2 mr-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               <div className="h-1.5 w-1.5 bg-emerald-500 rounded-full" />
-              Live System
+              Online
             </div>
             <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg h-9 w-9">
               <Bell className="h-5 w-5" />

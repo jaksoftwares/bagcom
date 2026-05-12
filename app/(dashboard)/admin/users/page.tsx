@@ -99,18 +99,18 @@ export default function UserManagement() {
             <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                <span>Admin</span>
                <ChevronRight className="h-3 w-3 opacity-50" />
-               <span className="text-primary">User Governance</span>
+               <span className="text-primary">Users</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              Marketplace <span className="text-slate-500">Participants</span>
+              User Accounts
             </h1>
             <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Maintain the integrity of the platform by managing user roles and vetting account statuses.
+              Manage platform users and account status.
             </p>
           </div>
           <div className="flex gap-3">
              <Button variant="outline" className="border-slate-200 bg-white hover:bg-slate-50 font-bold text-[11px] uppercase tracking-wider h-11 px-6 rounded-lg transition-all">
-                <Download className="h-4 w-4 mr-2 opacity-60" /> Export Registry
+                <Download className="h-4 w-4 mr-2 opacity-60" /> Export
              </Button>
           </div>
         </div>
@@ -118,16 +118,16 @@ export default function UserManagement() {
         {/* Quick Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
            <Card className="bg-white border-slate-200 p-6 space-y-2 rounded-xl shadow-sm">
-             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Consumer Base</p>
-             <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{users.filter(u => u.role === 'BUYER').length} <span className="text-sm font-medium text-slate-400 ml-2">Buyers</span></h3>
+             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Buyers</p>
+             <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{users.filter(u => u.role === 'BUYER').length} <span className="text-sm font-medium text-slate-400 ml-2">Users</span></h3>
            </Card>
            <Card className="bg-white border-slate-200 p-6 space-y-2 rounded-xl shadow-sm">
-             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Merchant Ecosystem</p>
-             <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{users.filter(u => u.role === 'SELLER').length} <span className="text-sm font-bold text-primary/60 ml-2">Verified Sellers</span></h3>
+             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sellers</p>
+             <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{users.filter(u => u.role === 'SELLER').length} <span className="text-sm font-bold text-primary/60 ml-2">Active</span></h3>
            </Card>
            <Card className="bg-white border-slate-200 p-6 space-y-2 rounded-xl shadow-sm">
-             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">System Flags</p>
-             <h3 className="text-3xl font-bold text-rose-600 tracking-tight">{users.filter(u => !u.is_active).length} <span className="text-sm font-bold text-rose-400 ml-2">Suspensions</span></h3>
+             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Suspended</p>
+             <h3 className="text-3xl font-bold text-rose-600 tracking-tight">{users.filter(u => !u.is_active).length} <span className="text-sm font-bold text-rose-400 ml-2">Accounts</span></h3>
            </Card>
         </div>
 
@@ -157,10 +157,10 @@ export default function UserManagement() {
                 <table className="w-full text-left">
                   <thead className="bg-slate-50 border-b border-slate-100">
                     <tr>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Identity Details</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Account Tier</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Verification</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Registration</th>
+                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">User</th>
+                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Role</th>
+                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Status</th>
+                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Joined</th>
                       <th className="px-6 py-4 text-right"></th>
                     </tr>
                   </thead>
@@ -203,14 +203,14 @@ export default function UserManagement() {
                                  </Button>
                                </DropdownMenuTrigger>
                                <DropdownMenuContent align="end" className="w-56 bg-white border border-slate-200 text-slate-700 rounded-lg p-1.5 shadow-lg">
-                                 <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 py-2">Account Actions</DropdownMenuLabel>
+                                 <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 py-2">Actions</DropdownMenuLabel>
                                  
                                  {user.role === 'SELLER' && user.seller_status !== 'APPROVED' && (
                                    <DropdownMenuItem 
                                       className="gap-3 px-3 py-2 rounded-md focus:bg-slate-100 focus:text-slate-900 transition-all cursor-pointer"
                                       onClick={() => handleAccountAction(user.id, { seller_status: 'APPROVED' }, 'Verified')}
                                     >
-                                      <ShieldCheck className="h-4 w-4" /> Verify User
+                                      <ShieldCheck className="h-4 w-4" /> Verify
                                     </DropdownMenuItem>
                                  )}
 
@@ -218,7 +218,7 @@ export default function UserManagement() {
                                     className="gap-3 px-3 py-2 rounded-md focus:bg-slate-100 focus:text-slate-900 transition-all cursor-pointer"
                                     onClick={() => window.location.href = `mailto:${user.email}`}
                                   >
-                                    <Mail className="h-4 w-4" /> Message Customer
+                                    <Mail className="h-4 w-4" /> Email
                                   </DropdownMenuItem>
                                  
                                  <DropdownMenuSeparator className="bg-slate-100 my-1" />
@@ -228,14 +228,14 @@ export default function UserManagement() {
                                       className="gap-3 px-3 py-2 rounded-md text-rose-600 focus:bg-rose-50 focus:text-rose-700 transition-all cursor-pointer"
                                       onClick={() => handleAccountAction(user.id, { is_active: false }, 'Suspended')}
                                     >
-                                      <Ban className="h-4 w-4" /> Suspend Access
+                                      <Ban className="h-4 w-4" /> Suspend
                                     </DropdownMenuItem>
                                  ) : (
                                    <DropdownMenuItem 
                                       className="gap-3 px-3 py-2 rounded-md text-emerald-600 focus:bg-emerald-50 focus:text-emerald-700 transition-all cursor-pointer"
                                       onClick={() => handleAccountAction(user.id, { is_active: true }, 'Reactivated')}
                                     >
-                                      <CheckCircle2 className="h-4 w-4" /> Reactivate Account
+                                      <CheckCircle2 className="h-4 w-4" /> Reactivate
                                     </DropdownMenuItem>
                                  )}
                                </DropdownMenuContent>
