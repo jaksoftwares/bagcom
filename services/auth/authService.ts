@@ -30,6 +30,8 @@ export async function signUp({
   phone_number?: string;
   city?: string;
 }) {
+  console.log('Initiating Bagcom Signup for:', email, 'Role:', role);
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -51,11 +53,16 @@ export async function signUp({
     }
   });
 
-  if (error) throw error;
+  if (error) {
+    console.error('CRITICAL AUTH ERROR:', error.message, '| Code:', error.status);
+    throw error;
+  }
 
-  // Manually insert into public.users to ensure the profile exists immediately
+  // Use UPSERT instead of INSERT to handle potential trigger conflicts in Supabase
   if (data.user) {
-    await supabase.from('users').insert({
+    console.log('Auth User Created:', data.user.id, 'Syncing to public.users...');
+    
+    const { error: dbError } = await supabase.from('users').upsert({
       id: data.user.id,
       email: data.user.email!,
       first_name,
@@ -68,8 +75,15 @@ export async function signUp({
       physical_address,
       phone_number,
       city,
+      is_active: true,
       seller_status: role === 'SELLER' ? 'PENDING' : 'APPROVED'
-    });
+    }, { onConflict: 'id' });
+
+    if (dbError) {
+      console.error('DATABASE SYNC FAILED:', dbError.message, '| Hint:', dbError.hint);
+    } else {
+      console.log('Database Profile Synced Successfully.');
+    }
   }
 
   return data;
