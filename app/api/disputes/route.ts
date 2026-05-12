@@ -22,8 +22,8 @@ export async function GET(request: Request) {
           total_amount,
           status,
           product:products(title),
-          buyer:users!orders_buyer_id_fkey(first_name, last_name, email),
-          seller:users!orders_seller_id_fkey(first_name, last_name, email)
+          buyer:users!orders_buyer_id_fkey(first_name, last_name, email, phone_number),
+          seller:users!orders_seller_id_fkey(first_name, last_name, email, phone_number, business_name, id_number)
         )
       `)
       .order('created_at', { ascending: false });

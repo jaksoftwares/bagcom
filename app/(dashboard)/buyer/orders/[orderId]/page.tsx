@@ -17,7 +17,8 @@ import {
   ShieldAlert,
   ChevronRight,
   MapPin,
-  ExternalLink
+  ExternalLink,
+  RotateCcw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,7 +32,9 @@ const ORDER_STATUS_STEPS = [
   { key: 'PRODUCT_LOCKED', label: 'Item Reserved', description: 'Seller has been notified to prepare for delivery.' },
   { key: 'OUT_FOR_DELIVERY', label: 'In Transit', description: 'The item is on its way to you.' },
   { key: 'AWAITING_VERIFICATION', label: 'Ready for Pick-up', description: 'Verify the item and provide your code.' },
+  { key: 'DISPUTED', label: 'Dispute Active', description: 'Administrative mediation is currently in progress.' },
   { key: 'COMPLETED', label: 'Transaction Complete', description: 'Payment released to seller. Thank you!' },
+  { key: 'REFUNDED', label: 'Order Refunded', description: 'Funds have been returned to your M-PESA.' },
 ];
 
 export default function BuyerOrderTrackingPage() {
@@ -122,6 +125,30 @@ export default function BuyerOrderTrackingPage() {
           </Button>
         </div>
       </div>
+      {/* Dispute Alert Banner */}
+      {order.status === 'DISPUTED' && (
+        <div className="bg-red-50 border border-red-100 rounded-2xl p-6 flex items-center gap-6 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
+           <div className="h-14 w-14 bg-red-100 rounded-xl flex items-center justify-center text-red-600 shrink-0">
+              <ShieldAlert className="h-8 w-8" />
+           </div>
+           <div className="space-y-1">
+              <p className="text-sm font-black text-red-900 uppercase tracking-widest">Case Under Mediation</p>
+              <p className="text-sm text-red-700 font-medium">You have raised a dispute for this order. Our team is currently reviewing the evidence. Your funds are safely frozen in escrow.</p>
+           </div>
+        </div>
+      )}
+
+      {order.status === 'REFUNDED' && (
+        <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 flex items-center gap-6 shadow-sm">
+           <div className="h-14 w-14 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shrink-0">
+              <RotateCcw className="h-8 w-8" />
+           </div>
+           <div className="space-y-1">
+              <p className="text-sm font-black text-emerald-900 uppercase tracking-widest">Refund Processed</p>
+              <p className="text-sm text-emerald-700 font-medium">This dispute has been resolved in your favor. Funds have been returned to your M-PESA wallet.</p>
+           </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
