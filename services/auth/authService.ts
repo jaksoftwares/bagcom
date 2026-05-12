@@ -8,7 +8,14 @@ export async function signUp({
   password,
   first_name,
   last_name,
-  role = 'BUYER'
+  role = 'BUYER',
+  business_name,
+  id_number,
+  planned_categories,
+  store_description,
+  physical_address,
+  phone_number,
+  city,
 }: {
   email: string;
   password: string;
