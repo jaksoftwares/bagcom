@@ -16,7 +16,10 @@ import {
   Lock,
   Unlock,
   AlertTriangle,
-  Search
+  Search,
+  ChevronRight,
+  Download,
+  Activity
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
@@ -30,7 +33,7 @@ export default function AdminFinancials() {
   useEffect(() => {
     async function fetchEscrow() {
       try {
-        const res = await fetch('/api/admin/financials'); // I'll create this next
+        const res = await fetch('/api/admin/financials'); 
         const data = await res.json();
         setEscrowList(data.transactions || []);
       } catch (error) {
@@ -44,126 +47,162 @@ export default function AdminFinancials() {
 
   const forceRelease = async (id: string) => {
     if (!confirm('EMERGENCY OVERRIDE: This will release funds to the seller without a verification code. Proceed?')) return;
-    // Implementation would call a high-privilege API
     toast({ title: "Emergency Release Triggered" });
   };
 
   const getEscrowBadge = (status: string) => {
     switch (status) {
-      case 'HELD': return <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20">Held in Escrow</Badge>;
-      case 'RELEASED': return <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Released</Badge>;
-      case 'REFUNDED': return <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20">Refunded</Badge>;
-      case 'FROZEN': return <Badge className="bg-rose-500/10 text-rose-500 border-rose-500/20">Frozen</Badge>;
-      default: return <Badge variant="outline">{status}</Badge>;
+      case 'HELD': return <Badge className="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-3 py-1 font-bold text-[9px] uppercase tracking-widest rounded-full">Held in Escrow</Badge>;
+      case 'RELEASED': return <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 font-bold text-[9px] uppercase tracking-widest rounded-full">Released</Badge>;
+      case 'REFUNDED': return <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1 font-bold text-[9px] uppercase tracking-widest rounded-full">Refunded</Badge>;
+      case 'FROZEN': return <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-1 font-bold text-[9px] uppercase tracking-widest rounded-full">Frozen</Badge>;
+      default: return <Badge variant="outline" className="text-slate-500 border-white/5 px-3 py-1 font-bold text-[9px] uppercase tracking-widest rounded-full">{status}</Badge>;
     }
   };
 
   return (
     <AdminLayout>
-      <div className="space-y-10">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div>
-            <h1 className="text-4xl font-black tracking-tight text-white">Financial Governance</h1>
-            <p className="text-gray-400 font-medium mt-2">Monitor escrow flow and execute emergency transaction overrides.</p>
+      <div className="space-y-12">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+               <span>Admin</span>
+               <ChevronRight className="h-3 w-3 opacity-30" />
+               <span className="text-primary">Financial Governance</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.1]">
+              Escrow <span className="text-primary/80">& Clearing</span>
+            </h1>
+            <p className="text-base text-slate-400 font-medium max-w-xl leading-relaxed">
+              Real-time oversight of platform liquidity and escrow transactions. Execute emergency overrides and reconciliation audits.
+            </p>
           </div>
-          <div className="flex gap-3">
-             <Button className="bg-emerald-500 hover:bg-emerald-600 font-bold text-sm h-12 px-6">
-                Audit Trail Export
+          <div className="flex gap-4">
+             <Button variant="outline" className="border-white/5 bg-white/5 hover:bg-white/10 font-bold text-[11px] uppercase tracking-widest h-14 px-8 rounded-2xl transition-all">
+                <Download className="h-4 w-4 mr-3 opacity-50" /> Audit Trail
              </Button>
           </div>
         </div>
 
-        {/* Financial Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-[#1E293B] border-white/5 p-8 relative overflow-hidden group">
-            <div className="relative z-10">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Total Active Escrow</p>
-              <h3 className="text-3xl font-black text-white">KSh {escrowList.reduce((sum, item) => item.escrow_status === 'HELD' ? sum + item.amount : sum, 0).toLocaleString()}</h3>
+        {/* Financial High-Level Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Card className="bg-slate-900/40 border-white/5 p-10 relative overflow-hidden group rounded-[2.5rem] shadow-2xl">
+            <div className="relative z-10 space-y-4">
+              <div className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
+                 <Lock className="h-6 w-6" />
+              </div>
+              <div className="space-y-1">
+                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Active Protection Pool</p>
+                 <h3 className="text-3xl font-bold text-white tracking-tight">KSh {escrowList.reduce((sum, item) => item.escrow_status === 'HELD' ? sum + item.amount : sum, 0).toLocaleString()}</h3>
+              </div>
             </div>
-            <Lock className="absolute -bottom-4 -right-4 h-24 w-24 text-white/5 group-hover:text-primary/10 transition-colors" />
+            <div className="absolute -bottom-6 -right-6 opacity-5 group-hover:scale-125 transition-transform duration-700">
+               <Lock className="h-28 w-28 text-white" />
+            </div>
           </Card>
-          <Card className="bg-[#1E293B] border-white/5 p-8 relative overflow-hidden group">
-            <div className="relative z-10">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Platform Revenue (30d)</p>
-              <h3 className="text-3xl font-black text-primary">KSh 42,500</h3>
+          
+          <Card className="bg-slate-900/40 border-white/5 p-10 relative overflow-hidden group rounded-[2.5rem] shadow-2xl">
+            <div className="relative z-10 space-y-4">
+              <div className="h-12 w-12 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                 <TrendingUp className="h-6 w-6" />
+              </div>
+              <div className="space-y-1">
+                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Platform Net Yield (30d)</p>
+                 <h3 className="text-3xl font-bold text-white tracking-tight">KSh 42,500</h3>
+              </div>
             </div>
-            <TrendingUp className="absolute -bottom-4 -right-4 h-24 w-24 text-white/5 group-hover:text-primary/10 transition-colors" />
+            <div className="absolute -bottom-6 -right-6 opacity-5 group-hover:scale-125 transition-transform duration-700">
+               <TrendingUp className="h-28 w-28 text-white" />
+            </div>
           </Card>
-          <Card className="bg-[#1E293B] border-white/5 p-8 relative overflow-hidden group">
-            <div className="relative z-10">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Pending Payouts</p>
-              <h3 className="text-3xl font-black text-amber-500">12</h3>
+
+          <Card className="bg-slate-900/40 border-white/5 p-10 relative overflow-hidden group rounded-[2.5rem] shadow-2xl">
+            <div className="relative z-10 space-y-4">
+              <div className="h-12 w-12 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 border border-amber-500/20">
+                 <ArrowRightLeft className="h-6 w-6" />
+              </div>
+              <div className="space-y-1">
+                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Settlement Queue</p>
+                 <h3 className="text-3xl font-bold text-white tracking-tight">12 <span className="text-sm font-medium text-slate-500 ml-2">Transfers</span></h3>
+              </div>
             </div>
-            <ArrowRightLeft className="absolute -bottom-4 -right-4 h-24 w-24 text-white/5 group-hover:text-primary/10 transition-colors" />
+            <div className="absolute -bottom-6 -right-6 opacity-5 group-hover:scale-125 transition-transform duration-700">
+               <ArrowRightLeft className="h-28 w-28 text-white" />
+            </div>
           </Card>
         </div>
 
-        {/* Escrow Monitoring Table */}
-        <div className="space-y-6">
+        {/* Ledger Section */}
+        <div className="space-y-8">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-white flex items-center gap-3">
-              <History className="h-5 w-5 text-primary" /> Active Escrow Ledger
-            </h2>
-            <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <div className="space-y-1">
+               <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Financial Log</p>
+               <h2 className="text-2xl font-bold text-white tracking-tight">Escrow Transaction Ledger</h2>
+            </div>
+            <div className="relative w-80 group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 group-focus-within:text-primary transition-colors" />
               <Input 
-                placeholder="Search by order ID..." 
-                className="pl-10 bg-white/5 border-white/5 h-10 rounded-xl text-xs"
+                placeholder="Search by Order ID..." 
+                className="pl-12 bg-white/5 border-white/5 h-12 rounded-xl text-xs font-medium focus-visible:ring-primary/20 transition-all"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
 
-          <Card className="bg-[#1E293B] border-white/5 shadow-xl overflow-hidden">
+          <Card className="bg-slate-900/40 border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-[#0F172A]/50 border-b border-white/5">
+                <thead className="bg-slate-950/50 border-b border-white/5">
                   <tr>
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-500">Order Ref</th>
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-500">Amount</th>
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-500">Status</th>
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-500">Last Action</th>
-                    <th className="px-6 py-4 text-right">Emergency Actions</th>
+                    <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Reference</th>
+                    <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Value</th>
+                    <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Lifecycle State</th>
+                    <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Last Resolution</th>
+                    <th className="px-8 py-6 text-right text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Override Engine</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {escrowList.length === 0 ? (
-                    <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500 font-medium italic">No active escrow transactions.</td></tr>
+                    <tr><td colSpan={5} className="px-8 py-16 text-center text-slate-500 font-bold uppercase tracking-[0.2em] italic">No active escrow transactions detected.</td></tr>
                   ) : (
                     escrowList.map((item) => (
-                      <tr key={item.id} className="hover:bg-white/5 transition-colors group">
-                        <td className="px-6 py-4">
-                          <p className="text-sm font-bold text-white">#{item.order?.order_number || '---'}</p>
-                          <p className="text-[10px] text-gray-500 uppercase tracking-tighter">ID: {item.id.slice(0, 8)}</p>
+                      <tr key={item.id} className="hover:bg-white/5 transition-all duration-300 group">
+                        <td className="px-8 py-6">
+                          <p className="text-sm font-bold text-white group-hover:text-primary transition-colors">#{item.order?.order_number || '---'}</p>
+                          <p className="text-[10px] font-mono font-bold text-slate-500 uppercase mt-1">REF: {item.id.slice(0, 8)}</p>
                         </td>
-                        <td className="px-6 py-4 text-sm font-black text-white">
+                        <td className="px-8 py-6 text-sm font-black text-white">
                           KSh {item.amount.toLocaleString()}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-8 py-6">
                           {getEscrowBadge(item.escrow_status)}
                         </td>
-                        <td className="px-6 py-4 text-xs font-medium text-gray-500">
-                           {item.released_at ? new Date(item.released_at).toLocaleString() : 'Pending'}
+                        <td className="px-8 py-6">
+                           <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
+                              <History className="h-3.5 w-3.5 opacity-40" />
+                              {item.released_at ? new Date(item.released_at).toLocaleDateString(undefined, { dateStyle: 'medium' }) : 'Pending Clearance'}
+                           </div>
                         </td>
-                        <td className="px-6 py-4 text-right">
-                           <div className="flex justify-end gap-2">
+                        <td className="px-8 py-6 text-right">
+                           <div className="flex justify-end gap-3">
                              <Button 
                                onClick={() => forceRelease(item.id)}
                                variant="ghost" 
                                size="icon" 
-                               className="h-9 w-9 text-rose-500 hover:bg-rose-500/10"
-                               title="Force Release"
+                               className="h-10 w-10 text-rose-400 hover:bg-rose-500/10 rounded-xl"
+                               title="Force Unlock"
                              >
-                               <Unlock className="h-4 w-4" />
+                               <Unlock className="h-4.5 w-4.5" />
                              </Button>
                              <Button 
                                variant="ghost" 
                                size="icon" 
-                               className="h-9 w-9 text-amber-500 hover:bg-amber-500/10"
-                               title="Freeze Funds"
+                               className="h-10 w-10 text-amber-500 hover:bg-amber-500/10 rounded-xl"
+                               title="Freeze Asset"
                              >
-                               <AlertTriangle className="h-4 w-4" />
+                               <AlertTriangle className="h-4.5 w-4.5" />
                              </Button>
                            </div>
                         </td>

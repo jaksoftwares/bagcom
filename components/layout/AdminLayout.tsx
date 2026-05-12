@@ -64,14 +64,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary/40" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0F172A] text-white selection:bg-primary selection:text-white">
+    <div className="min-h-screen bg-[#0F172A] text-slate-200 selection:bg-primary selection:text-white font-sans">
       {/* Sidebar */}
       <aside 
         className={`fixed inset-y-0 left-0 z-50 w-72 bg-[#1E293B] border-r border-white/5 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
@@ -79,89 +79,88 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         }`}
       >
         <div className="h-full flex flex-col">
-          {/* Logo */}
-          <div className="p-8 flex justify-center">
-            <Logo variant="dark" className="h-10 w-auto" />
+          {/* Logo Section */}
+          <div className="p-8 flex items-center justify-center border-b border-white/5">
+            <Logo variant="dark" className="h-8 w-auto" />
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+          <nav className="flex-1 px-4 py-8 space-y-1.5 overflow-y-auto custom-scrollbar">
+            <p className="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">Core Management</p>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 group ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[13px] font-bold transition-all duration-200 group ${
                     isActive 
                       ? 'bg-primary text-white shadow-lg shadow-primary/20' 
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                      : 'text-slate-400 hover:bg-white/5 hover:text-white'
                   }`}
                 >
-                  <item.icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-primary'}`} />
+                  <item.icon className={`h-4.5 w-4.5 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-primary'}`} />
                   {item.name}
-                  {isActive && <ChevronRight className="ml-auto h-4 w-4" />}
+                  {isActive && <ChevronRight className="ml-auto h-3.5 w-3.5 opacity-50" />}
                 </Link>
               );
             })}
           </nav>
 
-          {/* User Section */}
-          <div className="p-6 border-t border-white/5 bg-[#1e293b]/50">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 bg-gray-700 rounded-full flex items-center justify-center font-bold text-primary">
+          {/* User Profile Footer */}
+          <div className="p-6 border-t border-white/5 bg-slate-900/50">
+            <div className="flex items-center gap-3 mb-6 p-2 rounded-2xl bg-white/5 border border-white/5">
+              <div className="h-10 w-10 bg-slate-800 rounded-xl border border-white/10 flex items-center justify-center font-bold text-primary text-xs shadow-inner">
                 {admin?.first_name?.[0]}{admin?.last_name?.[0]}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-bold truncate">{admin?.first_name} {admin?.last_name}</p>
-                <p className="text-[10px] font-black text-primary uppercase tracking-widest">{admin?.role}</p>
+                <p className="text-xs font-bold text-white truncate leading-tight">{admin?.first_name} {admin?.last_name}</p>
+                <p className="text-[9px] font-black text-primary uppercase tracking-[0.15em] mt-1">{admin?.role}</p>
               </div>
             </div>
-            <Button variant="ghost" className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-400/10 font-bold gap-2">
+            <Button variant="ghost" className="w-full justify-start text-rose-400 hover:text-rose-300 hover:bg-rose-400/10 font-bold text-xs gap-3 rounded-xl transition-all">
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>
           </div>
         </div>
       </aside>
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <div className={`transition-all duration-300 ${isSidebarOpen ? 'lg:pl-72' : 'lg:pl-0'}`}>
-        {/* Topbar */}
-        <header className="sticky top-0 z-40 bg-[#0F172A]/80 backdrop-blur-xl border-b border-white/5 h-20 flex items-center justify-between px-8">
-          <div className="flex items-center gap-4">
+        {/* Top Header */}
+        <header className="sticky top-0 z-40 bg-[#0F172A]/80 backdrop-blur-md border-b border-white/5 h-20 flex items-center justify-between px-8">
+          <div className="flex items-center gap-6">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="lg:hidden text-gray-400"
+              className="lg:hidden text-slate-400"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
             </Button>
-            <div className="hidden md:flex items-center gap-3 bg-white/5 border border-white/5 px-4 py-2 rounded-xl w-96 group focus-within:border-primary/50 transition-all">
-              <Search className="h-4 w-4 text-gray-500 group-focus-within:text-primary" />
+            <div className="hidden md:flex items-center gap-3 bg-white/5 border border-white/5 px-4 py-2.5 rounded-2xl w-80 group focus-within:w-96 focus-within:border-primary/50 transition-all duration-300">
+              <Search className="h-4 w-4 text-slate-500 group-focus-within:text-primary" />
               <input 
                 type="text" 
-                placeholder="Search everything..." 
-                className="bg-transparent border-none text-sm outline-none w-full placeholder:text-gray-500 font-medium"
+                placeholder="Search command..." 
+                className="bg-transparent border-none text-[13px] outline-none w-full placeholder:text-slate-500 font-medium text-white"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="text-gray-400 relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-2 right-2 h-2 w-2 bg-primary rounded-full" />
-            </Button>
-            <div className="h-8 w-px bg-white/5 mx-2" />
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">System Live</span>
+            <div className="hidden sm:flex items-center gap-2 mr-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+              <div className="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+              Live Monitor
             </div>
+            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-white/5 rounded-xl h-10 w-10">
+              <Bell className="h-5 w-5" />
+            </Button>
           </div>
         </header>
 
-        {/* Page Content */}
-        <main className="p-8">
+        {/* Dynamic Page Content */}
+        <main className="p-8 max-w-[1600px] mx-auto animate-in fade-in duration-500">
           {children}
         </main>
       </div>

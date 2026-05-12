@@ -1,4 +1,4 @@
-import { ShoppingCart, User, Search, Menu, X, Bell, Heart, MessageCircle, LogOut, Settings, LayoutDashboard } from 'lucide-react';
+import { ShoppingCart, User, Search, Menu, X, Bell, Heart, MessageCircle, LogOut, Settings, LayoutDashboard, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -172,6 +172,15 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                         </Link>
                       </DropdownMenuItem>
 
+                      {(profile?.role === 'ADMIN' || profile?.role === 'SUPER_ADMIN') && (
+                        <DropdownMenuItem asChild className="rounded-lg focus:bg-rose-500/5 focus:text-rose-500 cursor-pointer">
+                          <Link href="/admin" className="w-full flex items-center gap-2">
+                            <ShieldCheck className="h-4 w-4" />
+                            <span>Admin Panel</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
+
                       <DropdownMenuItem asChild className="rounded-lg focus:bg-primary/5 focus:text-primary cursor-pointer">
                         <Link href="/settings" className="w-full flex items-center gap-2">
                           <Settings className="h-4 w-4" />
@@ -274,6 +283,15 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                   >
                     Dashboard
                   </Link>
+                  {(profile?.role === 'ADMIN' || profile?.role === 'SUPER_ADMIN') && (
+                    <Link 
+                      href="/admin" 
+                      className="flex items-center py-3 px-4 text-rose-500 hover:bg-rose-500/5 rounded-xl transition-all font-bold"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Admin Panel
+                    </Link>
+                  )}
                   <Link 
                     href="/cart" 
                     className="flex items-center justify-between py-3 px-4 text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-xl transition-all font-medium"
