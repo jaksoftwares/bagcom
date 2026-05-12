@@ -58,8 +58,9 @@ export default function UserManagement() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'VERIFIED': return <Badge className="bg-emerald-500/10 text-emerald-400 border-none px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">Verified</Badge>;
-      case 'PENDING': return <Badge className="bg-amber-500/10 text-amber-400 border-none px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">Pending KYC</Badge>;
+      case 'APPROVED': return <Badge className="bg-emerald-500/10 text-emerald-400 border-none px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">Verified</Badge>;
+      case 'PENDING': return <Badge className="bg-amber-500/10 text-amber-400 border-none px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">Pending Review</Badge>;
+      case 'REJECTED': return <Badge className="bg-rose-500/10 text-rose-400 border-none px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">Rejected</Badge>;
       case 'SUSPENDED': return <Badge className="bg-rose-500/10 text-rose-400 border-none px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">Suspended</Badge>;
       default: return <Badge variant="outline" className="text-slate-500 border-white/5 text-[9px] font-black uppercase tracking-widest px-2.5">Active</Badge>;
     }
@@ -169,7 +170,7 @@ export default function UserManagement() {
                              </Badge>
                           </td>
                           <td className="px-8 py-6">
-                             {getStatusBadge(user.kyc_status || 'NONE')}
+                             {getStatusBadge(user.seller_status || 'NONE')}
                           </td>
                           <td className="px-8 py-6">
                              <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
@@ -186,9 +187,26 @@ export default function UserManagement() {
                                </DropdownMenuTrigger>
                                <DropdownMenuContent align="end" className="w-64 bg-slate-900 border-white/10 text-slate-300 rounded-2xl p-2 shadow-2xl">
                                  <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-500 p-3">Account Actions</DropdownMenuLabel>
-                                 <DropdownMenuItem className="gap-3 p-3 rounded-xl focus:bg-primary focus:text-white transition-all cursor-pointer">
-                                   <ShieldCheck className="h-4 w-4" /> Verify User
-                                 </DropdownMenuItem>
+                                 <DropdownMenuItem 
+                                    className="gap-3 p-3 rounded-xl focus:bg-primary focus:text-white transition-all cursor-pointer"
+                                    onClick={async () => {
+                                      try {
+                                        const res = await fetch('/api/admin/sellers/approve', {
+                                          method: 'POST',
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ sellerId: user.id, action: 'APPROVE' })
+                                        });
+                                        if (res.ok) {
+                                          toast({ title: "User Verified", description: "Seller has been activated." });
+                                          setUsers(users.map(u => u.id === user.id ? { ...u, seller_status: 'APPROVED' } : u));
+                                        }
+                                      } catch (e) {
+                                        toast({ title: "Action failed", variant: "destructive" });
+                                      }
+                                    }}
+                                  >
+                                    <ShieldCheck className="h-4 w-4" /> Verify User
+                                  </DropdownMenuItem>
                                  <DropdownMenuItem className="gap-3 p-3 rounded-xl focus:bg-primary focus:text-white transition-all cursor-pointer">
                                    <Mail className="h-4 w-4" /> Message Customer
                                  </DropdownMenuItem>

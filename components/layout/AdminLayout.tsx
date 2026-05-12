@@ -17,7 +17,9 @@ import {
   Bell,
   Search,
   ChevronRight,
-  Loader2
+  Loader2,
+  History,
+  MessageCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
@@ -58,7 +60,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: 'Seller Verifications', href: '/admin/verifications', icon: ShieldCheck },
     { name: 'Product Moderation', href: '/admin/products', icon: ShoppingBag },
     { name: 'Dispute Center', href: '/admin/disputes', icon: ShieldAlert },
+    { name: 'Support Desk', href: '/admin/tickets', icon: MessageCircle },
     { name: 'Financials & Escrow', href: '/admin/financials', icon: CreditCard },
+    { name: 'Audit Logs', href: '/admin/logs', icon: History },
     { name: 'System Settings', href: '/admin/settings', icon: Settings },
   ];
 

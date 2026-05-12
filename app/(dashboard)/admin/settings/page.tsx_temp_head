@@ -1,0 +1,20 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import AdminLayout from '@/components/layout/AdminLayout';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { 
+  Settings, 
+  Shield, 
+  Bell, 
+  Globe, 
+  Database, 
+  Zap,
+  Save,
+  ChevronRight,
+  Loader2
+} from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';

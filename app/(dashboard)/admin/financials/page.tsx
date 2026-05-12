@@ -30,24 +30,64 @@ export default function AdminFinancials() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [stats, setStats] = useState({
+    activeEscrow: 0,
+    settlementQueue: 0,
+    platformYield: 0
+  });
+
   useEffect(() => {
-    async function fetchEscrow() {
+    async function fetchFinancials() {
       try {
         const res = await fetch('/api/admin/financials'); 
         const data = await res.json();
         setEscrowList(data.transactions || []);
+        
+        // Calculate dynamic stats
+        const active = (data.transactions || []).reduce((sum: number, item: any) => 
+          item.escrow_status === 'HELD' ? sum + item.amount : sum, 0);
+        const queue = (data.transactions || []).filter((item: any) => 
+          item.escrow_status === 'HELD').length;
+          
+        setStats({
+          activeEscrow: active,
+          settlementQueue: queue,
+          platformYield: active * 0.1
+        });
+
       } catch (error) {
         toast({ title: "Failed to load financial records", variant: "destructive" });
       } finally {
         setIsLoading(false);
       }
     }
-    fetchEscrow();
+    fetchFinancials();
   }, []);
 
-  const forceRelease = async (id: string) => {
-    if (!confirm('EMERGENCY OVERRIDE: This will release funds to the seller without a verification code. Proceed?')) return;
-    toast({ title: "Emergency Release Triggered" });
+  const handleOverride = async (escrowId: string, action: 'FORCE_RELEASE' | 'FREEZE') => {
+    const reason = prompt(`Reason for ${action}:`);
+    if (!reason) return;
+
+    try {
+      const res = await fetch('/api/admin/financials/override', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ escrowId, action, reason })
+      });
+      
+      if (res.ok) {
+        toast({ title: `${action} successful`, description: "Platform state has been updated." });
+        setEscrowList(escrowList.map(item => 
+          item.id === escrowId 
+            ? { ...item, escrow_status: action === 'FORCE_RELEASE' ? 'RELEASED' : 'FROZEN' } 
+            : item
+        ));
+      } else {
+        throw new Error('Override failed');
+      }
+    } catch (e) {
+      toast({ title: "Operation failed", variant: "destructive" });
+    }
   };
 
   const getEscrowBadge = (status: string) => {
@@ -94,7 +134,7 @@ export default function AdminFinancials() {
               </div>
               <div className="space-y-1">
                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Active Protection Pool</p>
-                 <h3 className="text-3xl font-bold text-white tracking-tight">KSh {escrowList.reduce((sum, item) => item.escrow_status === 'HELD' ? sum + item.amount : sum, 0).toLocaleString()}</h3>
+                 <h3 className="text-3xl font-bold text-white tracking-tight">KSh {stats.activeEscrow.toLocaleString()}</h3>
               </div>
             </div>
             <div className="absolute -bottom-6 -right-6 opacity-5 group-hover:scale-125 transition-transform duration-700">
@@ -108,8 +148,8 @@ export default function AdminFinancials() {
                  <TrendingUp className="h-6 w-6" />
               </div>
               <div className="space-y-1">
-                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Platform Net Yield (30d)</p>
-                 <h3 className="text-3xl font-bold text-white tracking-tight">KSh 42,500</h3>
+                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Platform Net Yield</p>
+                 <h3 className="text-3xl font-bold text-white tracking-tight">KSh {stats.platformYield.toLocaleString()}</h3>
               </div>
             </div>
             <div className="absolute -bottom-6 -right-6 opacity-5 group-hover:scale-125 transition-transform duration-700">
@@ -124,7 +164,7 @@ export default function AdminFinancials() {
               </div>
               <div className="space-y-1">
                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Settlement Queue</p>
-                 <h3 className="text-3xl font-bold text-white tracking-tight">12 <span className="text-sm font-medium text-slate-500 ml-2">Transfers</span></h3>
+                 <h3 className="text-3xl font-bold text-white tracking-tight">{stats.settlementQueue} <span className="text-sm font-medium text-slate-500 ml-2">Transfers</span></h3>
               </div>
             </div>
             <div className="absolute -bottom-6 -right-6 opacity-5 group-hover:scale-125 transition-transform duration-700">
@@ -188,7 +228,7 @@ export default function AdminFinancials() {
                         <td className="px-8 py-6 text-right">
                            <div className="flex justify-end gap-3">
                              <Button 
-                               onClick={() => forceRelease(item.id)}
+                               onClick={() => handleOverride(item.id, 'FORCE_RELEASE')}
                                variant="ghost" 
                                size="icon" 
                                className="h-10 w-10 text-rose-400 hover:bg-rose-500/10 rounded-xl"
@@ -197,6 +237,7 @@ export default function AdminFinancials() {
                                <Unlock className="h-4.5 w-4.5" />
                              </Button>
                              <Button 
+                               onClick={() => handleOverride(item.id, 'FREEZE')}
                                variant="ghost" 
                                size="icon" 
                                className="h-10 w-10 text-amber-500 hover:bg-amber-500/10 rounded-xl"

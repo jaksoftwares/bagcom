@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
-
+import { logAdminAction } from '@/lib/admin-audit';
 
 /**
  * Get single product by ID
@@ -42,14 +42,8 @@ export async function PUT(
     const supabase = createServerClient();
     const body = await request.json();
     
-    // 1. Verify ownership (In production, this should check the authenticated user)
-    const { data: existing } = await supabase
-      .from('products')
-      .select('seller_id')
-      .eq('id', params.productId)
-      .single();
-
-    if (!existing) return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    const { data: { user } } = await supabase.auth.getUser();
+    const { data: profile } = user ? await supabase.from('users').select('role').eq('id', user.id).single() : { data: null };
 
     // 2. Update basic info
     const { data: product, error } = await supabase
@@ -64,6 +58,11 @@ export async function PUT(
 
     if (error) throw error;
 
+    // Record Audit Log if admin is moderating status
+    if (profile?.role === 'ADMIN' && body.status) {
+      await logAdminAction(user!.id, 'MODERATE_PRODUCT', 'PRODUCT', params.productId, { status: body.status });
+    }
+
     return NextResponse.json({ success: true, product });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -76,8 +75,8 @@ export async function DELETE(
 ) {
   try {
     const supabase = createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    // Soft delete by marking as unavailable or actually deleting
     const { error } = await supabase
       .from('products')
       .delete()
@@ -85,9 +84,12 @@ export async function DELETE(
 
     if (error) throw error;
 
+    if (user) {
+      await logAdminAction(user.id, 'DELETE_PRODUCT', 'PRODUCT', params.productId);
+    }
+
     return NextResponse.json({ success: true, message: 'Product deleted' });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-

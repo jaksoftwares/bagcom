@@ -5,6 +5,7 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { 
   DollarSign, 
   ShoppingBag, 
@@ -21,7 +22,8 @@ import {
   ShieldCheck,
   LayoutDashboard,
   Download,
-  Database
+  Database,
+  ArrowRight
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -73,6 +75,15 @@ export default function AdminDashboard() {
       bg: 'bg-sky-400/5' 
     },
     { 
+      title: 'Verification Queue', 
+      value: stats?.counts?.pendingSellerCount || 0, 
+      icon: ShieldCheck, 
+      trend: 'Awaiting Review', 
+      color: 'text-amber-400', 
+      bg: 'bg-amber-400/5',
+      href: '/admin/verifications'
+    },
+    { 
       title: 'Active Disputes', 
       value: stats?.counts?.activeDisputes || 0, 
       icon: ShieldAlert, 
@@ -112,22 +123,27 @@ export default function AdminDashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {topStats.map((stat) => (
-            <Card key={stat.title} className="bg-slate-900/40 border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden group hover:border-primary/20 transition-all duration-500">
-              <CardContent className="p-8">
-                <div className="flex items-center justify-between mb-8">
-                  <div className={`h-14 w-14 rounded-2xl border border-white/5 flex items-center justify-center ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform duration-500 shadow-inner`}>
-                    <stat.icon className="h-6 w-6" />
-                  </div>
-                  <Badge variant="outline" className="border-white/5 bg-white/5 text-[9px] font-black text-slate-400 uppercase tracking-widest px-3 py-1 rounded-full">{stat.trend}</Badge>
-                </div>
-                <div className="space-y-1">
-                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">{stat.title}</p>
-                   <h3 className="text-3xl font-bold text-white tracking-tight">{stat.value}</h3>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {topStats.map((stat) => {
+            const CardWrapper = stat.href ? Link : 'div';
+            return (
+              <CardWrapper key={stat.title} href={stat.href || ''} className={stat.href ? 'block' : ''}>
+                <Card className="bg-slate-900/40 border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden group hover:border-primary/20 transition-all duration-500 h-full">
+                  <CardContent className="p-8">
+                    <div className="flex items-center justify-between mb-8">
+                      <div className={`h-14 w-14 rounded-2xl border border-white/5 flex items-center justify-center ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform duration-500 shadow-inner`}>
+                        <stat.icon className="h-6 w-6" />
+                      </div>
+                      <Badge variant="outline" className="border-white/5 bg-white/5 text-[9px] font-black text-slate-400 uppercase tracking-widest px-3 py-1 rounded-full">{stat.trend}</Badge>
+                    </div>
+                    <div className="space-y-1">
+                       <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">{stat.title}</p>
+                       <h3 className="text-3xl font-bold text-white tracking-tight">{stat.value}</h3>
+                    </div>
+                  </CardContent>
+                </Card>
+              </CardWrapper>
+            );
+          })}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-10">

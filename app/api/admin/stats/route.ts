@@ -46,6 +46,12 @@ export async function GET() {
       .order('created_at', { ascending: false })
       .limit(5);
 
+    const { count: pendingSellerCount } = await supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('role', 'SELLER')
+      .eq('seller_status', 'PENDING');
+
     return NextResponse.json({
       financials: financial || {
         total_transactions: 0,
@@ -57,7 +63,8 @@ export async function GET() {
       counts: {
         totalUsers,
         sellerCount,
-        activeDisputes
+        activeDisputes,
+        pendingSellerCount: pendingSellerCount || 0
       },
       recentActivity: recentActivity || []
     });

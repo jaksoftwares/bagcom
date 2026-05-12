@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { sendEmail, EmailTemplates } from '@/lib/mail';
+import { logAdminAction } from '@/lib/admin-audit';
 
 /**
  * Approve or Reject Seller Application
@@ -39,6 +40,11 @@ export async function POST(request: Request) {
       .single();
 
     if (updateError) throw updateError;
+
+    // Record Audit Log
+    if (admin) {
+      await logAdminAction(admin.id, `${action}_SELLER`, 'USER', sellerId, { status: updateData.seller_status });
+    }
 
     // Send Notification Email
     try {

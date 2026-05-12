@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { isMaintenanceMode, getCommissionRate } from '@/lib/settings';
 
 /**
  * Orders API Endpoint
  * URL: /api/orders
- * Uses service-role client to bypass RLS for server-side operations.
  */
 
 export async function GET(request: Request) {
@@ -49,6 +49,14 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const supabase = createServerClient();
+
+    // 0. Check Maintenance Mode
+    if (await isMaintenanceMode()) {
+      return NextResponse.json({ 
+        error: 'The marketplace is currently undergoing scheduled maintenance. Please try again later.' 
+      }, { status: 503 });
+    }
+
     const body = await request.json();
     const { buyer_id, product_id, quantity = 1 } = body;
 
@@ -56,7 +64,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields: buyer_id and product_id' }, { status: 400 });
     }
 
-    // 0. Ensure buyer profile exists in public.users (JIT Sync)
+    // 1. Ensure buyer profile exists in public.users (JIT Sync)
     const { data: existingUser } = await supabase
       .from('users')
       .select('id')
@@ -64,9 +72,7 @@ export async function POST(request: Request) {
       .single();
 
     if (!existingUser) {
-      console.log('User profile missing in public.users, attempting JIT sync for:', buyer_id);
       const { data: { user: authUser }, error: authError } = await supabase.auth.admin.getUserById(buyer_id);
-      
       if (!authError && authUser) {
         await supabase.from('users').insert({
           id: authUser.id,
@@ -78,8 +84,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // 1. Fetch product and verify it is available
-
+    // 2. Fetch product and verify availability
     const { data: product, error: productError } = await supabase
       .from('products')
       .select('*')
@@ -94,26 +99,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'This item is no longer available' }, { status: 409 });
     }
 
-    // 2. Calculate amounts (10% platform commission, escrow holds full amount)
+    // 3. Calculate amounts (dynamic commission rate)
     const subtotal = product.price * quantity;
-    const commission = Math.round(subtotal * 0.10);
-    const total = subtotal;            // Buyer pays the base price
-    const escrow = subtotal;           // Full amount held in escrow
+    const rate = await getCommissionRate();
+    const commission = Math.round(subtotal * rate);
+    const total = subtotal;
+    const escrow = subtotal;
     const sellerReceivable = subtotal - commission;
 
-    // 3. Generate unique order number — format: BGC-YYYYMMDD-XXXXXX
+    // 4. Generate order metadata
     const today = new Date();
     const datePart = today.toISOString().slice(0, 10).replace(/-/g, '');
     const randPart = Math.random().toString(36).substring(2, 8).toUpperCase();
     const orderNumber = `BGC-${datePart}-${randPart}`;
-
-    // 4. Generate unique delivery/verification code — format: BGX-XXXXXX
-    // This is the code the buyer shares with the seller upon delivery confirmation.
     const verificationCode = 'BGX-' + Math.floor(100000 + Math.random() * 900000).toString();
     const deliveryCodeExpires = new Date();
-    deliveryCodeExpires.setDate(deliveryCodeExpires.getDate() + 7); // Valid for 7 days
+    deliveryCodeExpires.setDate(deliveryCodeExpires.getDate() + 7);
 
-    // 5. Insert order using service role (bypasses RLS)
+    // 5. Insert order
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert({

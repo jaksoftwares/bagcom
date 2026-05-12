@@ -82,6 +82,17 @@ export async function POST(
         supabase.from('escrow_transactions').update({ escrow_status: 'REFUNDED', released_at: now }).eq('order_id', order.id)
       ]);
 
+      // Trigger Refund Payout (B2C to Buyer)
+      if (order.buyer?.phone_number) {
+        try {
+          const refundRes = await MpesaService.initiateB2CPayout(order.buyer.phone_number, order.total_amount, `REF-${order.id.slice(0,8)}`);
+          // We could track this in a 'refunds' table as well
+          console.log('Automated Refund Triggered:', refundRes);
+        } catch (e) {
+          console.error('Resolution Refund Error:', e);
+        }
+      }
+
       // Notify Buyer of Refund
       if (order.buyer?.email) {
         const buyerTemplate = EmailTemplates.disputeResolvedRefundBuyer(
