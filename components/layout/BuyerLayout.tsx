@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCurrentUser, getUserProfile, signOut } from '@/services/auth/authService';
+import Logo from '@/components/shared/Logo';
 
 interface BuyerLayoutProps {
   children: ReactNode;
@@ -100,16 +101,8 @@ export default function BuyerLayout({ children }: BuyerLayoutProps) {
       >
         <div className="h-full flex flex-col">
           {/* Logo Section */}
-          <div className="p-8 border-b border-gray-50">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                <ShoppingBasket className="text-white h-5 w-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tighter uppercase text-gray-900 leading-none">Bagcom</span>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mt-1">Buyer Hub</span>
-              </div>
-            </Link>
+          <div className="p-8 border-b border-gray-50 flex justify-center">
+            <Logo variant="primary" className="h-10 w-auto" />
           </div>
 
           {/* Navigation Groups */}

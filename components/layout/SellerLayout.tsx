@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
+import Logo from '@/components/shared/Logo';
 
 interface SellerLayoutProps {
   children: ReactNode;
@@ -76,13 +77,8 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
       >
         <div className="h-full flex flex-col">
           {/* Logo Section */}
-          <div className="p-8 border-b border-gray-50">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
-                <Store className="text-white h-5 w-5" />
-              </div>
-              <span className="text-xl font-black tracking-tighter uppercase text-gray-900">Bagcom <span className="text-indigo-600 text-xs ml-1 font-black">Seller</span></span>
-            </Link>
+          <div className="p-8 border-b border-gray-50 flex justify-center">
+            <Logo variant="primary" className="h-10 w-auto" />
           </div>
 
           {/* Create Listing Button */}

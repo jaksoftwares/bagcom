@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 sm:gap-16">
           {/* Brand & Mission */}
           <div className="md:col-span-4 lg:col-span-5 space-y-6">
-            <Logo variant="light" className="h-8" />
+            <Logo variant="dark" className="h-8 w-auto" />
             <p className="text-white/60 text-sm leading-relaxed max-w-sm">
               A modern trusted marketplace for buying and selling second-hand goods locally. Built with security and community in mind.
             </p>

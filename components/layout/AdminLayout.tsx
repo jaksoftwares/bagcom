@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
+import Logo from '@/components/shared/Logo';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -78,13 +79,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       >
         <div className="h-full flex flex-col">
           {/* Logo */}
-          <div className="p-8">
-            <Link href="/admin" className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                <ShieldCheck className="text-white h-6 w-6" />
-              </div>
-              <span className="text-xl font-black tracking-tighter uppercase">Bagcom <span className="text-primary">Admin</span></span>
-            </Link>
+          <div className="p-8 flex justify-center">
+            <Logo variant="dark" className="h-10 w-auto" />
           </div>
 
           {/* Navigation */}
