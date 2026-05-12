@@ -56,7 +56,7 @@ export default function AdminFinancials() {
         });
 
       } catch (error) {
-        toast({ title: "Failed to load financial records", variant: "destructive" });
+        toast({ title: "Failed to load records", variant: "destructive" });
       } finally {
         setIsLoading(false);
       }
@@ -109,18 +109,18 @@ export default function AdminFinancials() {
             <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                <span>Admin</span>
                <ChevronRight className="h-3 w-3 opacity-50" />
-               <span className="text-primary">Financial Governance</span>
+               <span className="text-primary">Financials</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              Escrow <span className="text-slate-500">& Clearing</span>
+              Payments
             </h1>
             <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Real-time oversight of platform liquidity and escrow transactions. Execute emergency overrides and reconciliation audits.
+              Monitor payments and escrow status.
             </p>
           </div>
           <div className="flex gap-3">
              <Button variant="outline" className="border-slate-200 bg-white hover:bg-slate-50 font-bold text-[11px] uppercase tracking-wider h-11 px-6 rounded-lg transition-all">
-                <Download className="h-4 w-4 mr-2 opacity-60" /> Audit Trail
+                <Download className="h-4 w-4 mr-2 opacity-60" /> History
              </Button>
           </div>
         </div>
@@ -132,10 +132,10 @@ export default function AdminFinancials() {
               <div className="h-11 w-11 bg-slate-50 rounded-lg flex items-center justify-center text-slate-600 border border-slate-100">
                  <Lock className="h-5 w-5" />
               </div>
-              <div className="space-y-1">
-                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Protection Pool</p>
-                 <h3 className="text-3xl font-bold text-slate-900 tracking-tight">KSh {stats.activeEscrow.toLocaleString()}</h3>
-              </div>
+               <div className="space-y-1">
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Held in Escrow</p>
+                  <h3 className="text-3xl font-bold text-slate-900 tracking-tight">KSh {stats.activeEscrow.toLocaleString()}</h3>
+               </div>
             </div>
             <div className="absolute -bottom-4 -right-4 opacity-[0.03] group-hover:scale-110 transition-transform duration-500">
                <Lock className="h-24 w-24 text-slate-900" />
@@ -147,10 +147,10 @@ export default function AdminFinancials() {
               <div className="h-11 w-11 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 border border-emerald-100">
                  <TrendingUp className="h-5 w-5" />
               </div>
-              <div className="space-y-1">
-                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Platform Net Yield</p>
-                 <h3 className="text-3xl font-bold text-slate-900 tracking-tight">KSh {stats.platformYield.toLocaleString()}</h3>
-              </div>
+               <div className="space-y-1">
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Earnings</p>
+                  <h3 className="text-3xl font-bold text-slate-900 tracking-tight">KSh {stats.platformYield.toLocaleString()}</h3>
+               </div>
             </div>
             <div className="absolute -bottom-4 -right-4 opacity-[0.03] group-hover:scale-110 transition-transform duration-500">
                <TrendingUp className="h-24 w-24 text-slate-900" />
@@ -162,10 +162,10 @@ export default function AdminFinancials() {
               <div className="h-11 w-11 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600 border border-amber-100">
                  <ArrowRightLeft className="h-5 w-5" />
               </div>
-              <div className="space-y-1">
-                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Settlement Queue</p>
-                 <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{stats.settlementQueue} <span className="text-sm font-medium text-slate-400 ml-2">Transfers</span></h3>
-              </div>
+               <div className="space-y-1">
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pending</p>
+                  <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{stats.settlementQueue} <span className="text-sm font-medium text-slate-400 ml-2">Transfers</span></h3>
+               </div>
             </div>
             <div className="absolute -bottom-4 -right-4 opacity-[0.03] group-hover:scale-110 transition-transform duration-500">
                <ArrowRightLeft className="h-24 w-24 text-slate-900" />
@@ -177,17 +177,17 @@ export default function AdminFinancials() {
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="space-y-0.5">
-               <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Financial Log</p>
-               <h2 className="text-xl font-bold text-slate-900 tracking-tight">Escrow Transaction Ledger</h2>
+               <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Transactions</p>
+               <h2 className="text-xl font-bold text-slate-900 tracking-tight">Transaction History</h2>
             </div>
             <div className="relative w-full md:w-80 group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-600 transition-colors" />
-              <Input 
-                placeholder="Search by Order ID..." 
-                className="pl-11 bg-white border-slate-200 h-11 rounded-lg text-sm font-medium focus:border-slate-300 shadow-sm transition-all"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+               <Input 
+                 placeholder="Search..." 
+                 className="pl-11 bg-white border-slate-200 h-11 rounded-lg text-sm font-medium focus:border-slate-300 shadow-sm transition-all"
+                 value={searchQuery}
+                 onChange={(e) => setSearchQuery(e.target.value)}
+               />
             </div>
           </div>
 
@@ -195,17 +195,17 @@ export default function AdminFinancials() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-slate-50 border-b border-slate-100">
-                  <tr>
-                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Reference</th>
-                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Value</th>
-                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Lifecycle State</th>
-                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Last Resolution</th>
-                    <th className="px-6 py-4 text-right text-[11px] font-bold uppercase tracking-wider text-slate-400">Operations</th>
+                   <tr>
+                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Order</th>
+                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Amount</th>
+                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Status</th>
+                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Updated</th>
+                    <th className="px-6 py-4 text-right text-[11px] font-bold uppercase tracking-wider text-slate-400">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {escrowList.length === 0 ? (
-                    <tr><td colSpan={5} className="px-6 py-16 text-center text-slate-400 font-bold uppercase tracking-wider italic">No active escrow transactions detected.</td></tr>
+                     <tr><td colSpan={5} className="px-6 py-16 text-center text-slate-400 font-bold uppercase tracking-wider italic">No transactions found.</td></tr>
                   ) : (
                     escrowList.map((item) => (
                       <tr key={item.id} className="hover:bg-slate-50 transition-all duration-200 group">

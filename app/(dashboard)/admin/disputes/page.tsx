@@ -71,13 +71,13 @@ export default function DisputeCenter() {
             <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                <span>Admin</span>
                <ChevronRight className="h-3 w-3 opacity-50" />
-               <span className="text-rose-600">Dispute Center</span>
+               <span className="text-rose-600">Disputes</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              Mediation <span className="text-slate-500">& Governance</span>
+              Order Disputes
             </h1>
             <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Resolve platform conflicts with full transparency. Your intervention secures the escrow and maintains market integrity.
+              Resolve conflicts between buyers and sellers.
             </p>
           </div>
           <div className="flex items-center gap-3 bg-white border border-slate-200 px-5 py-2.5 rounded-xl shadow-sm">
@@ -96,8 +96,8 @@ export default function DisputeCenter() {
                <ShieldCheck className="h-8 w-8 text-emerald-500" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">System is Healthy</h3>
-              <p className="text-slate-500 max-w-sm mx-auto font-medium">All active orders are proceeding through escrow without any mediation requests.</p>
+               <h3 className="text-xl font-bold text-slate-900 tracking-tight">No Active Disputes</h3>
+               <p className="text-slate-500 max-w-sm mx-auto font-medium">There are no open disputes at this time.</p>
             </div>
           </Card>
         ) : (
@@ -110,8 +110,8 @@ export default function DisputeCenter() {
                     <div className="flex justify-between items-start">
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                          <Badge className="bg-rose-50 text-rose-600 border-none px-2.5 py-1 font-bold uppercase text-[9px] tracking-wider rounded-md">Conflict Detected</Badge>
-                          <span className="text-[11px] font-mono font-bold text-slate-400 tracking-tighter">CASE-ID: #{dispute.order?.order_number}</span>
+                           <Badge className="bg-rose-50 text-rose-600 border-none px-2.5 py-1 font-bold uppercase text-[9px] tracking-wider rounded-md">Action Required</Badge>
+                           <span className="text-[11px] font-mono font-bold text-slate-400 tracking-tighter">Case # {dispute.order?.order_number}</span>
                         </div>
                         <h3 className="text-2xl font-bold text-slate-900 tracking-tight group-hover:text-primary transition-colors">{dispute.order?.product?.title}</h3>
                         <div className="bg-slate-50 border border-slate-100 rounded-xl p-5 relative overflow-hidden">
@@ -124,7 +124,7 @@ export default function DisputeCenter() {
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Escrow at Stake</p>
+                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Amount</p>
                          <p className="text-3xl font-bold text-slate-900 tracking-tight">KSh {dispute.order?.total_amount.toLocaleString()}</p>
                       </div>
                     </div>
@@ -134,7 +134,7 @@ export default function DisputeCenter() {
                       <div className="p-5 bg-slate-50 rounded-xl border border-slate-100 space-y-4">
                          <div className="flex items-center justify-between">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                              <User className="h-3.5 w-3.5" /> Buyer Identity
+                               <User className="h-3.5 w-3.5" /> Buyer
                             </p>
                             <Link href={`mailto:${dispute.order?.buyer?.email}`} className="text-slate-400 hover:text-slate-900 transition-colors">
                                <Mail className="h-4 w-4" />
@@ -152,12 +152,12 @@ export default function DisputeCenter() {
                       <div className="p-5 bg-slate-50 rounded-xl border border-slate-100 space-y-4">
                          <div className="flex items-center justify-between">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                              <Store className="h-3.5 w-3.5" /> Merchant Record
+                               <Store className="h-3.5 w-3.5" /> Seller
                             </p>
-                            <Badge className="bg-emerald-50 text-emerald-600 border-none text-[9px] font-bold uppercase tracking-wider px-2 py-0.5">KYC Vetted</Badge>
+                            <Badge className="bg-emerald-50 text-emerald-600 border-none text-[9px] font-bold uppercase tracking-wider px-2 py-0.5">Verified</Badge>
                          </div>
                          <div className="space-y-1">
-                            <p className="text-base font-bold text-slate-900">{dispute.order?.seller?.business_name || 'Individual Merchant'}</p>
+                            <p className="text-base font-bold text-slate-900">{dispute.order?.seller?.business_name || 'Seller'}</p>
                             <p className="text-xs text-slate-500 font-medium">{dispute.order?.seller?.first_name} {dispute.order?.seller?.last_name}</p>
                             <div className="mt-3 flex items-center gap-2 text-slate-600 font-bold text-[10px] uppercase tracking-wider bg-white border border-slate-200 px-2.5 py-1 rounded-md w-fit shadow-sm">
                               ID: {dispute.order?.seller?.id_number || 'UNVERIFIED'}
@@ -169,7 +169,7 @@ export default function DisputeCenter() {
                     <div className="bg-rose-50 p-4 rounded-xl flex items-center justify-between border border-rose-100">
                        <div className="flex items-center gap-3 text-sm font-bold text-rose-600">
                           <AlertCircle className="h-4 w-4" />
-                          Escrow Protection: <span className="text-slate-900">FROZEN PENDING MEDIATION</span>
+                          Escrow Status: <span className="text-slate-900">On Hold</span>
                        </div>
                        <div className="flex items-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                           <Clock className="h-3.5 w-3.5" />
@@ -181,8 +181,8 @@ export default function DisputeCenter() {
                   {/* Resolution Engine */}
                   <div className="p-8 lg:w-1/3 bg-slate-50/50 flex flex-col justify-center gap-6">
                     <div className="text-center space-y-1">
-                      <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Resolution Hub</h4>
-                      <p className="text-xs text-slate-500 font-medium">Final decisions will trigger instant M-Pesa movement.</p>
+                      <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Actions</h4>
+                      <p className="text-xs text-slate-500 font-medium">Select an action to resolve this dispute.</p>
                     </div>
                     
                     <div className="space-y-3">
@@ -190,14 +190,14 @@ export default function DisputeCenter() {
                         onClick={() => resolveDispute(dispute.id, 'RELEASE')}
                         className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold h-12 gap-2 shadow-sm rounded-lg transition-all"
                       >
-                        <ShieldCheck className="h-4 w-4" /> Release to Merchant
+                        <ShieldCheck className="h-4 w-4" /> Release Funds
                       </Button>
                       <Button 
                         onClick={() => resolveDispute(dispute.id, 'REFUND')}
                         variant="outline"
                         className="w-full border-slate-200 bg-white text-rose-600 hover:bg-rose-50 hover:text-rose-700 font-bold h-12 gap-2 shadow-sm rounded-lg transition-all"
                       >
-                        <RotateCcw className="h-4 w-4" /> Full Buyer Refund
+                        <RotateCcw className="h-4 w-4" /> Refund Buyer
                       </Button>
                     </div>
 
@@ -205,10 +205,10 @@ export default function DisputeCenter() {
 
                     <div className="grid grid-cols-2 gap-3">
                       <Button variant="ghost" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-bold h-10 gap-2 rounded-lg text-xs transition-all">
-                        <MessageSquare className="h-4 w-4 text-primary" /> Case Chat
+                        <MessageSquare className="h-4 w-4 text-primary" /> Chat
                       </Button>
                       <Button variant="ghost" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-bold h-10 gap-2 rounded-lg text-xs transition-all">
-                        <ExternalLink className="h-4 w-4" /> Audit Logs
+                        <ExternalLink className="h-4 w-4" /> History
                       </Button>
                     </div>
                   </div>

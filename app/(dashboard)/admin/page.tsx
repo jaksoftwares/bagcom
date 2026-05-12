@@ -203,7 +203,7 @@ export default function AdminDashboard() {
           {/* System Health / Sidebar */}
           <div className="space-y-8">
             <div className="space-y-1">
-               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">System Health</p>
+               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">System</p>
                <h2 className="text-xl font-bold text-slate-900 tracking-tight">Status</h2>
             </div>
             
@@ -247,10 +247,10 @@ export default function AdminDashboard() {
 
             {/* Platform Announcement Tool */}
             <Card className="bg-white border-slate-200 p-6 space-y-5 rounded-xl shadow-sm">
-               <div className="space-y-1">
-                  <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Communication</p>
-                  <h2 className="text-lg font-bold text-slate-900 tracking-tight">Broadcast Message</h2>
-               </div>
+                <div className="space-y-1">
+                   <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Broadcast</p>
+                   <h2 className="text-lg font-bold text-slate-900 tracking-tight">Send Message</h2>
+                </div>
                
                <div className="space-y-3">
                   <input 
@@ -299,7 +299,7 @@ export default function AdminDashboard() {
                    <ShieldCheck className="h-6 w-6 text-white" />
                 </div>
                 <div className="space-y-1">
-                   <h3 className="text-xl font-bold text-white tracking-tight">Escrow Summary</h3>
+                    <h3 className="text-xl font-bold text-white tracking-tight">Escrow</h3>
                    <p className="text-sm text-slate-400 leading-relaxed font-medium">
                      Total Escrow: <span className="text-white font-bold">KSh {stats?.financials?.total_currently_in_escrow?.toLocaleString() || 0}</span> 
                    </p>

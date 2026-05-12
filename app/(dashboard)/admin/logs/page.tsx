@@ -45,18 +45,18 @@ export default function AdminLogs() {
             <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                <span>Admin</span>
                <ChevronRight className="h-3 w-3 opacity-50" />
-               <span className="text-primary">Governance Audit</span>
+               <span className="text-primary">Logs</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              System <span className="text-slate-500">Audit Trail</span>
+              Activity History
             </h1>
             <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Transparent record of all administrative actions. Every status change, financial override, and setting update is logged for compliance.
+              A record of all actions performed by administrators.
             </p>
           </div>
           <div className="flex items-center gap-3 bg-white border border-slate-200 px-5 py-2.5 rounded-xl shadow-sm">
              <Terminal className="h-4 w-4 text-primary" />
-             <span className="text-[11px] font-bold text-slate-900 uppercase tracking-wide">{logs.length} Actions Logged</span>
+             <span className="text-[11px] font-bold text-slate-900 uppercase tracking-wide">{logs.length} Entries</span>
           </div>
         </div>
 
@@ -64,7 +64,7 @@ export default function AdminLogs() {
            <div className="relative w-full md:w-80 group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-600 transition-colors" />
               <Input 
-                placeholder="Search audit trail..." 
+                placeholder="Search..." 
                 className="pl-11 bg-white border-slate-200 h-11 rounded-lg text-sm font-medium focus:border-slate-300 shadow-sm transition-all"
               />
            </div>
@@ -74,17 +74,17 @@ export default function AdminLogs() {
                  <table className="w-full text-left">
                     <thead className="bg-slate-50 border-b border-slate-100">
                        <tr>
-                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Timestamp</th>
-                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Administrator</th>
-                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Action & Entity</th>
-                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Impact Details</th>
+                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
+                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Admin</th>
+                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Action</th>
+                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Details</th>
                        </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
                        {isLoading ? (
                          <tr><td colSpan={4} className="px-6 py-16 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-200" /></td></tr>
                        ) : logs.length === 0 ? (
-                         <tr><td colSpan={4} className="px-6 py-16 text-center text-slate-400 font-bold uppercase tracking-wider">No audit records found.</td></tr>
+                         <tr><td colSpan={4} className="px-6 py-16 text-center text-slate-400 font-bold uppercase tracking-wider">No logs found.</td></tr>
                        ) : (
                          logs.map((log) => (
                            <tr key={log.id} className="hover:bg-slate-50 transition-all duration-200 group">
