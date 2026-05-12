@@ -45,7 +45,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       }
       const profile = await getUserProfile(user.id);
       if (profile?.role !== 'ADMIN' && profile?.role !== 'SUPER_ADMIN') {
-        router.push('/');
+        router.push('/unauthorized');
         return;
       }
       setAdmin(profile);

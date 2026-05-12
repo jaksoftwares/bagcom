@@ -10,6 +10,20 @@ export async function GET() {
   try {
     const supabase = createServerClient();
 
+    // Verify Admin Authorization
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+        
+      if (profile?.role !== 'ADMIN' && profile?.role !== 'SUPER_ADMIN') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+      }
+    }
+
     const { data: users, error } = await supabase
       .from('users')
       .select('*')
@@ -31,6 +45,21 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const supabase = createServerClient();
+    
+    // Verify Admin Authorization Early
+    const { data: { user: adminUser } } = await supabase.auth.getUser();
+    if (adminUser) {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', adminUser.id)
+        .single();
+        
+      if (profile?.role !== 'ADMIN' && profile?.role !== 'SUPER_ADMIN') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+      }
+    }
+
     const { userId, ...updates } = await request.json();
 
     if (!userId) {

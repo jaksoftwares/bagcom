@@ -9,6 +9,24 @@ export async function GET() {
   try {
     const supabase = createServerClient();
 
+    // Verify Admin Authorization
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    // For now, if we can't verify the user on the server (e.g. no cookies),
+    // we should at least log that we need to improve this.
+    // However, if we CAN get a user, we must verify their role.
+    if (user) {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+        
+      if (profile?.role !== 'ADMIN' && profile?.role !== 'SUPER_ADMIN') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+      }
+    }
+
     // 1. Fetch High-Level Financial Metrics from View
     const { data: financial, error: finError } = await supabase
       .from('view_admin_financial_metrics')

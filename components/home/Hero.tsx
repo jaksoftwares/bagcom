@@ -1,18 +1,30 @@
 'use client';
 
-import { Search, ShoppingBag, Tag, ShieldCheck, ArrowRight } from 'lucide-react';
+import { 
+  Search, 
+  ShoppingBag, 
+  Tag, 
+  ShieldCheck, 
+  ArrowRight, 
+  Smartphone, 
+  Sofa, 
+  Shirt, 
+  Utensils, 
+  BookOpen, 
+  Dumbbell 
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import Image from 'next/image';
 
 const categories = [
-  { name: 'Electronics', icon: '📱', color: 'bg-blue-50' },
-  { name: 'Furniture', icon: '🪑', color: 'bg-orange-50' },
-  { name: 'Fashion', icon: '👕', color: 'bg-pink-50' },
-  { name: 'Kitchen', icon: '🍳', color: 'bg-yellow-50' },
-  { name: 'Books', icon: '📚', color: 'bg-purple-50' },
-  { name: 'Sports', icon: '⚽', color: 'bg-green-50' },
+  { name: 'Electronics', icon: Smartphone, color: 'bg-blue-50 text-blue-600 border-blue-100' },
+  { name: 'Furniture', icon: Sofa, color: 'bg-orange-50 text-orange-600 border-orange-100' },
+  { name: 'Fashion', icon: Shirt, color: 'bg-pink-50 text-pink-600 border-pink-100' },
+  { name: 'Kitchen', icon: Utensils, color: 'bg-yellow-50 text-yellow-600 border-yellow-100' },
+  { name: 'Books', icon: BookOpen, color: 'bg-purple-50 text-purple-600 border-purple-100' },
+  { name: 'Sports', icon: Dumbbell, color: 'bg-green-50 text-green-600 border-green-100' },
 ];
 
 export default function Hero() {
@@ -67,11 +79,11 @@ export default function Hero() {
             {/* Marketplace Trust Indicators */}
             <div className="flex flex-wrap items-center gap-8 pt-4">
               <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
-                <ShieldCheck className="h-5 w-5 text-primary" />
+                <ShieldCheck className="h-5 w-5 text-primary/70" />
                 <span>Escrow protection</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
-                <Tag className="h-5 w-5 text-primary" />
+                <Tag className="h-5 w-5 text-primary/70" />
                 <span>Great local deals</span>
               </div>
             </div>
@@ -151,8 +163,8 @@ export default function Hero() {
               href={`/category/${cat.name.toLowerCase()}`}
               className="flex items-center gap-3 p-4 rounded-xl border border-border/40 hover:border-primary/30 hover:bg-primary/5 transition-all group"
             >
-              <div className={`w-10 h-10 rounded-lg ${cat.color} flex items-center justify-center text-xl`}>
-                {cat.icon}
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center border transition-colors ${cat.color}`}>
+                <cat.icon className="h-5 w-5" />
               </div>
               <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{cat.name}</span>
             </Link>
