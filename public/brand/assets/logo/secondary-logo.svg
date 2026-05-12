@@ -1,0 +1,16 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&amp;display=swap');
+        .text { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 56px; fill: #0F172A; letter-spacing: -0.04em; text-anchor: middle; }
+      </style>
+      <g transform="translate(70, 30) scale(1)">
+        
+  <path d="M25 15 H 60 A 17.5 17.5 0 0 1 77.5 32.5 V 32.5 A 17.5 17.5 0 0 1 60 50 H 25" fill="none" stroke="#16A34A" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M25 50 H 65 A 17.5 17.5 0 0 1 82.5 67.5 V 67.5 A 17.5 17.5 0 0 1 65 85 H 25" fill="none" stroke="#3B82F6" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="25" y1="15" x2="25" y2="85" stroke="#0F172A" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="50" cy="32.5" r="5" fill="#0F172A" />
+  <circle cx="55" cy="67.5" r="5" fill="#0F172A" />
+
+      </g>
+      <text x="120" y="190" class="text">Bagcom</text>
+    </svg>

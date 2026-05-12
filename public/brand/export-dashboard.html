@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bagcom Logo Export Dashboard</title>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #F8FAFC; color: #0F172A; padding: 40px; margin: 0; }
+    h1 { margin-top: 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+    .card { background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
+    .img-container { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; background: #F1F5F9; border-radius: 8px; margin-bottom: 16px; overflow: hidden; padding: 16px; }
+    .card h3 { margin: 0 0 16px 0; font-size: 16px; width: 100%; text-align: left; }
+    img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    button { background: #16A34A; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; transition: background 0.2s; }
+    button:hover { background: #15803d; }
+  </style>
+</head>
+<body>
+  <h1>Bagcom Logo System</h1>
+  <p>Preview your vector logos. Click "Download PNG" to export high-resolution PNGs directly from the browser.</p>
+  <div class="grid" id="grid"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const logos = [
+      'primary-logo.svg', 'secondary-logo.svg', 'icon-only.svg', 
+      'monochrome-logo.svg', 'logo-dark-bg.svg', 'logo-light-bg.svg', 
+      'mobile-app-icon.svg', 'favicon.svg', 'horizontal-layout.svg', 'vertical-layout.svg'
+    ];
+
+    const grid = document.getElementById('grid');
+
+    logos.forEach(file => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      
+      const title = document.createElement('h3');
+      title.innerText = file;
+      
+      const container = document.createElement('div');
+      container.className = 'img-container';
+      
+      const img = document.createElement('img');
+      const fileUrl = 'assets/logo/' + file;
+      img.src = fileUrl;
+      
+      const btnGroup = document.createElement('div');
+      btnGroup.style.display = 'flex';
+      btnGroup.style.gap = '8px';
+      btnGroup.style.width = '100%';
+
+      const btnPng = document.createElement('button');
+      btnPng.innerText = 'PNG';
+      btnPng.onclick = () => downloadPng(img, file.replace('.svg', '.png'), fileUrl);
+      
+      const btnPdf = document.createElement('button');
+      btnPdf.innerText = 'PDF';
+      btnPdf.style.background = '#3B82F6';
+      btnPdf.onclick = () => downloadPdf(img, file.replace('.svg', '.pdf'), fileUrl);
+      
+      btnGroup.appendChild(btnPng);
+      btnGroup.appendChild(btnPdf);
+
+      container.appendChild(img);
+      card.appendChild(title);
+      card.appendChild(container);
+      card.appendChild(btnGroup);
+      grid.appendChild(card);
+    });
+
+    async function getSafeSvgUrl(fileUrl) {
+      const response = await fetch(fileUrl);
+      let svgText = await response.text();
+      // Remove @import to prevent canvas tainting (security error)
+      svgText = svgText.replace(/@import url\([^)]+\);/, '');
+      const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+      return URL.createObjectURL(blob);
+    }
+
+    async function downloadPng(imgElement, filename, fileUrl) {
+      try {
+        const safeUrl = await getSafeSvgUrl(fileUrl);
+        const tempImg = new Image();
+        tempImg.onload = () => {
+          const canvas = document.createElement('canvas');
+          const scale = 4; 
+          canvas.width = (tempImg.naturalWidth || 420) * scale;
+          canvas.height = (tempImg.naturalHeight || 100) * scale;
+          const ctx = canvas.getContext('2d');
+          ctx.scale(scale, scale);
+          ctx.drawImage(tempImg, 0, 0);
+          
+          const dataUrl = canvas.toDataURL('image/png');
+          const a = document.createElement('a');
+          a.download = filename;
+          a.href = dataUrl;
+          a.click();
+          URL.revokeObjectURL(safeUrl);
+        };
+        tempImg.src = safeUrl;
+      } catch (err) {
+        alert("Export failed: " + err.message + "\n\nPlease ensure you are running this page via localhost (e.g. http://localhost:3000/brand/export-dashboard.html) and not directly from the file system.");
+      }
+    }
+
+    async function downloadPdf(imgElement, filename, fileUrl) {
+      try {
+        const safeUrl = await getSafeSvgUrl(fileUrl);
+        const tempImg = new Image();
+        tempImg.onload = () => {
+          const { jsPDF } = window.jspdf;
+          const canvas = document.createElement('canvas');
+          const scale = 4;
+          canvas.width = (tempImg.naturalWidth || 420) * scale;
+          canvas.height = (tempImg.naturalHeight || 100) * scale;
+          const ctx = canvas.getContext('2d');
+          ctx.scale(scale, scale);
+          ctx.drawImage(tempImg, 0, 0);
+          
+          const imgData = canvas.toDataURL('image/png');
+          const orientation = canvas.width > canvas.height ? 'l' : 'p';
+          const pdf = new jsPDF(orientation, 'px', [canvas.width, canvas.height]);
+          pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+          pdf.save(filename);
+          URL.revokeObjectURL(safeUrl);
+        };
+        tempImg.src = safeUrl;
+      } catch (err) {
+        alert("PDF Export failed: " + err.message + "\n\nPlease ensure you are running this page via localhost.");
+      }
+    }
+  </script>
+</body>
+</html>
