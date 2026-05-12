@@ -234,7 +234,7 @@ export default function SellerDashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {sellerStats.map((stat) => (
             <Card key={stat.title} className="border-none shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
               <CardContent className="p-0">
@@ -254,16 +254,18 @@ export default function SellerDashboard() {
           ))}
         </div>
 
-        {/* Tabs System */}
+          {/* Tabs System */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="bg-transparent border-b border-gray-200 w-full justify-start rounded-none h-auto p-0 gap-8">
+          <div className="overflow-x-auto scrollbar-hide border-b border-gray-200">
+            <TabsList className="bg-transparent w-full justify-start rounded-none h-auto p-0 gap-8 whitespace-nowrap min-w-max">
             <TabsTrigger value="overview" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary rounded-none px-0 py-3 font-bold text-sm">Dashboard Overview</TabsTrigger>
             <TabsTrigger value="products" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary rounded-none px-0 py-3 font-bold text-sm">Inventory Management</TabsTrigger>
             <TabsTrigger value="orders" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary rounded-none px-0 py-3 font-bold text-sm">Active Orders</TabsTrigger>
             <TabsTrigger value="payouts" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary rounded-none px-0 py-3 font-bold text-sm">Payout History</TabsTrigger>
             <TabsTrigger value="analytics" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary rounded-none px-0 py-3 font-bold text-sm">Analytics</TabsTrigger>
             <TabsTrigger value="add-product" className="bg-transparent border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary rounded-none px-0 py-3 font-bold text-sm">Create Listing</TabsTrigger>
-          </TabsList>
+            </TabsList>
+          </div>
 
 
           {/* OVERVIEW CONTENT */}
@@ -280,28 +282,24 @@ export default function SellerDashboard() {
                     <table className="w-full text-left">
                       <thead className="bg-gray-50 border-b border-gray-100">
                         <tr>
-                          <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Order ID</th>
+                          <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 hidden sm:table-cell">Order ID</th>
                           <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Product</th>
-                          <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Buyer</th>
-                          <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Status</th>
+                          <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 hidden sm:table-cell">Status</th>
                           <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Total</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
                         {orders.length === 0 ? (
-                          <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500 font-medium italic">No transactions yet.</td></tr>
+                          <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-500 font-medium italic">No transactions yet.</td></tr>
                         ) : (
                           orders.slice(0, 5).map((order) => (
                             <Link href={`/seller/orders/${order.id}`} key={order.id} className="contents">
                               <tr className="hover:bg-gray-50/50 transition-colors cursor-pointer group">
-                                <td className="px-6 py-4 font-mono text-xs font-bold text-gray-400 group-hover:text-primary">#{order.order_number.split('-').pop()}</td>
+                                <td className="px-6 py-4 font-mono text-xs font-bold text-gray-400 group-hover:text-primary hidden sm:table-cell">#{order.order_number.split('-').pop()}</td>
                                 <td className="px-6 py-4">
                                   <p className="text-sm font-bold text-gray-900 truncate max-w-[150px]">{order.product?.title}</p>
                                 </td>
-                                <td className="px-6 py-4">
-                                  <p className="text-sm font-medium text-gray-600">{order.buyer?.first_name} {order.buyer?.last_name}</p>
-                                </td>
-                                <td className="px-6 py-4">
+                                <td className="px-6 py-4 hidden sm:table-cell">
                                   <Badge className={`${getStatusColor(order.status)} text-[10px] h-5 px-2`}>{order.status.replace('_', ' ')}</Badge>
                                 </td>
                                 <td className="px-6 py-4">
@@ -555,10 +553,7 @@ export default function SellerDashboard() {
                             <h3 className="text-xl font-bold text-gray-900 mt-2 group-hover:text-primary transition-colors">{order.product?.title}</h3>
                             <p className="text-sm font-medium text-gray-500">Ordered by <span className="text-gray-900 font-bold">{order.buyer?.first_name} {order.buyer?.last_name}</span> on {new Date(order.created_at).toLocaleDateString()}</p>
                           </div>
-                          <div className="text-right">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Earnings</p>
-                            <p className="text-2xl font-black text-primary">KSh {order.seller_receivable.toLocaleString()}</p>
-                          </div>
+                          <p className="text-2xl font-black text-primary">KSh {order.seller_receivable.toLocaleString()}</p>
                         </div>
 
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-6 border-t border-gray-50">

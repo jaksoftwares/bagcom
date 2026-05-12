@@ -199,7 +199,7 @@ export default function AdminFinancials() {
                     <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Order</th>
                     <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Amount</th>
                     <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Status</th>
-                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Updated</th>
+                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400 hidden md:table-cell">Updated</th>
                     <th className="px-6 py-4 text-right text-[11px] font-bold uppercase tracking-wider text-slate-400">Actions</th>
                   </tr>
                 </thead>
@@ -219,7 +219,7 @@ export default function AdminFinancials() {
                         <td className="px-6 py-5">
                           {getEscrowBadge(item.escrow_status)}
                         </td>
-                        <td className="px-6 py-5">
+                        <td className="px-6 py-5 hidden md:table-cell">
                            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400">
                               <History className="h-3.5 w-3.5 opacity-60" />
                               {item.released_at ? new Date(item.released_at).toLocaleDateString(undefined, { dateStyle: 'medium' }) : 'Pending Clearance'}

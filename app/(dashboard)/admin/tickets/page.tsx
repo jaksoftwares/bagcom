@@ -170,7 +170,7 @@ export default function SupportTickets() {
                         </div>
                      </div>
 
-                     <div className="lg:w-56 space-y-3 flex flex-col justify-center border-l border-slate-100 pl-8">
+                     <div className="lg:w-56 space-y-3 flex flex-col justify-center border-t lg:border-t-0 lg:border-l border-slate-100 pt-6 lg:pt-0 lg:pl-8">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center mb-1">Actions</p>
                         <Button 
                           onClick={() => updateTicket(ticket.id, 'IN_PROGRESS')}

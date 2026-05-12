@@ -32,9 +32,15 @@ interface BuyerLayoutProps {
 export default function BuyerLayout({ children }: BuyerLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    if (window.innerWidth >= 1024) {
+      setIsSidebarOpen(true);
+    }
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -103,10 +109,10 @@ export default function BuyerLayout({ children }: BuyerLayoutProps) {
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Mobile Sidebar Overlay */}
-      {!isSidebarOpen && (
+      {isSidebarOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden"
-          onClick={() => setIsSidebarOpen(true)}
+          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
@@ -136,6 +142,9 @@ export default function BuyerLayout({ children }: BuyerLayoutProps) {
                       <Link
                         key={item.name}
                         href={item.href}
+                        onClick={() => {
+                          if (window.innerWidth < 1024) setIsSidebarOpen(false);
+                        }}
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 group ${
                           isActive 
                             ? 'bg-primary/5 text-primary' 
@@ -187,7 +196,7 @@ export default function BuyerLayout({ children }: BuyerLayoutProps) {
       {/* Content Area */}
       <div className={`transition-all duration-300 min-h-screen flex flex-col ${isSidebarOpen ? 'lg:pl-72' : 'lg:pl-0'}`}>
         {/* Top Header */}
-        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100 h-20 flex items-center justify-between px-8 shrink-0">
+        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100 h-20 flex items-center justify-between px-4 sm:px-8 shrink-0">
           <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
@@ -227,7 +236,7 @@ export default function BuyerLayout({ children }: BuyerLayoutProps) {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-8 lg:p-12 overflow-x-hidden">
+        <main className="flex-1 p-4 sm:p-8 lg:p-12 overflow-x-hidden">
           {children}
         </main>
       </div>

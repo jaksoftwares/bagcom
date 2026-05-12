@@ -33,9 +33,15 @@ interface SellerLayoutProps {
 export default function SellerLayout({ children }: SellerLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    if (window.innerWidth >= 1024) {
+      setIsSidebarOpen(true);
+    }
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -143,7 +149,13 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Sidebar for Desktop */}
+      {/* Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
       <aside 
         className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
@@ -172,6 +184,9 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={() => {
+                    if (window.innerWidth < 1024) setIsSidebarOpen(false);
+                  }}
                   className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 group ${
                     isActive 
                       ? 'bg-indigo-50 text-indigo-600 shadow-sm' 
@@ -213,7 +228,7 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
       {/* Content Area */}
       <div className={`transition-all duration-300 ${isSidebarOpen ? 'lg:pl-72' : 'lg:pl-0'}`}>
         {/* Top Header */}
-        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100 h-20 flex items-center justify-between px-8">
+        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100 h-20 flex items-center justify-between px-4 sm:px-8 shrink-0">
           <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
@@ -253,7 +268,7 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
         </header>
 
         {/* Main Content */}
-        <main className="p-8 lg:p-12">
+        <main className="p-4 sm:p-8 lg:p-12">
           {children}
         </main>
       </div>

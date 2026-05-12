@@ -132,7 +132,7 @@ export default function BuyerDashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
@@ -192,8 +192,8 @@ export default function BuyerDashboard() {
                             </div>
                           </div>
                           
-                          <div className="flex items-center space-x-6">
-                            <div className="text-right">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mt-4 sm:mt-0">
+                            <div className="text-left sm:text-right">
                               <p className="font-semibold text-gray-900">KSh {order.total_amount.toLocaleString()}</p>
                               <Badge className={`${getStatusColor(order.status)} text-white mt-1`}>
                                 <StatusIcon className="h-3 w-3 mr-1" />

@@ -163,9 +163,9 @@ export default function AdminDashboard() {
                 <table className="w-full text-left">
                   <thead className="bg-slate-50 border-b border-slate-100">
                     <tr>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Order</th>
+                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400 hidden sm:table-cell">Order</th>
                       <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Product</th>
-                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Buyer</th>
+                      <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400 hidden lg:table-cell">Buyer</th>
                       <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-right">Amount</th>
                       <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">Status</th>
                     </tr>
@@ -173,12 +173,12 @@ export default function AdminDashboard() {
                   <tbody className="divide-y divide-slate-50">
                     {stats?.recentActivity?.map((order: any) => (
                       <tr key={order.id} className="hover:bg-slate-50 transition-all duration-200 group cursor-pointer">
-                        <td className="px-6 py-5 text-xs font-mono font-bold text-slate-400 group-hover:text-slate-900 transition-colors">#{order.order_number.split('-').pop()}</td>
+                        <td className="px-6 py-5 text-xs font-mono font-bold text-slate-400 group-hover:text-slate-900 transition-colors hidden sm:table-cell">#{order.order_number.split('-').pop()}</td>
                         <td className="px-6 py-5">
-                          <p className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors truncate max-w-[200px]">{order.product?.title}</p>
+                          <p className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors truncate max-w-[150px] sm:max-w-[200px]">{order.product?.title}</p>
                           <p className="text-[11px] font-medium text-slate-400 mt-0.5">{new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                         </td>
-                        <td className="px-6 py-5">
+                        <td className="px-6 py-5 hidden lg:table-cell">
                            <div className="flex items-center gap-2">
                               <div className="h-7 w-7 bg-slate-100 rounded-md flex items-center justify-center text-[10px] font-bold text-slate-500">
                                  {order.buyer?.first_name?.[0]}
