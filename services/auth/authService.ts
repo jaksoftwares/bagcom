@@ -20,6 +20,8 @@ export async function signUp({
   planned_categories?: string;
   store_description?: string;
   physical_address?: string;
+  phone_number?: string;
+  city?: string;
 }) {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -34,6 +36,8 @@ export async function signUp({
         planned_categories,
         store_description,
         physical_address,
+        phone_number,
+        city,
         seller_status: role === 'SELLER' ? 'PENDING' : 'APPROVED'
       },
       emailRedirectTo: `${window.location.origin}/auth/callback`
@@ -55,6 +59,8 @@ export async function signUp({
       planned_categories,
       store_description,
       physical_address,
+      phone_number,
+      city,
       seller_status: role === 'SELLER' ? 'PENDING' : 'APPROVED'
     });
   }

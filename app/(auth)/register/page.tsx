@@ -13,7 +13,9 @@ import {
   ArrowRight,
   ShieldCheck,
   Store,
-  GraduationCap
+  GraduationCap,
+  Phone,
+  MapPin
 } from 'lucide-react';
 import Link from 'next/link';
 import { signUp } from '@/services/auth/authService';
@@ -40,18 +42,27 @@ export default function RegisterPage() {
     const last_name = formData.get('last_name') as string;
 
     try {
-      await signUp({ 
+      const signupData: any = { 
         email, 
         password, 
         first_name, 
         last_name, 
-        role: userRole,
-        business_name: formData.get('business_name') as string,
-        id_number: formData.get('id_number') as string,
-        planned_categories: formData.get('planned_categories') as string,
-        store_description: formData.get('store_description') as string,
-        physical_address: formData.get('physical_address') as string
-      });
+        role: userRole 
+      };
+
+      // Only add seller-specific fields if the role is SELLER
+      if (userRole === 'SELLER') {
+        signupData.business_name = formData.get('business_name') as string;
+        signupData.id_number = formData.get('id_number') as string;
+        signupData.phone_number = formData.get('phone_number') as string;
+        signupData.city = formData.get('city') as string;
+        signupData.planned_categories = formData.get('planned_categories') as string;
+        signupData.store_description = formData.get('store_description') as string;
+        signupData.physical_address = formData.get('physical_address') as string;
+      }
+
+      await signUp(signupData);
+      
       // Redirect to verification notice
       router.push('/verify-email');
     } catch (err: any) {
@@ -127,6 +138,22 @@ export default function RegisterPage() {
                   <Label htmlFor="id_number" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">National ID / Passport</Label>
                   <Input id="id_number" name="id_number" placeholder="ID Number" className="h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />
                 </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="phone_number" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">M-PESA Phone Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
+                    <Input id="phone_number" name="phone_number" placeholder="0712345678" className="pl-10 h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">City / Town</Label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
+                    <Input id="city" name="city" placeholder="e.g. Nairobi" className="pl-10 h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />
+                  </div>
+                </div>
+
                 <div className="space-y-2 col-span-2">
                   <Label htmlFor="planned_categories" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">What do you plan to sell?</Label>
                   <Input id="planned_categories" name="planned_categories" placeholder="e.g. Smartphones, Laptops, Fashion" className="h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />

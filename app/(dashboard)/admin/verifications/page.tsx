@@ -15,7 +15,9 @@ import {
   Loader2,
   ExternalLink,
   Mail,
-  AlertCircle
+  AlertCircle,
+  Phone,
+  MapPin
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -115,7 +117,7 @@ export default function SellerVerifications() {
                       <Badge className="bg-amber-500/10 text-amber-500 border-none px-3 py-1 font-black uppercase text-[10px] tracking-widest">Awaiting Review</Badge>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div className="p-4 bg-[#0F172A]/50 border border-white/5 rounded-xl space-y-3">
                          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
                            <FileText className="h-3 w-3" /> Identification
@@ -124,10 +126,35 @@ export default function SellerVerifications() {
                       </div>
                       <div className="p-4 bg-[#0F172A]/50 border border-white/5 rounded-xl space-y-3">
                          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                           <AlertCircle className="h-3 w-3" /> Application Date
+                           <Phone className="h-3 w-3" /> Contact Phone
                          </p>
-                         <p className="text-lg font-bold text-white">{new Date(seller.created_at).toLocaleDateString(undefined, { dateStyle: 'long' })}</p>
+                         <p className="text-lg font-bold text-white">{seller.phone_number || 'N/A'}</p>
                       </div>
+                      <div className="p-4 bg-[#0F172A]/50 border border-white/5 rounded-xl space-y-3">
+                         <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                           <MapPin className="h-3 w-3" /> Location (City)
+                         </p>
+                         <p className="text-lg font-bold text-white">{seller.city || 'N/A'}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="p-6 bg-[#0F172A]/50 border border-white/5 rounded-2xl space-y-4">
+                       <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                         <Store className="h-3 w-3" /> Store Details & Intent
+                       </p>
+                       <div className="space-y-2">
+                          <p className="text-sm text-gray-300 font-bold leading-relaxed italic">
+                            Planned Categories: <span className="text-primary not-italic">{seller.planned_categories}</span>
+                          </p>
+                          <div className="h-px bg-white/5" />
+                          <p className="text-xs text-gray-400 font-medium leading-relaxed">
+                            {seller.store_description}
+                          </p>
+                          <div className="h-px bg-white/5" />
+                          <p className="text-[10px] text-gray-500 font-bold flex items-center gap-2">
+                             <MapPin className="h-3 w-3" /> {seller.physical_address}
+                          </p>
+                       </div>
                     </div>
                   </div>
 
