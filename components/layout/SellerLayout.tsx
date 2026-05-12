@@ -39,14 +39,20 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
 
   useEffect(() => {
     async function checkAuth() {
-      const currentUser = await getCurrentUser();
-      if (!currentUser) {
+      try {
+        const currentUser = await getCurrentUser();
+        if (!currentUser) {
+          router.push('/login');
+          return;
+        }
+        const profile = await getUserProfile(currentUser.id);
+        setUser(profile);
+      } catch (error) {
+        console.error('Seller Auth Check Failed:', error);
         router.push('/login');
-        return;
+      } finally {
+        setIsLoading(false);
       }
-      const profile = await getUserProfile(currentUser.id);
-      setUser(profile);
-      setIsLoading(false);
     }
     checkAuth();
   }, [router]);

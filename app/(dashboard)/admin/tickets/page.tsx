@@ -18,16 +18,19 @@ import {
   Loader2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
 
 export default function SupportTickets() {
   const { toast } = useToast();
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
   const [responses, setResponses] = useState<any[]>([]);
   const [reply, setReply] = useState('');
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
-    async function fetchTickets() {
+    async function loadTickets() {
       try {
         const res = await fetch('/api/admin/tickets');
         const data = await res.json();
@@ -38,13 +41,12 @@ export default function SupportTickets() {
         setIsLoading(false);
       }
     }
-    fetchTickets();
+    loadTickets();
   }, []);
 
   const fetchResponses = async (ticketId: string) => {
     try {
-      const supabase = createServerClient(); // Wait, this is client side
-      const res = await fetch(`/api/admin/tickets/${ticketId}/responses`); // Need to create this API
+      const res = await fetch(`/api/admin/tickets/${ticketId}/responses`);
       const data = await res.json();
       setResponses(data.responses || []);
     } catch (e) {

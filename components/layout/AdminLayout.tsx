@@ -38,18 +38,24 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   useEffect(() => {
     async function checkAdmin() {
-      const user = await getCurrentUser();
-      if (!user) {
+      try {
+        const user = await getCurrentUser();
+        if (!user) {
+          router.push('/login');
+          return;
+        }
+        const profile = await getUserProfile(user.id);
+        if (profile?.role !== 'ADMIN' && profile?.role !== 'SUPER_ADMIN') {
+          router.push('/unauthorized');
+          return;
+        }
+        setAdmin(profile);
+      } catch (error) {
+        console.error('Admin Auth Check Failed:', error);
         router.push('/login');
-        return;
+      } finally {
+        setIsLoading(false);
       }
-      const profile = await getUserProfile(user.id);
-      if (profile?.role !== 'ADMIN' && profile?.role !== 'SUPER_ADMIN') {
-        router.push('/unauthorized');
-        return;
-      }
-      setAdmin(profile);
-      setIsLoading(false);
     }
     checkAdmin();
   }, [router]);
