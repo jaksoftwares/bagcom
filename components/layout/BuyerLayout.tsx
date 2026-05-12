@@ -37,23 +37,34 @@ export default function BuyerLayout({ children }: BuyerLayoutProps) {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
+    let mounted = true;
     async function checkAuth() {
       try {
         const currentUser = await getCurrentUser();
         if (!currentUser) {
-          router.push('/login');
+          console.log('Buyer Guard: No user found');
+          if (mounted) router.push('/login');
           return;
         }
         const profile = await getUserProfile(currentUser.id);
-        setUser(profile);
+        if (mounted) {
+          setUser(profile);
+          setIsLoading(false);
+        }
       } catch (error) {
         console.error('Buyer Auth Check Failed:', error);
-        router.push('/login');
-      } finally {
-        setIsLoading(false);
+        if (mounted) router.push('/login');
       }
     }
-    checkAuth();
+    
+    const timer = setTimeout(() => {
+      checkAuth();
+    }, 100);
+
+    return () => {
+      mounted = false;
+      clearTimeout(timer);
+    };
   }, [router]);
 
   const handleSignOut = async () => {

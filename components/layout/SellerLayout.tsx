@@ -38,23 +38,34 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
+    let mounted = true;
     async function checkAuth() {
       try {
         const currentUser = await getCurrentUser();
         if (!currentUser) {
-          router.push('/login');
+          console.log('Seller Guard: No user found');
+          if (mounted) router.push('/login');
           return;
         }
         const profile = await getUserProfile(currentUser.id);
-        setUser(profile);
+        if (mounted) {
+          setUser(profile);
+          setIsLoading(false);
+        }
       } catch (error) {
         console.error('Seller Auth Check Failed:', error);
-        router.push('/login');
-      } finally {
-        setIsLoading(false);
+        if (mounted) router.push('/login');
       }
     }
-    checkAuth();
+    
+    const timer = setTimeout(() => {
+      checkAuth();
+    }, 100);
+
+    return () => {
+      mounted = false;
+      clearTimeout(timer);
+    };
   }, [router]);
 
   const navItems = [

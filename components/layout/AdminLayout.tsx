@@ -37,27 +37,50 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [admin, setAdmin] = useState<any>(null);
 
   useEffect(() => {
+    let mounted = true;
     async function checkAdmin() {
       try {
         const user = await getCurrentUser();
+        
         if (!user) {
-          router.push('/login');
+          console.log('Admin Guard: No user found, redirecting to login');
+          if (mounted) router.push('/login');
           return;
         }
+
         const profile = await getUserProfile(user.id);
-        if (profile?.role !== 'ADMIN' && profile?.role !== 'SUPER_ADMIN') {
-          router.push('/unauthorized');
+        
+        if (!profile) {
+          console.log('Admin Guard: No profile found for user', user.id);
+          if (mounted) router.push('/unauthorized');
           return;
         }
-        setAdmin(profile);
+
+        if (profile.role !== 'ADMIN' && profile.role !== 'SUPER_ADMIN') {
+          console.log('Admin Guard: User is not an admin', profile.role);
+          if (mounted) router.push('/unauthorized');
+          return;
+        }
+
+        if (mounted) {
+          setAdmin(profile);
+          setIsLoading(false);
+        }
       } catch (error) {
         console.error('Admin Auth Check Failed:', error);
-        router.push('/login');
-      } finally {
-        setIsLoading(false);
+        if (mounted) router.push('/login');
       }
     }
-    checkAdmin();
+    
+    // Add a small delay to allow session to stabilize
+    const timer = setTimeout(() => {
+      checkAdmin();
+    }, 100);
+
+    return () => {
+      mounted = false;
+      clearTimeout(timer);
+    };
   }, [router]);
 
   const navItems = [
