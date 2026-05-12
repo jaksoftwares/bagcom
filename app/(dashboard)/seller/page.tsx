@@ -39,11 +39,12 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
-import Header from '@/components/navigation/Header';
 import { categories } from '@/lib/mock-data/categories';
 import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
+import SellerLayout from '@/components/layout/SellerLayout';
 import { useToast } from '@/hooks/use-toast';
 import { OrderActions } from '@/components/dashboard/seller/OrderActions';
+import { SellerAnalytics } from '@/components/dashboard/seller/SellerAnalytics';
 import Link from 'next/link';
 
 export default function SellerDashboard() {
@@ -60,7 +61,8 @@ export default function SellerDashboard() {
     totalSales: 0,
     activeListings: 0,
     totalOrders: 0,
-    pendingVerification: 0
+    pendingVerification: 0,
+    availableBalance: 0
   });
   const [detailedStats, setDetailedStats] = useState<any>(null);
   const [payouts, setPayouts] = useState<any[]>([]);
@@ -110,18 +112,24 @@ export default function SellerDashboard() {
         setProducts(liveProducts);
         setOrders(liveOrders);
         setDetailedStats(statsData);
-        setPayouts(payoutsData.payouts || []);
+        
+        const livePayouts = payoutsData.payouts || [];
+        setPayouts(livePayouts);
 
         // Calculate Stats
         const completedOrders = liveOrders.filter((o: any) => o.status === 'COMPLETED');
         const totalEarnings = completedOrders.reduce((sum: number, o: any) => sum + o.seller_receivable, 0);
+        const totalWithdrawn = livePayouts.reduce((sum: number, p: any) => sum + p.amount, 0);
+        const availableBalance = totalEarnings - totalWithdrawn;
+
         const pending = liveOrders.filter((o: any) => o.status === 'PAYMENT_SUCCESS' || o.status === 'DELIVERED').length;
 
         setStats({
           totalSales: totalEarnings,
           activeListings: liveProducts.filter((p: any) => p.status === 'ACTIVE').length,
           totalOrders: liveOrders.length,
-          pendingVerification: pending
+          pendingVerification: pending,
+          availableBalance
         });
 
 
@@ -207,10 +215,8 @@ export default function SellerDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB]">
-      <Header isLoggedIn={true} setIsLoggedIn={() => {}} userRole="seller" />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <SellerLayout>
+      <div className="space-y-10">
         {/* Welcome Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
           <div>
@@ -412,13 +418,48 @@ export default function SellerDashboard() {
           {/* PAYOUTS CONTENT */}
           <TabsContent value="payouts" className="space-y-6 outline-none">
             <div className="grid md:grid-cols-3 gap-6">
-              <Card className="bg-primary text-white p-6 md:col-span-1">
-                <Wallet className="h-8 w-8 mb-4 text-primary-foreground/50" />
-                <h4 className="text-xs font-bold uppercase tracking-widest text-primary-foreground/70">Total Withdrawn</h4>
-                <p className="text-3xl font-black">KSh {stats.totalSales.toLocaleString()}</p>
-                <div className="mt-6 pt-6 border-t border-white/10">
-                  <p className="text-xs font-medium text-primary-foreground/70 mb-2">Connected M-PESA Number</p>
-                  <p className="font-bold">{profile?.phone_number || 'Not Linked'}</p>
+              <Card className="bg-indigo-600 text-white p-8 md:col-span-1 shadow-xl shadow-indigo-100 flex flex-col justify-between">
+                <div>
+                  <Wallet className="h-10 w-10 mb-6 text-indigo-300" />
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-indigo-100/70">Available for Payout</h4>
+                  <p className="text-4xl font-black mt-2">KSh {stats.availableBalance.toLocaleString()}</p>
+                  
+                  <div className="mt-8 space-y-4">
+                    <div className="p-4 bg-white/10 rounded-xl">
+                      <p className="text-[10px] font-bold text-indigo-200 uppercase tracking-widest mb-1">Total Earned</p>
+                      <p className="text-lg font-black">KSh {stats.totalSales.toLocaleString()}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-10">
+                  <Button 
+                    className="w-full bg-white text-indigo-600 hover:bg-indigo-50 font-black h-12 rounded-xl"
+                    disabled={stats.availableBalance <= 0}
+                    onClick={async () => {
+                      if (stats.availableBalance <= 0) return;
+                      setIsSubmitting(true);
+                      try {
+                        const res = await fetch('/api/payouts', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ sellerId: user.id, amount: stats.availableBalance })
+                        });
+                        if (res.ok) {
+                          toast({ title: "Payout request sent", description: "Your funds will be sent to your M-PESA shortly." });
+                          // Refresh data
+                          window.location.reload();
+                        }
+                      } catch (e) {
+                        toast({ title: "Request failed", variant: "destructive" });
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }}
+                  >
+                    {isSubmitting ? "Processing..." : "Request Full Payout"}
+                  </Button>
+                  <p className="text-[10px] text-center text-indigo-200 mt-4 font-bold uppercase tracking-widest">Sent to {profile?.phone_number}</p>
                 </div>
               </Card>
 
@@ -487,37 +528,7 @@ export default function SellerDashboard() {
               </Card>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-8">
-              <Card className="p-8 border-none shadow-sm">
-                <h3 className="text-lg font-bold text-gray-900 mb-6">Status Breakdown</h3>
-                <div className="space-y-4">
-                  {Object.entries(detailedStats?.statusBreakdown || {}).map(([status, count]: [any, any]) => (
-                    <div key={status} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`h-3 w-3 rounded-full ${getStatusColor(status)}`} />
-                        <span className="text-sm font-bold text-gray-600 uppercase tracking-tighter">{status.replace('_', ' ')}</span>
-                      </div>
-                      <span className="text-sm font-black text-gray-900">{count}</span>
-                    </div>
-                  ))}
-                  {Object.keys(detailedStats?.statusBreakdown || {}).length === 0 && (
-                    <p className="text-gray-400 text-center py-10 italic">No sales data available for breakdown.</p>
-                  )}
-                </div>
-              </Card>
-
-              <Card className="p-8 border-none shadow-sm bg-gray-900 text-white flex flex-col justify-center">
-                <BarChart3 className="h-10 w-10 text-primary mb-4" />
-                <h3 className="text-xl font-bold mb-2">Growth Analytics</h3>
-                <p className="text-gray-400 text-sm leading-relaxed mb-6">We're processing your historical data to provide growth insights. Check back soon for conversion rate and traffic source analysis.</p>
-                <div className="space-y-2">
-                  <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary w-[45%] animate-pulse" />
-                  </div>
-                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Data Ingestion 45%</p>
-                </div>
-              </Card>
-            </div>
+            <SellerAnalytics stats={detailedStats} />
           </TabsContent>
 
 
@@ -727,6 +738,6 @@ export default function SellerDashboard() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </SellerLayout>
   );
 }

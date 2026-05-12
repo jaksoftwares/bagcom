@@ -20,7 +20,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import Header from '@/components/navigation/Header';
+import SellerLayout from '@/components/layout/SellerLayout';
 import { OrderActions } from '@/components/dashboard/seller/OrderActions';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -72,10 +72,8 @@ export default function SellerOrderDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB]">
-      <Header isLoggedIn={true} setIsLoggedIn={() => {}} userRole="seller" />
-      
-      <div className="max-w-5xl mx-auto px-4 py-8">
+    <SellerLayout>
+      <div className="max-w-5xl">
         <Link href="/seller" className="flex items-center text-sm font-bold text-gray-500 hover:text-primary mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4 mr-2" /> Back to Dashboard
         </Link>
@@ -203,6 +201,6 @@ export default function SellerOrderDetails() {
           </div>
         </div>
       </div>
-    </div>
+    </SellerLayout>
   );
 }

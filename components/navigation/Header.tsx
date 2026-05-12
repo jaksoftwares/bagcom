@@ -46,8 +46,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
           setUnreadCount(data.count || 0);
 
           // Subscribe to new messages for any conversation this user is part of
-          const { createBrowserClient } = await import('@/lib/supabase/client');
-          const supabase = createBrowserClient();
+          const { supabase } = await import('@/lib/supabase/client');
           
           const channel = supabase
             .channel('global-unread')

@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createBrowserClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 
 export function useChat(conversationId: string | null, currentUserId: string | null) {
   const [messages, setMessages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const supabase = createBrowserClient();
 
   const fetchMessages = useCallback(async () => {
     if (!conversationId) return;
