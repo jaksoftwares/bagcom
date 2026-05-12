@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   description: 'A modern trusted marketplace for buying and selling second-hand goods locally.',
 };
 
+import { CartProvider } from '@/context/CartContext';
+
 export default function RootLayout({
   children,
 }: {
@@ -21,8 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
-        <Toaster />
+        <CartProvider>
+          {children}
+          <Toaster />
+        </CartProvider>
       </body>
     </html>
   );

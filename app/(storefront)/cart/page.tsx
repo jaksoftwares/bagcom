@@ -14,44 +14,22 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 
-// Mock cart data
-const initialCart = [
-  {
-    id: 1,
-    name: "MacBook Pro M2 2023",
-    price: 185000,
-    category: "Electronics",
-    image: "https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=400",
-    quantity: 1,
-    seller: "Maina Gadgets"
-  },
-  {
-    id: 2,
-    name: "Ergonomic Office Chair",
-    price: 12500,
-    category: "Furniture",
-    image: "https://images.pexels.com/photos/1957477/pexels-photo-1957477.jpeg?auto=compress&cs=tinysrgb&w=400",
-    quantity: 1,
-    seller: "Sarah Furniture"
-  }
-];
+
 
 export default function CartPage() {
-  const [cart, setCart] = useState(initialCart);
+  const { cart, updateQuantity, removeFromCart, totalPrice } = useCart();
 
-  const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const subtotal = totalPrice;
   const serviceFee = subtotal * 0.02; // 2% Escrow/Service fee
   const total = subtotal + serviceFee;
 
-  const updateQuantity = (id: number, delta: number) => {
-    setCart(prev => prev.map(item => 
-      item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-    ));
-  };
-
-  const removeItem = (id: number) => {
-    setCart(prev => prev.filter(item => item.id !== id));
+  const handleUpdateQuantity = (id: string | number, delta: number) => {
+    const item = cart.find(i => i.id === id);
+    if (item) {
+      updateQuantity(id, item.quantity + delta);
+    }
   };
 
   return (
@@ -103,7 +81,7 @@ export default function CartPage() {
                               variant="ghost" 
                               size="icon" 
                               className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-white transition-all"
-                              onClick={() => updateQuantity(item.id, -1)}
+                              onClick={() => handleUpdateQuantity(item.id, -1)}
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
@@ -112,7 +90,7 @@ export default function CartPage() {
                               variant="ghost" 
                               size="icon" 
                               className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-white transition-all"
-                              onClick={() => updateQuantity(item.id, 1)}
+                              onClick={() => handleUpdateQuantity(item.id, 1)}
                             >
                               <Plus className="h-3 w-3" />
                             </Button>
@@ -126,7 +104,7 @@ export default function CartPage() {
                                variant="ghost" 
                                size="sm" 
                                className="rounded-xl gap-2 text-red-500 hover:text-red-600 hover:bg-red-50"
-                               onClick={() => removeItem(item.id)}
+                               onClick={() => removeFromCart(item.id)}
                              >
                                 <Trash2 className="h-4 w-4" /> Remove
                              </Button>

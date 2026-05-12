@@ -58,25 +58,34 @@ export async function POST(request: Request) {
         .eq('id', transaction.id);
 
 
-      // Update Order Status
-      if (transaction.order_id) {
+      // Get all associated orders from metadata
+      const orderIds = (transaction.metadata as any)?.order_ids || [transaction.order_id];
+      
+      for (const order_id of orderIds) {
+        if (!order_id) continue;
+
+        // Update Order Status
         await supabase
           .from('orders')
           .update({
             status: 'PAYMENT_SUCCESS' as const,
             updated_at: now
           })
-          .eq('id', transaction.order_id);
+          .eq('id', order_id);
 
         // Create Escrow Record
+        // Note: For bulk orders, we'd ideally split the amount, but for now we'll fetch the order's total
+        const { data: currentOrder } = await supabase.from('orders').select('total_amount').eq('id', order_id).single();
+        
         await supabase
           .from('escrow_transactions')
           .insert({
-            order_id: transaction.order_id,
-            held_amount: Number(amount),
+            order_id: order_id,
+            held_amount: currentOrder?.total_amount || 0,
             escrow_status: 'HELD_IN_ESCROW',
             held_at: now
           });
+
         // 4. Send Notifications (Email)
         try {
           const { data: orderData } = await supabase
@@ -89,7 +98,7 @@ export async function POST(request: Request) {
               buyer:users!orders_buyer_id_fkey(email, first_name),
               seller:users!orders_seller_id_fkey(email, first_name)
             `)
-            .eq('id', transaction.order_id)
+            .eq('id', order_id)
             .single();
 
           if (orderData) {
@@ -146,14 +155,16 @@ export async function POST(request: Request) {
         .eq('id', transaction.id);
 
 
-      if (transaction.order_id) {
+      const orderIds = (transaction.metadata as any)?.order_ids || [transaction.order_id];
+      for (const order_id of orderIds) {
+        if (!order_id) continue;
         await supabase
           .from('orders')
           .update({
             status: 'FAILED' as const,
             updated_at: now
           })
-          .eq('id', transaction.order_id);
+          .eq('id', order_id);
       }
 
     }

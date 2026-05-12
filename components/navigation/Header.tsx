@@ -15,6 +15,7 @@ import Logo from '../shared/Logo';
 import { signOut, getCurrentUser, getUserProfile } from '@/services/auth/authService';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useCart } from '@/context/CartContext';
 
 interface HeaderProps {
   isLoggedIn?: boolean;
@@ -28,6 +29,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
   const [profile, setProfile] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [unreadCount, setUnreadCount] = useState(0);
+  const { totalItems } = useCart();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -224,9 +226,11 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                 <Link href="/cart">
                   <Button variant="ghost" size="icon" className="relative rounded-sm">
                     <ShoppingCart className="h-5 w-5 text-foreground/80" />
-                    <Badge className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center p-0 text-[10px] bg-primary text-white border-white border-2">
-                      3
-                    </Badge>
+                    {totalItems > 0 && (
+                      <Badge className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center p-0 text-[10px] bg-primary text-white border-white border-2">
+                        {totalItems}
+                      </Badge>
+                    )}
                   </Button>
                 </Link>
               )}
@@ -304,7 +308,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <span>My Cart</span>
-                    <Badge className="bg-primary text-white">3</Badge>
+                    {totalItems > 0 && <Badge className="bg-primary text-white">{totalItems}</Badge>}
                   </Link>
                   <Button
                     variant="outline"

@@ -11,45 +11,46 @@ import { MpesaService } from '@/services/mpesa';
 export async function POST(request: Request) {
   try {
     const supabase = createServerClient();
-    const { orderId, phoneNumber } = await request.json();
+    const { orderId, orderIds, phoneNumber } = await request.json();
 
+    const targetOrderId = orderId || (orderIds && orderIds[0]);
     
-    if (!orderId || !phoneNumber) {
+    if (!targetOrderId || !phoneNumber) {
       return NextResponse.json({ error: 'Order ID and phone number are required' }, { status: 400 });
     }
 
-    // 1. Fetch order details
-    const { data: order, error: orderError } = await supabase
+    // 1. Fetch order details (using the first order to get the amount if not provided, 
+    // or we calculate total from all orders)
+    const { data: orders, error: orderError } = await supabase
       .from('orders')
       .select('*, product:products(title)')
-      .eq('id', orderId)
-      .single();
+      .in('id', orderIds || [targetOrderId]);
 
-    if (orderError || !order) {
-      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+    if (orderError || !orders || orders.length === 0) {
+      return NextResponse.json({ error: 'Orders not found' }, { status: 404 });
     }
 
-    if (order.status !== 'PENDING_PAYMENT') {
-      return NextResponse.json({ error: 'Order is not in a payable state' }, { status: 400 });
-    }
+    const totalAmount = orders.reduce((sum, o) => sum + Number(o.total_amount), 0);
+    const orderNumber = orders.length > 1 ? `BULK-${Date.now()}` : orders[0].order_number;
 
     // 2. Initiate STK Push via MpesaService
     const stkResponse = await MpesaService.initiateSTKPush(
       phoneNumber,
-      order.total_amount,
-      order.order_number
+      totalAmount,
+      orderNumber
     );
 
     // 3. Log the transaction attempt
     const { error: transactionError } = await supabase
       .from('payment_transactions')
       .insert({
-        order_id: orderId,
+        order_id: targetOrderId,
         checkout_request_id: stkResponse.CheckoutRequestID,
         merchant_request_id: stkResponse.MerchantRequestID,
         payer_phone: phoneNumber,
-        amount: order.total_amount,
-        status: 'PENDING'
+        amount: totalAmount,
+        status: 'PENDING',
+        metadata: { order_ids: orderIds || [targetOrderId] }
       });
 
     if (transactionError) console.error('Transaction logging error:', transactionError);

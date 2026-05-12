@@ -26,6 +26,7 @@ import StorefrontLayout from '@/components/layout/StorefrontLayout';
 import ProductCard from '@/components/products/ProductCard';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCart } from '@/context/CartContext';
 import { getProductBySlug, getProducts, Product } from '@/services/products/productService';
 import { getCurrentUser } from '@/services/auth/authService';
 
@@ -33,6 +34,7 @@ export default function ProductDetail() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
+  const { addToCart } = useCart();
   const slug = params.slug as string;
   
   const [product, setProduct] = useState<Product | null>(null);
@@ -90,6 +92,23 @@ export default function ProductDetail() {
 
 
 
+   const handleAddToCart = () => {
+    if (!product) return;
+    addToCart({
+      id: product.id,
+      name: product.title,
+      price: product.price,
+      image: product.images?.[0]?.image_url || '',
+      seller: product.seller?.first_name ? `${product.seller.first_name} ${product.seller.last_name || ''}`.trim() : 'Verified Seller',
+      category: product.category?.name
+    });
+    toast({ 
+      title: "Added to cart", 
+      description: "You can view your items in the shopping cart.",
+      action: <Link href="/cart" className="bg-primary text-white px-3 py-1 rounded text-xs font-bold">View Cart</Link>
+    });
+  };
+
   const handleBuyNow = () => {
     if (!currentUser) {
       toast({ title: "Sign in required", description: "Please log in to purchase items.", variant: "destructive" });
@@ -97,7 +116,17 @@ export default function ProductDetail() {
       return;
     }
     if (!product) return;
-    router.push(`/checkout?productId=${product.id}`);
+    
+    // Add to cart first then checkout
+    addToCart({
+      id: product.id,
+      name: product.title,
+      price: product.price,
+      image: product.images?.[0]?.image_url || '',
+      seller: product.seller?.first_name ? `${product.seller.first_name} ${product.seller.last_name || ''}`.trim() : 'Verified Seller',
+      category: product.category?.name
+    });
+    router.push(`/checkout`);
   };
 
   const handleWishlist = async () => {
@@ -306,14 +335,23 @@ export default function ProductDetail() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {/* BUY NOW — Primary CTA */}
-                    <Button
-                      onClick={handleBuyNow}
-                      className="w-full h-13 text-[13px] font-bold uppercase tracking-widest shadow-md bg-primary hover:bg-primary/90 gap-2"
-                    >
-                      <ShoppingBag className="h-4 w-4" />
-                      Buy Now — KSh {product.price.toLocaleString()}
-                    </Button>
+                     {/* BUY NOW — Primary CTA */}
+                    <div className="space-y-2">
+                      <Button
+                        onClick={handleBuyNow}
+                        className="w-full h-13 text-[13px] font-bold uppercase tracking-widest shadow-md bg-primary hover:bg-primary/90 gap-2"
+                      >
+                        <ShoppingBag className="h-4 w-4" />
+                        Buy Now
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={handleAddToCart}
+                        className="w-full h-11 text-[11px] font-bold uppercase tracking-widest border-primary/20 text-primary hover:bg-primary/5 transition-all"
+                      >
+                        Add to Cart
+                      </Button>
+                    </div>
 
                     {/* Secondary actions */}
                     <div className="grid grid-cols-2 gap-3">

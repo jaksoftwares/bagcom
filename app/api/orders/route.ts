@@ -58,13 +58,13 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { buyer_id, product_id, quantity = 1 } = body;
+    const { buyer_id, product_id, quantity = 1, items } = body;
 
-    if (!buyer_id || !product_id) {
-      return NextResponse.json({ error: 'Missing required fields: buyer_id and product_id' }, { status: 400 });
+    if (!buyer_id && !items) {
+      return NextResponse.json({ error: 'Missing buyer_id' }, { status: 400 });
     }
 
-    // 1. Ensure buyer profile exists in public.users (JIT Sync)
+    // 1. Ensure buyer profile exists
     const { data: existingUser } = await supabase
       .from('users')
       .select('id')
@@ -84,62 +84,70 @@ export async function POST(request: Request) {
       }
     }
 
-    // 2. Fetch product and verify availability
-    const { data: product, error: productError } = await supabase
-      .from('products')
-      .select('*')
-      .eq('id', product_id)
-      .single();
-
-    if (productError || !product) {
-      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
-    }
-
-    if (!product.is_available) {
-      return NextResponse.json({ error: 'This item is no longer available' }, { status: 409 });
-    }
-
-    // 3. Calculate amounts (dynamic commission rate)
-    const subtotal = product.price * quantity;
+    // 2. Prepare items to process
+    const itemsToProcess = items || [{ product_id, quantity }];
+    const createdOrders = [];
     const rate = await getCommissionRate();
-    const commission = Math.round(subtotal * rate);
-    const total = subtotal;
-    const escrow = subtotal;
-    const sellerReceivable = subtotal - commission;
 
-    // 4. Generate order metadata
-    const today = new Date();
-    const datePart = today.toISOString().slice(0, 10).replace(/-/g, '');
-    const randPart = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const orderNumber = `BGC-${datePart}-${randPart}`;
-    const verificationCode = 'BGX-' + Math.floor(100000 + Math.random() * 900000).toString();
-    const deliveryCodeExpires = new Date();
-    deliveryCodeExpires.setDate(deliveryCodeExpires.getDate() + 7);
+    for (const item of itemsToProcess) {
+      const { product_id: p_id, quantity: qty } = item;
+      
+      // Fetch product
+      const { data: product } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', p_id)
+        .single();
 
-    // 5. Insert order
-    const { data: order, error: orderError } = await supabase
-      .from('orders')
-      .insert({
-        buyer_id,
-        seller_id: product.seller_id,
-        product_id,
-        order_number: orderNumber,
-        quantity,
-        subtotal_amount: subtotal,
-        commission_amount: commission,
-        total_amount: total,
-        escrow_amount: escrow,
-        seller_receivable: sellerReceivable,
-        status: 'PENDING_PAYMENT',
-        delivery_code: verificationCode,
-        delivery_code_expires_at: deliveryCodeExpires.toISOString()
-      })
-      .select()
-      .single();
+      if (!product || !product.is_available) continue;
 
-    if (orderError) throw orderError;
+      // Calculate amounts
+      const subtotal = product.price * qty;
+      const commission = Math.round(subtotal * rate);
+      const total = subtotal;
+      const escrow = subtotal;
+      const sellerReceivable = subtotal - commission;
 
-    return NextResponse.json({ success: true, order }, { status: 201 });
+      // Metadata
+      const today = new Date();
+      const datePart = today.toISOString().slice(0, 10).replace(/-/g, '');
+      const randPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const orderNumber = `BGC-${datePart}-${randPart}`;
+      const verificationCode = 'BGX-' + Math.floor(100000 + Math.random() * 900000).toString();
+      const deliveryCodeExpires = new Date();
+      deliveryCodeExpires.setDate(deliveryCodeExpires.getDate() + 7);
+
+      // Insert order
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          buyer_id,
+          seller_id: product.seller_id,
+          product_id: p_id,
+          order_number: orderNumber,
+          quantity: qty,
+          subtotal_amount: subtotal,
+          commission_amount: commission,
+          total_amount: total,
+          escrow_amount: escrow,
+          seller_receivable: sellerReceivable,
+          status: 'PENDING_PAYMENT',
+          delivery_code: verificationCode,
+          delivery_code_expires_at: deliveryCodeExpires.toISOString()
+        })
+        .select()
+        .single();
+
+      if (!orderError && order) {
+        createdOrders.push(order);
+      }
+    }
+
+    if (createdOrders.length === 0) {
+      return NextResponse.json({ error: 'No orders could be created' }, { status: 400 });
+    }
+
+    return NextResponse.json({ success: true, orders: createdOrders, order: createdOrders[0] }, { status: 201 });
   } catch (error: any) {
     console.error('Orders POST Error:', error);
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Heart, MapPin, Star, Clock } from 'lucide-react';
+import { Heart, MapPin, Star, Clock, ShoppingCart } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
@@ -14,7 +15,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, layout = 'grid' }: ProductCardProps) {
   const { toast } = useToast();
-  const isList = layout === 'list';
+  const { addToCart } = useCart();
+  const isList = layout === 'grid';
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
 
@@ -59,6 +61,23 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
     } finally {
       setIsWishlistLoading(false);
     }
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart({
+      id: product.id,
+      name: product.title,
+      price: product.price,
+      image: displayImage,
+      seller: product.seller?.first_name ? `${product.seller.first_name} ${product.seller.last_name || ''}`.trim() : 'Verified Seller',
+      category: categoryName
+    });
+    toast({ 
+      title: "Added to cart", 
+      description: `${product.title} has been added to your cart.`
+    });
   };
 
   return (
@@ -127,6 +146,13 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
               <MapPin className="h-2.5 w-2.5" />
               <span>{product.location?.campus || product.location || 'Marketplace'}</span>
             </div>
+            <button
+              onClick={handleAddToCart}
+              className="p-1.5 rounded-full bg-primary/5 hover:bg-primary hover:text-white text-primary transition-all ml-2"
+              aria-label="Add to cart"
+            >
+              <ShoppingCart className="h-3 w-3" />
+            </button>
           </div>
         </div>
       </div>

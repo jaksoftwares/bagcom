@@ -23,16 +23,18 @@ import { getProducts } from '@/services/products/productService';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { usePaymentStatus } from '@/lib/hooks/usePaymentStatus';
+import { useCart } from '@/context/CartContext';
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { toast } = useToast();
+  const { cart, totalPrice, clearCart } = useCart();
   const productId = searchParams.get('productId');
 
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
-  const [product, setProduct] = useState<any>(null);
+  const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -53,7 +55,9 @@ function CheckoutContent() {
   useEffect(() => {
     if (paymentStatus === 'SUCCESS') {
       setAwaitingPayment(false);
-      router.push(`/buyer/orders/${orderId}`);
+      clearCart();
+      // Redirect to the first order or the buyer dashboard
+      router.push(orderId ? `/buyer/orders/${orderId}` : '/buyer');
     } else if (paymentStatus === 'CANCELLED') {
       setAwaitingPayment(false);
       setIsProcessing(false);
@@ -71,7 +75,7 @@ function CheckoutContent() {
         variant: "destructive"
       });
     }
-  }, [paymentStatus, orderId, router]);
+  }, [paymentStatus, orderId, router, clearCart]);
 
 
   useEffect(() => {
@@ -83,22 +87,18 @@ function CheckoutContent() {
       }
       setUser(currentUser);
 
-      const [userProfile, allProducts] = await Promise.all([
-        getUserProfile(currentUser.id).catch(() => null),
-        productId ? getProducts({ limit: 1 }) : Promise.resolve([]) // will fetch by id below
-      ]);
-
+      const userProfile = await getUserProfile(currentUser.id).catch(() => null);
       setProfile(userProfile);
       setFullName(`${userProfile?.first_name || ''} ${userProfile?.last_name || ''}`.trim());
       setPhone(userProfile?.phone_number || '');
 
-      // Fetch the specific product
+      // Fetch the specific product OR use the cart
       if (productId) {
         try {
           const res = await fetch(`/api/products/${productId}`);
           const data = await res.json();
           if (data.product) {
-            setProduct(data.product);
+            setProducts([data.product]);
           } else {
             toast({ title: "Product not found", variant: "destructive" });
             router.push('/products');
@@ -107,15 +107,29 @@ function CheckoutContent() {
           toast({ title: "Failed to load product", variant: "destructive" });
           router.push('/products');
         }
+      } else if (cart.length > 0) {
+        setProducts(cart.map(item => ({
+            id: item.id,
+            title: item.name,
+            price: item.price,
+            category: { name: item.category },
+            images: [{ image_url: item.image }],
+            condition: 'Good'
+        })));
+      } else {
+          // Empty cart and no productId
+          setIsLoading(false);
+          return;
       }
 
       setIsLoading(false);
     }
     loadData();
-  }, [productId]);
+  }, [productId, cart]);
 
-  const commission = product ? product.price * 0.10 : 0;
-  const total = product ? product.price + commission : 0;
+  const subtotal = products.reduce((sum, p) => sum + p.price, 0);
+  const commission = subtotal * 0.10;
+  const total = subtotal + commission;
 
   const handlePlaceOrder = async () => {
     if (!phone.trim()) {
@@ -129,26 +143,32 @@ function CheckoutContent() {
 
     setIsProcessing(true);
     try {
-      // Step 1: Create the order
+      // Step 1: Create the orders
       const orderRes = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ buyer_id: user.id, product_id: product.id, quantity: 1 })
+        body: JSON.stringify({ 
+            buyer_id: user.id, 
+            items: products.map(p => ({ product_id: p.id, quantity: 1 }))
+        })
       });
       const orderData = await orderRes.json();
 
-      if (!orderData.order) {
+      if (!orderData.orders || orderData.orders.length === 0) {
         throw new Error(orderData.error || 'Failed to create order');
       }
 
-      const createdOrderId = orderData.order.id;
-      setOrderId(createdOrderId);
+      const createdOrderIds = orderData.orders.map((o: any) => o.id);
+      setOrderId(createdOrderIds[0]); // Primary ID for polling
 
       // Step 2: Trigger M-PESA STK Push
       const payRes = await fetch('/api/payments/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId: createdOrderId, phoneNumber: phone })
+        body: JSON.stringify({ 
+            orderIds: createdOrderIds, 
+            phoneNumber: phone 
+        })
       });
       const payData = await payRes.json();
 
@@ -179,17 +199,15 @@ function CheckoutContent() {
     );
   }
 
-  if (!product) {
+  if (products.length === 0) {
     return (
       <div className="min-h-screen bg-[#F9FAFB] flex flex-col items-center justify-center gap-4">
         <AlertCircle className="h-12 w-12 text-gray-300" />
-        <p className="text-gray-500 font-medium">No product selected for checkout.</p>
+        <p className="text-gray-500 font-medium">No products selected for checkout.</p>
         <Link href="/products"><Button>Browse Items</Button></Link>
       </div>
     );
   }
-
-  const displayImage = product.images?.[0]?.image_url || product.product_images?.[0]?.image_url || null;
 
   return (
     <div className="bg-[#F9FAFB] min-h-screen py-12">
@@ -201,20 +219,27 @@ function CheckoutContent() {
           <div className="lg:col-span-7 space-y-6">
             
             {/* Product Summary */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex gap-5 items-start">
-              {displayImage && (
-                <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0">
-                  <Image src={displayImage} alt={product.title} fill className="object-cover" />
-                </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{product.category?.name}</p>
-                <h3 className="font-bold text-gray-900 text-base truncate">{product.title}</h3>
-                <p className="text-[11px] text-gray-400 mt-1 font-medium">{product.condition} condition</p>
-              </div>
-              <div className="text-right shrink-0">
-                <p className="text-xl font-bold text-gray-900">KSh {product.price.toLocaleString()}</p>
-              </div>
+            <div className="space-y-4">
+                {products.map(product => {
+                    const displayImage = product.images?.[0]?.image_url || product.product_images?.[0]?.image_url || null;
+                    return (
+                        <div key={product.id} className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex gap-5 items-start">
+                            {displayImage && (
+                                <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0">
+                                <Image src={displayImage} alt={product.title} fill className="object-cover" />
+                                </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{product.category?.name}</p>
+                                <h3 className="font-bold text-gray-900 text-sm truncate">{product.title}</h3>
+                                <p className="text-[11px] text-gray-400 mt-1 font-medium">{product.condition} condition</p>
+                            </div>
+                            <div className="text-right shrink-0">
+                                <p className="text-lg font-bold text-gray-900">KSh {product.price.toLocaleString()}</p>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
 
             {/* Delivery Details */}
@@ -294,8 +319,8 @@ function CheckoutContent() {
 
               <div className="space-y-4">
                 <div className="flex justify-between text-sm font-medium">
-                  <span className="text-gray-500">Item price</span>
-                  <span className="font-bold text-gray-900">KSh {product.price.toLocaleString()}</span>
+                  <span className="text-gray-500">Items subtotal</span>
+                  <span className="font-bold text-gray-900">KSh {subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm font-medium">
                   <span className="text-gray-500 flex items-center gap-1">
