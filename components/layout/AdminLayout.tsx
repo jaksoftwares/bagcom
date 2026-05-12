@@ -114,7 +114,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className="h-full flex flex-col">
           {/* Logo Section */}
           <div className="p-8 flex items-center justify-center border-b border-slate-100">
-            <Logo variant="default" className="h-8 w-auto" />
+            <Logo variant="primary" className="h-8 w-auto" />
           </div>
 
           {/* Navigation */}
