@@ -71,6 +71,26 @@ export async function signUp({
       is_active: true,
       seller_status: role === 'SELLER' ? 'PENDING' : 'APPROVED'
     }, { onConflict: 'id' });
+
+    // Trigger professional email notifications for sellers
+    if (role === 'SELLER') {
+      try {
+        await fetch('/api/auth/notify-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            first_name,
+            last_name,
+            role,
+            business_name,
+            id_number
+          })
+        });
+      } catch (e) {
+        console.error('NOTIFICATION_TRIGGER_FAILED:', e);
+      }
+    }
   }
 
   return data;

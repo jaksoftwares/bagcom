@@ -425,5 +425,92 @@ export const EmailTemplates = {
         </div>
       </div>
     `
+  }),
+
+  /**
+   * Seller Under Review
+   */
+  sellerUnderReview: (sellerName: string, businessName: string) => ({
+    subject: "Your Bagcom Seller Account is Under Review",
+    html: `
+      <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
+        <div style="background-color: #0F172A; padding: 40px; text-align: center;">
+          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+        </div>
+        <div style="padding: 40px; background-color: #ffffff; text-align: center;">
+          <div style="height: 64px; width: 64px; background-color: #f8fafc; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px; border: 1px solid #f1f5f9;">
+             <span style="color: #4f46e5; font-size: 24px;">⚖️</span>
+          </div>
+          <h1 style="font-size: 28px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Account Under Review</h1>
+          <p style="font-size: 16px; line-height: 1.6; color: #64748b; margin-bottom: 32px;">
+            Welcome to Bagcom! We take quality seriously. Our administrative team is currently reviewing your KYC details for <strong>${businessName || 'your store'}</strong>.
+          </p>
+          
+          <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 16px; padding: 24px; text-align: left; margin-bottom: 32px;">
+             <p style="text-transform: uppercase; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: #94a3b8; margin-bottom: 12px;">What's Next?</p>
+             <p style="font-size: 14px; font-weight: 600; color: #0F172A; margin-bottom: 8px;">1. Verification Audit</p>
+             <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">We verify your identity and business details to ensure a safe marketplace for everyone.</p>
+             
+             <p style="font-size: 14px; font-weight: 600; color: #0F172A; margin-bottom: 8px;">2. Account Activation</p>
+             <p style="font-size: 13px; color: #64748b; margin: 0;">You will receive an email as soon as your account is activated. This usually takes less than 24 hours.</p>
+          </div>
+
+          <div style="background-color: #fffbeb; border: 1px solid #fef3c7; border-radius: 12px; padding: 16px; margin-bottom: 32px; text-align: left;">
+             <p style="font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 4px;">Account Type</p>
+             <p style="font-size: 14px; font-weight: 800; color: #b45309; margin: 0;">${sellerName} Sells (Verified Tier)</p>
+          </div>
+
+          <div style="margin-top: 40px;">
+            <a href="https://bagcom.dovepeakdigital.com" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Return to Marketplace</a>
+          </div>
+        </div>
+      </div>
+    `
+  }),
+
+  /**
+   * Admin New Seller Signup Notification
+   */
+  adminNewSellerSignup: (sellerName: string, email: string, businessName: string, idNumber: string) => ({
+    subject: `ALERT: New Merchant Signup - ${businessName || sellerName}`,
+    html: `
+      <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
+        <div style="background-color: #4f46e5; padding: 40px; text-align: center;">
+          <h1 style="color: white; font-size: 20px; font-weight: 800; margin: 0;">Bagcom Admin Protocol</h1>
+        </div>
+        <div style="padding: 40px; background-color: #ffffff;">
+          <h2 style="font-size: 20px; font-weight: 800; color: #0F172A; margin-bottom: 24px;">New Seller Application Pending</h2>
+          
+          <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 12px 0; color: #64748b;">Merchant Name</td>
+              <td style="padding: 12px 0; font-weight: 700; color: #0F172A; text-align: right;">${sellerName}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 12px 0; color: #64748b;">Business Name</td>
+              <td style="padding: 12px 0; font-weight: 700; color: #0F172A; text-align: right;">${businessName || 'Individual'}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 12px 0; color: #64748b;">Email Address</td>
+              <td style="padding: 12px 0; font-weight: 700; color: #4f46e5; text-align: right;">${email}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 12px 0; color: #64748b;">ID Number</td>
+              <td style="padding: 12px 0; font-weight: 700; color: #0F172A; text-align: right;">${idNumber || 'PENDING'}</td>
+            </tr>
+          </table>
+
+          <div style="margin-top: 32px; background-color: #f8fafc; border-radius: 12px; padding: 20px; border: 1px solid #f1f5f9;">
+             <p style="font-size: 13px; color: #64748b; margin: 0;">
+               Action required: Please review this merchant's KYC details in the Admin Verification Hub and approve/deny the account to enable their store.
+             </p>
+          </div>
+
+          <div style="margin-top: 40px; text-align: center;">
+            <a href="https://bagcom.dovepeakdigital.com/admin/verifications" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Open Verification Hub</a>
+          </div>
+        </div>
+      </div>
+    `
   })
 };
