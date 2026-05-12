@@ -45,7 +45,12 @@ export default function RegisterPage() {
         password, 
         first_name, 
         last_name, 
-        role: userRole 
+        role: userRole,
+        business_name: formData.get('business_name') as string,
+        id_number: formData.get('id_number') as string,
+        planned_categories: formData.get('planned_categories') as string,
+        store_description: formData.get('store_description') as string,
+        physical_address: formData.get('physical_address') as string
       });
       // Redirect to verification notice
       router.push('/verify-email');
@@ -111,6 +116,31 @@ export default function RegisterPage() {
                 <Input id="last_name" name="last_name" placeholder="Doe" className="h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />
               </div>
             </div>
+
+            {userRole === 'SELLER' && (
+              <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="space-y-2">
+                  <Label htmlFor="business_name" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Shop / Business Name</Label>
+                  <Input id="business_name" name="business_name" placeholder="e.g. Joy's Electronics" className="h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="id_number" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">National ID / Passport</Label>
+                  <Input id="id_number" name="id_number" placeholder="ID Number" className="h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <Label htmlFor="planned_categories" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">What do you plan to sell?</Label>
+                  <Input id="planned_categories" name="planned_categories" placeholder="e.g. Smartphones, Laptops, Fashion" className="h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <Label htmlFor="store_description" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Short Store Description</Label>
+                  <Input id="store_description" name="store_description" placeholder="Tell us about your business..." className="h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <Label htmlFor="physical_address" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Physical Address / Pickup Location</Label>
+                  <Input id="physical_address" name="physical_address" placeholder="Building, Street, Room Number" className="h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />
+                </div>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="email" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Email Address</Label>

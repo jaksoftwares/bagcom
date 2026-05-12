@@ -55,6 +55,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const navItems = [
     { name: 'Overview', href: '/admin', icon: LayoutDashboard },
     { name: 'User Management', href: '/admin/users', icon: Users },
+    { name: 'Seller Verifications', href: '/admin/verifications', icon: ShieldCheck },
     { name: 'Product Moderation', href: '/admin/products', icon: ShoppingBag },
     { name: 'Dispute Center', href: '/admin/disputes', icon: ShieldAlert },
     { name: 'Financials & Escrow', href: '/admin/financials', icon: CreditCard },

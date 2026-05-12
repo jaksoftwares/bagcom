@@ -329,6 +329,76 @@ export const EmailTemplates = {
   }),
 
   /**
+   * Seller Approved
+   */
+  sellerApprovedEmail: (sellerName: string, businessName: string) => ({
+    subject: "Congratulations! Your Bagcom Seller Account is Active",
+    html: `
+      <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
+        <div style="background-color: #4f46e5; padding: 40px; text-align: center;">
+           <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+        </div>
+        <div style="padding: 40px; background-color: #ffffff;">
+          <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Welcome to the Marketplace!</h1>
+          <p style="font-size: 16px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">
+            Hello ${sellerName}, we are excited to inform you that your seller application for <strong>${businessName || 'your store'}</strong> has been approved.
+          </p>
+          
+          <div style="background-color: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 12px; padding: 24px; margin-bottom: 32px; text-align: center;">
+             <div style="font-size: 40px; margin-bottom: 16px;">🚀</div>
+             <p style="font-size: 14px; font-weight: 700; color: #4f46e5;">Your Seller Dashboard is now unlocked.</p>
+          </div>
+
+          <p style="font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 32px;">
+            You can now start listing your products, managing your inventory, and receiving payments via M-PESA.
+          </p>
+
+          <div style="text-align: center;">
+            <a href="https://bagcom.dovepeakdigital.com/seller" style="background-color: #4f46e5; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Go to Seller Dashboard</a>
+          </div>
+        </div>
+      </div>
+    `
+  }),
+
+  /**
+   * Seller Rejected
+   */
+  sellerRejectedEmail: (sellerName: string) => ({
+    subject: "Update regarding your Bagcom Seller Application",
+    html: `
+      <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
+        <div style="background-color: #0F172A; padding: 40px; text-align: center;">
+           <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+        </div>
+        <div style="padding: 40px; background-color: #ffffff;">
+          <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Application Status</h1>
+          <p style="font-size: 16px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">
+            Hello ${sellerName}, thank you for your interest in selling on Bagcom. 
+          </p>
+          
+          <p style="font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 24px;">
+            At this time, we require further information or documentation to verify your account. Please ensure your ID and business details are accurate.
+          </p>
+
+          <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 20px; margin-bottom: 32px;">
+             <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin-bottom: 8px;">Next Steps:</p>
+             <ul style="font-size: 13px; color: #64748b; padding-left: 20px; margin: 0;">
+               <li>Verify your ID number is correct</li>
+               <li>Ensure your business name matches your registration</li>
+               <li>Contact support if you believe this was an error</li>
+             </ul>
+          </div>
+
+          <div style="text-align: center;">
+            <a href="mailto:support@bagcom.com" style="color: #4f46e5; text-decoration: none; font-weight: 700; font-size: 14px;">Contact Support Team</a>
+          </div>
+        </div>
+      </div>
+    `
+  }),
+
+  /**
    * Payout Initiated (Seller)
    */
   payoutInitiatedSeller: (sellerName: string, amount: string, orderNumber: string) => ({

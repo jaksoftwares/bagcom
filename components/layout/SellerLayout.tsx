@@ -19,7 +19,8 @@ import {
   Loader2,
   Plus,
   Bell,
-  Store
+  Store,
+  ShieldCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
@@ -63,6 +64,62 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (user?.role === 'SELLER' && user?.seller_status !== 'APPROVED') {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-8 text-center">
+        <div className="max-w-md w-full space-y-8">
+          <div className="flex justify-center">
+             <div className="h-24 w-24 bg-indigo-50 rounded-3xl flex items-center justify-center text-indigo-600 animate-pulse">
+                <ShieldCheck className="h-12 w-12" />
+             </div>
+          </div>
+          <div className="space-y-4">
+             <h1 className="text-3xl font-black text-gray-900 tracking-tight leading-tight">
+               Your Seller Account is <br /> <span className="text-indigo-600">Under Review</span>
+             </h1>
+             <p className="text-gray-500 font-medium leading-relaxed">
+               Welcome to Bagcom! We take quality seriously. Our administrative team is currently reviewing your KYC details. 
+             </p>
+          </div>
+          
+          <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4 shadow-sm">
+             <div className="flex items-center gap-4 text-left">
+                <div className="h-10 w-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                   <Bell className="h-5 w-5" />
+                </div>
+                <div>
+                   <p className="text-sm font-bold text-gray-900">What's Next?</p>
+                   <p className="text-xs text-gray-500 font-medium">You will receive an email as soon as your account is activated.</p>
+                </div>
+             </div>
+             <div className="h-px bg-gray-50" />
+             <div className="flex items-center gap-4 text-left">
+                <div className="h-10 w-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                   <Store className="h-5 w-5" />
+                </div>
+                <div>
+                   <p className="text-sm font-bold text-gray-900">Account Type</p>
+                   <p className="text-xs text-gray-500 font-medium">{user?.business_name || 'Individual Seller'}</p>
+                </div>
+             </div>
+          </div>
+
+          <Button 
+            variant="outline" 
+            className="w-full h-12 rounded-xl font-bold gap-2 border-gray-200"
+            onClick={() => router.push('/')}
+          >
+            Return to Marketplace
+          </Button>
+          
+          <button onClick={() => router.push('/login')} className="text-xs font-bold text-gray-400 hover:text-indigo-600 transition-colors uppercase tracking-widest">
+             Switch Account
+          </button>
+        </div>
       </div>
     );
   }
