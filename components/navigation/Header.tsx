@@ -173,12 +173,15 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                       </DropdownMenuItem>
 
                       {(profile?.role === 'ADMIN' || profile?.role === 'SUPER_ADMIN') && (
-                        <DropdownMenuItem asChild className="rounded-lg focus:bg-rose-500/5 focus:text-rose-500 cursor-pointer">
-                          <Link href="/admin" className="w-full flex items-center gap-2">
-                            <ShieldCheck className="h-4 w-4" />
-                            <span>Admin Panel</span>
-                          </Link>
-                        </DropdownMenuItem>
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem asChild className="rounded-lg focus:bg-rose-500/5 focus:text-rose-500 cursor-pointer bg-rose-500/5 font-bold">
+                            <Link href="/admin" className="w-full flex items-center gap-2">
+                              <ShieldCheck className="h-4 w-4 text-rose-500" />
+                              <span className="text-rose-600">Admin Panel</span>
+                            </Link>
+                          </DropdownMenuItem>
+                        </>
                       )}
 
                       <DropdownMenuItem asChild className="rounded-lg focus:bg-primary/5 focus:text-primary cursor-pointer">
@@ -284,13 +287,16 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                     Dashboard
                   </Link>
                   {(profile?.role === 'ADMIN' || profile?.role === 'SUPER_ADMIN') && (
-                    <Link 
-                      href="/admin" 
-                      className="flex items-center py-3 px-4 text-rose-500 hover:bg-rose-500/5 rounded-xl transition-all font-bold"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Admin Panel
-                    </Link>
+                    <div className="pt-2 mt-2 border-t border-border/40">
+                      <Link 
+                        href="/admin" 
+                        className="flex items-center py-3 px-4 text-rose-500 bg-rose-500/5 rounded-xl transition-all font-bold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <ShieldCheck className="h-4 w-4 mr-2" />
+                        Admin Panel
+                      </Link>
+                    </div>
                   )}
                   <Link 
                     href="/cart" 
