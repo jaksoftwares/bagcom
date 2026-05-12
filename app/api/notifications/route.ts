@@ -17,15 +17,44 @@ export async function GET(request: Request) {
 
     const supabase = createServerClient();
 
-    const { data, error } = await supabase
+    // 1. Fetch individual notifications
+    const { data: individual, error: indError } = await supabase
       .from('notifications')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (indError) throw indError;
 
-    return NextResponse.json({ notifications: data });
+    // 2. Fetch broadcasts
+    // Get user role first
+    const { data: user } = await supabase.from('users').select('role').eq('id', userId).single();
+    const role = user?.role || 'BUYER';
+
+    const { data: broadcasts, error: brError } = await supabase
+      .from('broadcast_notifications')
+      .select('*')
+      .or(`target_role.eq.ALL,target_role.eq.${role}`)
+      .order('created_at', { ascending: false });
+
+    if (brError) throw brError;
+
+    // 3. Merge and format
+    const formattedBroadcasts = (broadcasts || []).map(b => ({
+      id: b.id,
+      user_id: userId,
+      type: 'BROADCAST',
+      title: b.title,
+      body: b.body,
+      is_sent: true, // Broadcasts are always "sent"
+      created_at: b.created_at
+    }));
+
+    const allNotifications = [...(individual || []), ...formattedBroadcasts].sort((a, b) => 
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    return NextResponse.json({ notifications: allNotifications });
   } catch (error: any) {
     console.error('Notifications GET Error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });

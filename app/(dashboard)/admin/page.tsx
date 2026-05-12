@@ -246,6 +246,53 @@ export default function AdminDashboard() {
               </Button>
             </Card>
 
+            {/* Platform Announcement Tool */}
+            <Card className="bg-slate-900/40 border-white/5 p-8 space-y-6 rounded-[2.5rem] shadow-2xl">
+               <div className="space-y-1">
+                  <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Communication Hub</p>
+                  <h2 className="text-xl font-bold text-white tracking-tight">Broadcast Message</h2>
+               </div>
+               
+               <div className="space-y-4">
+                  <input 
+                    id="broadcast-title"
+                    placeholder="Announcement Title" 
+                    className="w-full bg-white/5 border border-white/5 h-12 px-4 rounded-xl text-xs text-white focus:border-primary/50 outline-none transition-all"
+                  />
+                  <textarea 
+                    id="broadcast-body"
+                    placeholder="Message to all users..." 
+                    rows={3}
+                    className="w-full bg-white/5 border border-white/5 p-4 rounded-xl text-xs text-white focus:border-primary/50 outline-none transition-all resize-none"
+                  />
+                  <Button 
+                    onClick={async () => {
+                      const title = (document.getElementById('broadcast-title') as HTMLInputElement).value;
+                      const body = (document.getElementById('broadcast-body') as HTMLTextAreaElement).value;
+                      if (!title || !body) return;
+                      
+                      try {
+                        const res = await fetch('/api/admin/notifications', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ broadcast: true, title, body })
+                        });
+                        if (res.ok) {
+                          toast({ title: "Broadcast Sent", description: "Message is live on user feeds." });
+                          (document.getElementById('broadcast-title') as HTMLInputElement).value = '';
+                          (document.getElementById('broadcast-body') as HTMLTextAreaElement).value = '';
+                        }
+                      } catch (e) {
+                        toast({ title: "Failed to broadcast", variant: "destructive" });
+                      }
+                    }}
+                    className="w-full bg-primary hover:bg-primary/90 font-bold text-[10px] uppercase tracking-widest h-12 rounded-xl transition-all"
+                  >
+                     <Zap className="h-4 w-4 mr-2" /> Push to All Feeds
+                  </Button>
+               </div>
+            </Card>
+
             {/* Escrow Banner */}
             <Card className="bg-gradient-to-br from-primary/30 to-primary/5 border border-primary/20 p-10 rounded-[2.5rem] relative overflow-hidden group shadow-2xl">
               <div className="relative z-10 space-y-6">

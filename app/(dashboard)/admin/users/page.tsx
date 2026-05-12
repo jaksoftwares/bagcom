@@ -56,12 +56,29 @@ export default function UserManagement() {
     fetchUsers();
   }, []);
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
+  const handleAccountAction = async (userId: string, updates: any, actionName: string) => {
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, ...updates })
+      });
+      if (res.ok) {
+        toast({ title: `User ${actionName}`, description: "Account status updated successfully." });
+        setUsers(users.map(u => u.id === userId ? { ...u, ...updates } : u));
+      }
+    } catch (e) {
+      toast({ title: "Action failed", variant: "destructive" });
+    }
+  };
+
+  const getStatusBadge = (user: any) => {
+    if (!user.is_active) return <Badge className="bg-rose-500/10 text-rose-400 border-none px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">Suspended</Badge>;
+    
+    switch (user.seller_status) {
       case 'APPROVED': return <Badge className="bg-emerald-500/10 text-emerald-400 border-none px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">Verified</Badge>;
       case 'PENDING': return <Badge className="bg-amber-500/10 text-amber-400 border-none px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">Pending Review</Badge>;
       case 'REJECTED': return <Badge className="bg-rose-500/10 text-rose-400 border-none px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">Rejected</Badge>;
-      case 'SUSPENDED': return <Badge className="bg-rose-500/10 text-rose-400 border-none px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest">Suspended</Badge>;
       default: return <Badge variant="outline" className="text-slate-500 border-white/5 text-[9px] font-black uppercase tracking-widest px-2.5">Active</Badge>;
     }
   };
@@ -110,7 +127,7 @@ export default function UserManagement() {
            </Card>
            <Card className="bg-slate-900/40 border-white/5 p-8 space-y-3 rounded-[2.5rem] shadow-2xl">
              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">System Flags</p>
-             <h3 className="text-4xl font-bold text-rose-500 tracking-tight">0 <span className="text-sm font-bold text-rose-500/40 ml-2">Active Alerts</span></h3>
+             <h3 className="text-4xl font-bold text-rose-500 tracking-tight">{users.filter(u => !u.is_active).length} <span className="text-sm font-bold text-rose-500/40 ml-2">Suspensions</span></h3>
            </Card>
         </div>
 
@@ -170,7 +187,7 @@ export default function UserManagement() {
                              </Badge>
                           </td>
                           <td className="px-8 py-6">
-                             {getStatusBadge(user.seller_status || 'NONE')}
+                             {getStatusBadge(user)}
                           </td>
                           <td className="px-8 py-6">
                              <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
@@ -187,33 +204,40 @@ export default function UserManagement() {
                                </DropdownMenuTrigger>
                                <DropdownMenuContent align="end" className="w-64 bg-slate-900 border-white/10 text-slate-300 rounded-2xl p-2 shadow-2xl">
                                  <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-500 p-3">Account Actions</DropdownMenuLabel>
+                                 
+                                 {user.role === 'SELLER' && user.seller_status !== 'APPROVED' && (
+                                   <DropdownMenuItem 
+                                      className="gap-3 p-3 rounded-xl focus:bg-primary focus:text-white transition-all cursor-pointer"
+                                      onClick={() => handleAccountAction(user.id, { seller_status: 'APPROVED' }, 'Verified')}
+                                    >
+                                      <ShieldCheck className="h-4 w-4" /> Verify User
+                                    </DropdownMenuItem>
+                                 )}
+
                                  <DropdownMenuItem 
                                     className="gap-3 p-3 rounded-xl focus:bg-primary focus:text-white transition-all cursor-pointer"
-                                    onClick={async () => {
-                                      try {
-                                        const res = await fetch('/api/admin/sellers/approve', {
-                                          method: 'POST',
-                                          headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({ sellerId: user.id, action: 'APPROVE' })
-                                        });
-                                        if (res.ok) {
-                                          toast({ title: "User Verified", description: "Seller has been activated." });
-                                          setUsers(users.map(u => u.id === user.id ? { ...u, seller_status: 'APPROVED' } : u));
-                                        }
-                                      } catch (e) {
-                                        toast({ title: "Action failed", variant: "destructive" });
-                                      }
-                                    }}
+                                    onClick={() => window.location.href = `mailto:${user.email}`}
                                   >
-                                    <ShieldCheck className="h-4 w-4" /> Verify User
+                                    <Mail className="h-4 w-4" /> Message Customer
                                   </DropdownMenuItem>
-                                 <DropdownMenuItem className="gap-3 p-3 rounded-xl focus:bg-primary focus:text-white transition-all cursor-pointer">
-                                   <Mail className="h-4 w-4" /> Message Customer
-                                 </DropdownMenuItem>
+                                 
                                  <DropdownMenuSeparator className="bg-white/5 my-2" />
-                                 <DropdownMenuItem className="gap-3 p-3 rounded-xl text-rose-500 focus:bg-rose-500 focus:text-white transition-all cursor-pointer">
-                                   <Ban className="h-4 w-4" /> Suspend Access
-                                 </DropdownMenuItem>
+                                 
+                                 {user.is_active ? (
+                                   <DropdownMenuItem 
+                                      className="gap-3 p-3 rounded-xl text-rose-500 focus:bg-rose-500 focus:text-white transition-all cursor-pointer"
+                                      onClick={() => handleAccountAction(user.id, { is_active: false }, 'Suspended')}
+                                    >
+                                      <Ban className="h-4 w-4" /> Suspend Access
+                                    </DropdownMenuItem>
+                                 ) : (
+                                   <DropdownMenuItem 
+                                      className="gap-3 p-3 rounded-xl text-emerald-500 focus:bg-emerald-500 focus:text-white transition-all cursor-pointer"
+                                      onClick={() => handleAccountAction(user.id, { is_active: true }, 'Reactivated')}
+                                    >
+                                      <CheckCircle2 className="h-4 w-4" /> Reactivate Account
+                                    </DropdownMenuItem>
+                                 )}
                                </DropdownMenuContent>
                              </DropdownMenu>
                           </td>

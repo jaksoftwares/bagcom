@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { logAdminAction } from '@/lib/admin-audit';
 
 /**
  * Admin Users List API
@@ -44,6 +45,11 @@ export async function PUT(request: Request) {
       .single();
 
     if (error) throw error;
+
+    const { data: { user: admin } } = await supabase.auth.getUser();
+    if (admin) {
+      await logAdminAction(admin.id, 'UPDATE_USER_ACCOUNT', 'USER', userId, updates);
+    }
 
     return NextResponse.json({ success: true, user });
   } catch (error: any) {

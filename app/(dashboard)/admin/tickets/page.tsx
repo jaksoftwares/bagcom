@@ -21,8 +21,10 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function SupportTickets() {
   const { toast } = useToast();
-  const [tickets, setTickets] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [responses, setResponses] = useState<any[]>([]);
+  const [reply, setReply] = useState('');
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     async function fetchTickets() {
@@ -38,6 +40,38 @@ export default function SupportTickets() {
     }
     fetchTickets();
   }, []);
+
+  const fetchResponses = async (ticketId: string) => {
+    try {
+      const supabase = createServerClient(); // Wait, this is client side
+      const res = await fetch(`/api/admin/tickets/${ticketId}/responses`); // Need to create this API
+      const data = await res.json();
+      setResponses(data.responses || []);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const sendResponse = async () => {
+    if (!reply.trim() || !selectedTicket) return;
+    setIsSending(true);
+    try {
+      const res = await fetch(`/api/admin/tickets/${selectedTicket.id}/respond`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: reply })
+      });
+      if (res.ok) {
+        setReply('');
+        fetchResponses(selectedTicket.id);
+        toast({ title: "Response sent" });
+      }
+    } catch (e) {
+      toast({ title: "Failed to send", variant: "destructive" });
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   const updateTicket = async (ticketId: string, status: string) => {
     try {
@@ -151,11 +185,61 @@ export default function SupportTickets() {
                         >
                            Resolve Issue
                         </Button>
-                        <Button variant="ghost" className="w-full text-slate-500 hover:text-white font-bold text-[10px] uppercase tracking-widest h-12 rounded-xl transition-all">
+                        <Button 
+                          onClick={() => {
+                            setSelectedTicket(ticket);
+                            fetchResponses(ticket.id);
+                          }}
+                          variant="ghost" 
+                          className="w-full text-slate-500 hover:text-white font-bold text-[10px] uppercase tracking-widest h-12 rounded-xl transition-all"
+                        >
                            Open Case Chat
                         </Button>
                      </div>
                   </div>
+
+                  {/* Chat Section (Only visible when selected) */}
+                  {selectedTicket?.id === ticket.id && (
+                    <div className="border-t border-white/5 bg-slate-950/30 p-8 space-y-6">
+                       <div className="space-y-4 max-h-80 overflow-y-auto pr-4 custom-scrollbar">
+                          {responses.length === 0 ? (
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-center py-4">No responses yet.</p>
+                          ) : (
+                            responses.map((resp) => (
+                              <div key={resp.id} className={`flex ${resp.sender?.role === 'ADMIN' ? 'justify-end' : 'justify-start'}`}>
+                                 <div className={`max-w-[80%] p-4 rounded-2xl text-xs font-medium ${
+                                   resp.sender?.role === 'ADMIN' 
+                                     ? 'bg-primary text-white rounded-tr-none' 
+                                     : 'bg-white/5 text-slate-300 rounded-tl-none'
+                                 }`}>
+                                    <p>{resp.message}</p>
+                                    <p className={`text-[9px] mt-2 opacity-50 ${resp.sender?.role === 'ADMIN' ? 'text-right' : 'text-left'}`}>
+                                       {new Date(resp.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </p>
+                                 </div>
+                              </div>
+                            ))
+                          )}
+                       </div>
+
+                       <div className="flex gap-4">
+                          <Input 
+                            placeholder="Type your response..." 
+                            className="bg-white/5 border-white/5 h-12 rounded-xl text-xs"
+                            value={reply}
+                            onChange={(e) => setReply(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && sendResponse()}
+                          />
+                          <Button 
+                            onClick={sendResponse}
+                            disabled={isSending || !reply.trim()}
+                            className="bg-primary hover:bg-primary/90 h-12 px-6 rounded-xl"
+                          >
+                             {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageCircle className="h-4 w-4" />}
+                          </Button>
+                       </div>
+                    </div>
+                  )}
                </Card>
              ))
            )}
