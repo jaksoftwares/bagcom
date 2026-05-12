@@ -19,7 +19,6 @@ import {
   Star
 } from 'lucide-react';
 import { getCurrentUser } from '@/services/auth/authService';
-import BuyerLayout from '@/components/layout/BuyerLayout';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 
@@ -93,8 +92,7 @@ export default function BuyerOrdersPage() {
   }
 
   return (
-    <BuyerLayout>
-      <div className="space-y-8">
+    <div className="space-y-8">
         <div className="flex items-center gap-4 mb-8">
           <Link href="/buyer">
             <Button variant="ghost" size="sm" className="rounded-full">
@@ -235,6 +233,5 @@ export default function BuyerOrdersPage() {
           )}
         </div>
       </div>
-    </BuyerLayout>
   );
 }

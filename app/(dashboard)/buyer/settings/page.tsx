@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
-import BuyerLayout from '@/components/layout/BuyerLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -101,8 +100,7 @@ export default function SettingsPage() {
   );
 
   return (
-    <BuyerLayout>
-      <div className="max-w-4xl space-y-12">
+    <div className="max-w-4xl space-y-12">
         <div className="space-y-2">
           <h1 className="text-4xl font-black tracking-tight text-gray-900">Account Settings</h1>
           <p className="text-gray-500 font-medium">Manage your personal information and security preferences.</p>
@@ -230,7 +228,6 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
-    </BuyerLayout>
   );
 }
 

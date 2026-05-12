@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { getCurrentUser } from '@/services/auth/authService';
-import BuyerLayout from '@/components/layout/BuyerLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -78,8 +77,7 @@ export default function NotificationsPage() {
   };
 
   return (
-    <BuyerLayout>
-      <div className="max-w-4xl space-y-10">
+    <div className="max-w-4xl space-y-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-2">
             <h1 className="text-4xl font-black tracking-tight text-gray-900">Activity Feed</h1>
@@ -158,6 +156,5 @@ export default function NotificationsPage() {
           </div>
         )}
       </div>
-    </BuyerLayout>
   );
 }

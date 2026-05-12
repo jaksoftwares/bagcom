@@ -14,7 +14,6 @@ import {
   ShieldCheck,
   Package
 } from 'lucide-react';
-import Header from '@/components/navigation/Header';
 import Link from 'next/link';
 import { getCurrentUser } from '@/services/auth/authService';
 import { useToast } from '@/hooks/use-toast';
@@ -114,10 +113,7 @@ export default function LeaveReviewPage() {
   const sellerName = order.seller?.first_name ? `${order.seller.first_name} ${order.seller.last_name || ''}`.trim() : 'Seller';
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header isLoggedIn={true} setIsLoggedIn={() => {}} userRole="buyer" />
-      
-      <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="max-w-3xl mx-auto py-8">
         <Link href="/buyer/orders">
           <Button variant="ghost" size="sm" className="mb-6 gap-2">
             <ArrowLeft className="h-4 w-4" /> Back to Orders
@@ -222,7 +218,6 @@ export default function LeaveReviewPage() {
             </CardContent>
           </Card>
         </div>
-      </div>
     </div>
   );
 }

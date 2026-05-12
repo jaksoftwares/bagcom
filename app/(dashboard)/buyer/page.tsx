@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import BuyerLayout from '@/components/layout/BuyerLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -126,8 +125,7 @@ export default function BuyerDashboard() {
   }
 
   return (
-    <BuyerLayout>
-      <div className="space-y-8">
+    <div className="space-y-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Buyer Dashboard</h1>
           <p className="text-gray-600 mt-2">Welcome back, {profile?.first_name || 'Buyer'}! Track your orders and manage your account.</p>
@@ -328,6 +326,5 @@ export default function BuyerDashboard() {
           </TabsContent>
         </Tabs>
       </div>
-    </BuyerLayout>
   );
 }
