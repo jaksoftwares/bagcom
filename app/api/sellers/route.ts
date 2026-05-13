@@ -11,7 +11,7 @@ export async function GET() {
   try {
     const supabase = createServerClient();
     
-    // Fetch users (debugging)
+    // Fetch users who are sellers and have been approved by admin
     const { data: sellers, error } = await supabase
       .from('users')
       .select(`
@@ -27,9 +27,9 @@ export async function GET() {
         role,
         seller_status
       `)
-      // .eq('role', 'SELLER')
-      // .eq('seller_status', 'APPROVED')
-      // .eq('is_active', true)
+      .eq('role', 'SELLER')
+      .eq('seller_status', 'APPROVED')
+      .eq('is_active', true)
       .order('created_at', { ascending: false })
       .limit(12);
 
