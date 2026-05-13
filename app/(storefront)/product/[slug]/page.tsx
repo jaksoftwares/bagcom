@@ -65,8 +65,8 @@ export default function ProductDetail() {
           // Parallel fetch for all recommendation sections
           const [related, sellerItems, trending] = await Promise.all([
             getProducts({ category_id: data.category_id || undefined, limit: 5 }),
-            getProducts({ seller_id: data.seller_id, limit: 5 }),
-            getProducts({ limit: 12 }) // Discovery/Trending section
+            getProducts({ sellerId: data.seller_id, limit: 5 }),
+            getProducts({ limit: 12 }) 
           ]);
 
           setRelatedProducts(related.filter(p => p.id !== data.id).slice(0, 4));

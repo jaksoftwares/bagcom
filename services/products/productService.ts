@@ -23,6 +23,7 @@ export async function getProducts(options?: {
   minPrice?: string;
   maxPrice?: string;
   limit?: number;
+  sellerId?: string;
 }) {
   const params = new URLSearchParams();
   const categoryId = options?.category_id || options?.category;
@@ -32,6 +33,7 @@ export async function getProducts(options?: {
   if (options?.minPrice) params.append('minPrice', options.minPrice);
   if (options?.maxPrice) params.append('maxPrice', options.maxPrice);
   if (options?.limit) params.append('limit', options.limit.toString());
+  if (options?.sellerId) params.append('sellerId', options.sellerId);
 
   try {
     const response = await fetch(`${getBaseUrl()}/api/products?${params.toString()}`, {
