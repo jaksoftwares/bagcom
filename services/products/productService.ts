@@ -109,3 +109,22 @@ export async function getCategoryBySlug(slug: string) {
     return null;
   }
 }
+
+export async function getSellerById(userId: string) {
+  try {
+    const response = await fetch(`${getBaseUrl()}/api/users/profile?userId=${userId}`, {
+      cache: 'no-store'
+    });
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('API Error fetching seller profile:', data.error);
+      return null;
+    }
+
+    return data.user;
+  } catch (error) {
+    console.error('Fetch error:', error);
+    return null;
+  }
+}

@@ -266,17 +266,17 @@ export default function ProductDetail() {
 
           {/* MORE FROM THIS SELLER */}
           {sellerProducts.length > 0 && (
-            <section className="mt-24 space-y-12">
+            <section className="mt-16 space-y-10">
                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 rounded-full text-primary font-bold text-[10px] uppercase tracking-widest border border-primary/10">
                         <ShoppingBag className="h-3 w-3" /> Exclusive
                      </div>
-                     <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">More from {product.seller?.first_name || 'this seller'}</h2>
-                     <p className="text-slate-500 font-medium max-w-xl text-sm leading-relaxed">Check out other quality items listed by this verified merchant.</p>
+                     <h2 className="text-3xl font-bold text-foreground tracking-tight">More from {product.seller?.first_name || 'this seller'}</h2>
+                     <p className="text-muted-foreground font-medium max-w-xl text-sm leading-relaxed">Check out other quality items listed by this verified merchant.</p>
                   </div>
-                  <Link href={`/seller/${product.seller_id}`} className="text-sm font-black text-primary hover:underline uppercase tracking-widest flex items-center gap-2">
-                     Visit Seller Store <ChevronRight className="h-4 w-4" />
+                  <Link href={`/seller/${product.seller_id}`} className="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest flex items-center gap-2">
+                     Visit store <ChevronRight className="h-4 w-4" />
                   </Link>
                </div>
                

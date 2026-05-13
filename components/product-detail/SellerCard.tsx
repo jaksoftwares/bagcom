@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Link from 'next/link';
 
 interface SellerCardProps {
   seller: any;
@@ -36,10 +37,12 @@ export default function SellerCard({ seller, onContact }: SellerCardProps) {
           </div>
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="text-lg font-bold text-foreground truncate">{sellerName}</h3>
-            <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
-          </div>
+          <Link href={`/seller/${seller.id}`} className="block group/name">
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-bold text-foreground truncate group-hover/name:text-primary transition-colors">{sellerName}</h3>
+              <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+            </div>
+          </Link>
           <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1">Verified community member</p>
         </div>
       </div>
@@ -71,9 +74,11 @@ export default function SellerCard({ seller, onContact }: SellerCardProps) {
           <MessageCircle className="h-4 w-4 mr-2" /> Send message
         </Button>
         <div className="grid grid-cols-2 gap-3">
-           <Button variant="outline" className="h-10 rounded-md border-border/60 text-foreground font-bold text-[10px] uppercase tracking-widest hover:bg-muted/5">
-              <Store className="h-3.5 w-3.5 mr-2" /> Shop
-           </Button>
+           <Link href={`/seller/${seller.id}`} className="w-full">
+              <Button variant="outline" className="w-full h-10 rounded-md border-border/60 text-foreground font-bold text-[10px] uppercase tracking-widest hover:bg-muted/5">
+                 <Store className="h-3.5 w-3.5 mr-2" /> Shop
+              </Button>
+           </Link>
            <Button variant="outline" className="h-10 rounded-md border-border/60 text-foreground font-bold text-[10px] uppercase tracking-widest hover:bg-muted/5">
               <UserPlus className="h-3.5 w-3.5 mr-2" /> Follow
            </Button>
