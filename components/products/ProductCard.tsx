@@ -1,12 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import { Heart, MapPin, Star, Clock, ShoppingCart } from 'lucide-react';
+import { 
+  Heart, 
+  MapPin, 
+  Star, 
+  ShoppingCart, 
+  ShieldCheck, 
+  Eye,
+  Truck
+} from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import { getCurrentUser } from '@/services/auth/authService';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface ProductCardProps {
   product: any;
@@ -16,15 +26,17 @@ interface ProductCardProps {
 export default function ProductCard({ product, layout = 'grid' }: ProductCardProps) {
   const { toast } = useToast();
   const { addToCart } = useCart();
-  const isList = layout === 'grid';
+  const isGrid = layout === 'grid';
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
 
   const displayImage = product.images?.[0]?.image_url || product.product_images?.[0]?.image_url || product.image || '/placeholder-product.jpg';
-  const categoryName = product.category?.name || product.categories?.name || product.category;
-  const timeDisplay = product.created_at 
-    ? new Date(product.created_at).toLocaleDateString('en-KE', { day: 'numeric', month: 'short' })
-    : product.timePosted;
+  const categoryName = product.category?.name || product.categories?.name || product.category || 'General';
+  const sellerName = product.seller?.first_name ? `${product.seller.first_name} ${product.seller.last_name || ''}`.trim() : 'Verified Seller';
+  
+  const discountPercent = product.original_price 
+    ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
+    : 0;
 
   const handleWishlist = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -71,91 +83,109 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
       name: product.title,
       price: product.price,
       image: displayImage,
-      seller: product.seller?.first_name ? `${product.seller.first_name} ${product.seller.last_name || ''}`.trim() : 'Verified Seller',
+      seller: sellerName,
       category: categoryName
     });
     toast({ 
       title: "Added to cart", 
-      description: `${product.title} has been added to your cart.`
+      description: `${product.title} has been added.`
     });
   };
 
   return (
-    <Link href={`/product/${product.slug}`} className="group block">
-      <div className={`bg-white border border-border/30 rounded-sm overflow-hidden transition-all hover:border-primary/30 hover:shadow-subtle ${
-        isList ? 'flex h-40 md:h-44' : 'flex flex-col'
-      }`}>
-        {/* Image */}
-        <div className={`relative bg-muted/5 overflow-hidden ${
-          isList ? 'w-40 md:w-48 flex-shrink-0' : 'aspect-[1/1]'
+    <div 
+      className={`group relative bg-white border border-border/40 overflow-hidden transition-all duration-300 hover:shadow-subtle ${
+        !isGrid ? 'flex h-48 md:h-56' : 'flex flex-col rounded-md'
+      }`}
+    >
+      <Link href={`/product/${product.slug}`} className="flex-1 flex flex-col no-underline text-inherit">
+        {/* Image Area */}
+        <div className={`relative overflow-hidden bg-muted/20 ${
+          isGrid ? 'aspect-[4/5]' : 'w-48 md:w-56 shrink-0'
         }`}>
           <Image 
             src={displayImage} 
             alt={product.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <div className="absolute top-2 left-2">
-            <div className="bg-white/90 backdrop-blur-sm text-[9px] font-bold px-1.5 py-0.5 rounded-sm border border-border/20 uppercase tracking-wider text-foreground shadow-sm">
-              {product.condition}
-            </div>
+          
+          {/* Overlay Actions */}
+          <div className="absolute top-2 right-2 flex flex-col gap-1.5 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+            <button 
+              onClick={handleWishlist}
+              className={`p-2 rounded-md shadow-sm transition-all ${
+                isWishlisted ? 'bg-rose-500 text-white' : 'bg-white text-foreground hover:text-primary'
+              }`}
+            >
+              <Heart className={`h-3.5 w-3.5 ${isWishlisted ? 'fill-current' : ''}`} />
+            </button>
           </div>
-          <button
-            onClick={handleWishlist}
-            disabled={isWishlistLoading}
-            aria-label={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
-            className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-sm shadow-subtle hover:bg-white transition-all"
-          >
-            <Heart className={`h-3 w-3 transition-colors ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-foreground'}`} />
-          </button>
+
+          {/* Condition & Discount Badges */}
+          <div className="absolute top-2 left-2 flex flex-wrap gap-1.5">
+            {discountPercent > 0 && (
+              <Badge className="bg-rose-500 text-white border-none font-bold text-[10px] px-1.5 py-0.5 rounded-sm">
+                -{discountPercent}%
+              </Badge>
+            )}
+            {product.condition && (
+              <Badge variant="secondary" className="bg-white/90 text-foreground border-none font-semibold text-[9px] px-1.5 py-0.5 rounded-sm uppercase tracking-wider">
+                {product.condition}
+              </Badge>
+            )}
+          </div>
         </div>
 
-        {/* Content */}
-        <div className="p-2.5 flex flex-col flex-1 min-w-0">
-          <div className="flex-1 space-y-0.5">
-            <div className="flex items-center justify-between mb-0.5">
-              <span className="text-[9px] font-bold uppercase tracking-tight text-muted-foreground/40 truncate">{categoryName}</span>
-              <div className="flex items-center gap-1 text-[9px] font-bold text-muted-foreground/40">
-                <Clock className="h-2 w-2" />
-                <span>{timeDisplay}</span>
+        {/* Content Area */}
+        <div className="p-4 flex flex-col flex-1">
+          <div className="flex-1 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{categoryName}</span>
+              <div className="flex items-center gap-1">
+                <Star className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />
+                <span className="text-[10px] font-bold text-foreground">4.8</span>
               </div>
             </div>
-            <h3 className="text-[12px] md:text-[13px] font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-[1.2] mb-0.5">
+
+            <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-snug h-10 group-hover:text-primary transition-colors">
               {product.title}
             </h3>
-            <div className="flex items-baseline gap-1">
-              <span className="text-[14px] md:text-[15px] font-bold text-foreground">
+
+            <div className="flex items-baseline gap-2 pt-1">
+              <span className="text-base font-bold text-foreground">
                 KSh {product.price.toLocaleString()}
               </span>
               {product.original_price && (
-                <span className="text-[10px] text-muted-foreground line-through opacity-30">
+                <span className="text-xs text-muted-foreground line-through">
                   {product.original_price.toLocaleString()}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="pt-1.5 mt-1.5 border-t border-border/10 flex items-center justify-between">
-            <div className="flex items-center gap-0.5">
-              <Star className="h-2.5 w-2.5 fill-yellow-400 text-yellow-400" />
-              <span className="text-[9px] font-bold text-foreground/60">
-                {product.seller?.first_name || product.users?.first_name || '4.8'}
-              </span>
+          {/* Compact Footer */}
+          <div className="pt-3 mt-3 border-t border-border/30 flex items-center justify-between">
+            <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
+              <MapPin className="h-3 w-3" />
+              <span className="truncate max-w-[80px]">{product.location?.campus || product.location || 'Nairobi'}</span>
             </div>
-            <div className="flex items-center gap-1 text-[9px] font-medium text-muted-foreground/50 flex-shrink-0">
-              <MapPin className="h-2.5 w-2.5" />
-              <span>{product.location?.campus || product.location || 'Marketplace'}</span>
+            <div className="flex items-center gap-1">
+               <ShieldCheck className="h-3 w-3 text-emerald-500" />
+               <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-tighter">Escrow</span>
             </div>
-            <button
-              onClick={handleAddToCart}
-              className="p-1.5 rounded-full bg-primary/5 hover:bg-primary hover:text-white text-primary transition-all ml-2"
-              aria-label="Add to cart"
-            >
-              <ShoppingCart className="h-3 w-3" />
-            </button>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+      
+      {/* Quick Add Button */}
+      <button 
+        onClick={handleAddToCart}
+        className="absolute bottom-16 right-3 h-9 w-9 bg-primary text-white rounded-md shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 z-10"
+      >
+        <ShoppingCart className="h-4 w-4" />
+      </button>
+    </div>
   );
 }

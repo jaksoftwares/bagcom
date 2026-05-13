@@ -42,13 +42,13 @@ export default function NewProductsSection() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="aspect-square bg-gray-100 animate-pulse rounded-sm" />
+              <div key={i} className="aspect-[4/5] bg-slate-100 animate-pulse rounded-2xl" />
             ))}
           </div>
         ) : products.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8">
             {products.map((product) => (
               <ProductCard 
                 key={product.id} 

@@ -2,178 +2,195 @@
 
 import { useState, useEffect } from 'react';
 import { 
-  Search, 
-  Grid, 
-  List, 
   ChevronRight, 
-  SlidersHorizontal,
+  Search,
+  Filter,
   ArrowUpDown,
-  ShoppingBag
+  ShoppingBag,
+  Zap,
+  TrendingUp,
+  Clock,
+  LayoutGrid,
+  List,
+  ChevronDown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+
+// Layout & Navigation
 import StorefrontLayout from '@/components/layout/StorefrontLayout';
+import Header from '@/components/navigation/Header';
+import Footer from '@/components/navigation/Footer';
+
+// Marketplace Components
+import MarketplaceHeader from '@/components/marketplace/MarketplaceHeader';
+import MarketplaceFilters from '@/components/marketplace/MarketplaceFilters';
+import ProductToolbar from '@/components/marketplace/ProductToolbar';
+import ProductDiscoverySections from '@/components/marketplace/ProductDiscoverySections';
+import MarketplaceTrustBanner from '@/components/marketplace/MarketplaceTrustBanner';
+import ProductCard from '@/components/products/ProductCard';
+
+// Services
 import { getProducts } from '@/services/products/productService';
 
 export default function BrowseProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
+  const [trendingProducts, setTrendingProducts] = useState<any[]>([]);
+  const [newArrivals, setNewArrivals] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   useEffect(() => {
-    async function loadProducts() {
-      const data = await getProducts();
-      setProducts(data);
-      setIsLoading(false);
+    async function loadData() {
+      setIsLoading(true);
+      try {
+        const [allProducts, trending, latest] = await Promise.all([
+          getProducts(),
+          getProducts({ limit: 4 }), // Trending
+          getProducts({ limit: 4 })  // Latest (simulate)
+        ]);
+        setProducts(allProducts);
+        setTrendingProducts(trending);
+        setNewArrivals(latest);
+      } catch (error) {
+        console.error("Error loading marketplace data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
-    loadProducts();
+    loadData();
   }, []);
 
   return (
     <StorefrontLayout>
-      <div className="bg-[#F9FAFB] min-h-screen">
+      <div className="bg-white min-h-screen">
         
-        {/* Marketplace Header & Search Bar */}
-        <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
-          <div className="container mx-auto px-4 py-4 space-y-4">
-             {/* Breadcrumbs */}
-             <nav className="flex items-center gap-1.5 text-[11px] text-gray-500">
-                <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-                <ChevronRight className="h-3 w-3" />
-                <span className="text-gray-900 font-medium">Browse All Products</span>
-             </nav>
+        {/* Discovery Header */}
+        <MarketplaceHeader />
 
-             <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-                <div className="relative w-full lg:max-w-2xl group">
-                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-primary transition-colors" />
-                   <input 
-                     type="text" 
-                     placeholder="Search marketplace: 'iPhone', 'study desk', 'hoodies'..." 
-                     className="w-full h-11 pl-12 pr-4 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
-                   />
-                </div>
-                
-                <div className="flex items-center gap-3 w-full lg:w-auto overflow-x-auto pb-1 lg:pb-0">
-                   <Button variant="outline" className="h-10 px-4 rounded-lg border-gray-200 text-sm font-medium shrink-0 gap-2">
-                      <SlidersHorizontal className="h-4 w-4" /> Filters
-                   </Button>
-                   <Button variant="outline" className="h-10 px-4 rounded-lg border-gray-200 text-sm font-medium shrink-0 gap-2">
-                      <ArrowUpDown className="h-4 w-4" /> Sort
-                   </Button>
-                   <div className="h-6 w-px bg-gray-200 mx-1 shrink-0"></div>
-                   <div className="flex bg-gray-100 p-1 rounded-md border border-gray-200 shrink-0">
-                      <button
-                        onClick={() => setViewMode('grid')}
-                        className={`h-8 w-8 flex items-center justify-center rounded transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500'}`}
-                      >
-                        <Grid className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => setViewMode('list')}
-                        className={`h-8 w-8 flex items-center justify-center rounded transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500'}`}
-                      >
-                        <List className="h-4 w-4" />
-                      </button>
-                   </div>
-                </div>
-             </div>
-          </div>
-        </div>
+        {/* Discovery Sections (Featured) */}
+        <section className="bg-muted/5 py-16 lg:py-20 border-b border-border/20">
+           <div className="container mx-auto px-4">
+              <ProductDiscoverySections 
+                trending={trendingProducts}
+                newArrivals={newArrivals}
+              />
+           </div>
+        </section>
 
-        <main className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Trust Banner */}
+        <MarketplaceTrustBanner />
+
+        {/* Main Marketplace Area */}
+        <main className="container mx-auto px-4 py-16 lg:py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
              
-             {/* Sidebar Filters - Desktop */}
-             <aside className="hidden lg:block lg:col-span-3 space-y-8">
-                <div className="space-y-4">
-                   <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest">Categories</h3>
-                   <div className="space-y-2">
-                      {['Electronics', 'Furniture', 'Fashion', 'Books', 'Kitchen', 'Others'].map((cat) => (
-                        <label key={cat} className="flex items-center gap-2 group cursor-pointer">
-                           <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
-                           <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors font-medium">{cat}</span>
-                        </label>
-                      ))}
-                   </div>
-                </div>
-
-                <div className="space-y-4 pt-8 border-t border-gray-200">
-                   <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest">Condition</h3>
-                   <div className="space-y-2">
-                      {['New', 'Like New', 'Good', 'Fair'].map((cond) => (
-                        <label key={cond} className="flex items-center gap-2 group cursor-pointer">
-                           <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
-                           <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors font-medium">{cond}</span>
-                        </label>
-                      ))}
-                   </div>
-                </div>
-
-                <div className="space-y-4 pt-8 border-t border-gray-200">
-                   <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest">Price Range</h3>
-                   <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                         <input type="number" placeholder="Min" className="w-full h-10 px-3 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-primary" />
-                         <span className="text-gray-400">—</span>
-                         <input type="number" placeholder="Max" className="w-full h-10 px-3 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-primary" />
-                      </div>
-                      <Button className="w-full h-10 rounded-lg text-sm font-bold">Apply Price</Button>
-                   </div>
-                </div>
+             {/* LEFT: Sidebar Filters (Desktop) */}
+             <aside className="hidden lg:block lg:col-span-3 sticky top-24">
+                <MarketplaceFilters />
              </aside>
 
-             {/* Main Content - Results */}
-             <div className="lg:col-span-9 space-y-6">
-                <div className="flex items-center justify-between">
-                   <p className="text-sm text-gray-500 font-medium">Showing <span className="text-gray-900 font-bold">{products.length}</span> active items</p>
+             {/* RIGHT: Results & Toolbar */}
+             <div className="lg:col-span-9 space-y-8">
+                
+                {/* Results Header & Toolbar */}
+                <div className="space-y-6">
+                   <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">
+                      <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+                      <ChevronRight className="h-3 w-3 opacity-30" />
+                      <span className="text-foreground">Marketplace</span>
+                   </nav>
+                   
+                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                      <div className="space-y-1">
+                         <h2 className="text-2xl font-bold text-foreground tracking-tight">All products</h2>
+                         <p className="text-xs font-semibold text-muted-foreground">Showing <span className="text-foreground">{products.length}</span> verified community items</p>
+                      </div>
+                      <ProductToolbar 
+                        count={products.length}
+                        viewMode={viewMode}
+                        setViewMode={setViewMode}
+                        onMobileFilterOpen={() => setIsMobileFilterOpen(true)}
+                      />
+                   </div>
                 </div>
 
+                {/* Main Results Grid */}
                 {isLoading ? (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
                     {[...Array(9)].map((_, i) => (
-                      <div key={i} className="aspect-[4/5] bg-gray-200 animate-pulse rounded-xl" />
+                      <div key={i} className="aspect-[4/5] bg-muted/10 animate-pulse rounded-md" />
+                    ))}
+                  </div>
+                ) : products.length > 0 ? (
+                  <div className={`grid gap-6 md:gap-8 ${
+                    viewMode === 'grid' 
+                      ? 'grid-cols-2 md:grid-cols-3' 
+                      : 'grid-cols-1'
+                  }`}>
+                    {products.map((product) => (
+                      <ProductCard 
+                        key={product.id} 
+                        product={product} 
+                        layout={viewMode}
+                      />
                     ))}
                   </div>
                 ) : (
-                  <div className={`grid gap-5 ${viewMode === 'grid' ? 'grid-cols-2 md:grid-cols-3' : 'grid-cols-1'}`}>
-                    {products.map((product) => (
-                      <Link key={product.id} href={`/product/${product.slug}`}>
-                        <div className={`group bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition-all ${viewMode === 'list' ? 'flex' : ''}`}>
-                          <div className={`${viewMode === 'list' ? 'h-40 w-48 shrink-0' : 'aspect-square'} relative overflow-hidden bg-gray-100`}>
-                             <img 
-                               src={product.images?.[0]?.image_url || 'https://images.pexels.com/photos/1866149/pexels-photo-1866149.jpeg'} 
-                               alt={product.title}
-                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                             />
-                             {product.is_available && (
-                               <div className="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-0.5 rounded text-[10px] font-bold text-green-600 uppercase tracking-widest border border-green-100">
-                                  Available
-                               </div>
-                             )}
-                          </div>
-                          <div className="p-4 space-y-2">
-                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{product.category?.name}</p>
-                             <h3 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-1">{product.title}</h3>
-                             <div className="flex items-end justify-between pt-2">
-                                <div className="space-y-0.5">
-                                   <p className="text-lg font-black text-gray-900 leading-none">KSh {product.price.toLocaleString()}</p>
-                                   {product.negotiable && <p className="text-[10px] text-gray-400 font-medium italic">Negotiable</p>}
-                                </div>
-                                <div className="h-8 w-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-primary group-hover:text-white transition-all">
-                                   <ShoppingBag className="h-4 w-4" />
-                                </div>
-                             </div>
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
+                  <div className="py-24 text-center bg-muted/5 rounded-md border border-dashed border-border/40">
+                     <ShoppingBag className="h-12 w-12 text-muted-foreground/20 mx-auto mb-4" />
+                     <h3 className="text-lg font-bold text-foreground tracking-tight mb-2">No products found</h3>
+                     <p className="text-muted-foreground font-medium max-w-xs mx-auto text-sm">We couldn't find any items matching your current filters.</p>
+                     <Button variant="outline" className="mt-6 h-10 px-6 rounded-md border-border/60 text-foreground font-bold uppercase tracking-widest text-[10px]">Clear filters</Button>
                   </div>
                 )}
-             </div>
 
+                {/* Pagination Placeholder */}
+                <div className="pt-16 flex justify-center">
+                   <div className="flex items-center gap-2 bg-muted/5 p-1.5 rounded-md border border-border/20">
+                      {[1, 2, 3, '...', 12].map((p, i) => (
+                        <button 
+                          key={i}
+                          className={`h-10 w-10 rounded-sm flex items-center justify-center text-[10px] font-bold transition-all ${
+                            p === 1 ? 'bg-primary text-white shadow-sm' : 'text-muted-foreground/40 hover:bg-white hover:text-foreground'
+                          }`}
+                        >
+                           {p}
+                        </button>
+                      ))}
+                      <button className="h-10 px-4 rounded-sm flex items-center gap-2 text-[10px] font-bold text-muted-foreground/40 hover:bg-white hover:text-foreground transition-all uppercase tracking-widest">
+                         Next <ChevronRight className="h-3 w-3" />
+                      </button>
+                   </div>
+                </div>
+             </div>
           </div>
         </main>
       </div>
+
+      {/* MOBILE FILTER DRAWER */}
+      {isMobileFilterOpen && (
+        <div className="fixed inset-0 z-[100] lg:hidden animate-in fade-in duration-300">
+           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsMobileFilterOpen(false)} />
+           <div className="absolute inset-y-0 right-0 w-[85%] bg-white shadow-2xl animate-in slide-in-from-right duration-500 overflow-y-auto p-8">
+              <div className="flex items-center justify-between mb-8 pb-8 border-b border-border/20">
+                 <h2 className="text-xl font-bold text-foreground tracking-tight">Filters</h2>
+                 <button onClick={() => setIsMobileFilterOpen(false)} className="h-10 w-10 rounded-md bg-muted/10 flex items-center justify-center text-muted-foreground">
+                    <X className="h-5 w-5" />
+                 </button>
+              </div>
+              <MarketplaceFilters />
+              <div className="sticky bottom-0 left-0 right-0 pt-8 mt-8 bg-white border-t border-border/20">
+                 <Button onClick={() => setIsMobileFilterOpen(false)} className="w-full h-12 rounded-md bg-primary text-white font-bold uppercase tracking-widest text-[10px] shadow-sm">
+                    Show results
+                 </Button>
+              </div>
+           </div>
+        </div>
+      )}
+
+      <Footer />
     </StorefrontLayout>
   );
 }

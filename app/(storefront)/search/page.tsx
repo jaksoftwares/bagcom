@@ -180,13 +180,13 @@ function SearchContent() {
             {isLoading ? (
               <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="aspect-[3/4] bg-muted/20 animate-pulse rounded-sm" />
+                  <div key={i} className="aspect-[4/5] bg-slate-100 animate-pulse rounded-2xl" />
                 ))}
               </div>
             ) : products.length > 0 ? (
               <div className={viewMode === 'grid' 
                 ? "grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8" 
-                : "flex flex-col gap-4"
+                : "flex flex-col gap-6"
               }>
                 {products.map(p => (
                   <ProductCard 

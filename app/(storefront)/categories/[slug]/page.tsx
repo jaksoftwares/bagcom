@@ -48,10 +48,10 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
       <div className="min-h-screen bg-white">
         <Header isLoggedIn={false} setIsLoggedIn={() => {}} />
         <div className="container mx-auto px-4 py-20">
-          <div className="h-64 w-full bg-muted/20 animate-pulse rounded-sm mb-12" />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="h-64 w-full bg-slate-100 animate-pulse rounded-2xl mb-12" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="aspect-[3/4] bg-muted/20 animate-pulse rounded-sm" />
+              <div key={i} className="aspect-[4/5] bg-slate-100 animate-pulse rounded-2xl" />
             ))}
           </div>
         </div>
@@ -198,7 +198,7 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
               {filteredProducts.length > 0 ? (
                 <div className={viewMode === 'grid' 
                   ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8" 
-                  : "flex flex-col gap-4"
+                  : "flex flex-col gap-6"
                 }>
                   {filteredProducts.map(p => (
                     <ProductCard 
