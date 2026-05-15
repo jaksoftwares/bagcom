@@ -1,7 +1,9 @@
-'use client';
+"use client";
 
-import { Star, Clock, Eye, Heart, Share2, Flag } from 'lucide-react';
-import Link from 'next/link';
+import React from "react";
+import { Star, Clock, Eye, Heart, Share2, Flag } from "lucide-react";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 
 interface ProductHeaderProps {
   product: any;

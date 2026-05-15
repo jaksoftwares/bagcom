@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, ChevronRight, Clock, Loader2, Mail, MapPin, MessageCircle, Send } from 'lucide-react';
