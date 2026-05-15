@@ -39,13 +39,13 @@ export default function AdminSettings() {
         body: JSON.stringify({ settings })
       });
       if (res.ok) {
-        toast({ title: "Settings Synchronized", description: "Global platform parameters updated." });
+        toast({ title: "Settings Saved", description: "System parameters updated." });
         fetchSettings();
       } else {
         throw new Error('Save failed');
       }
     } catch (e) {
-      toast({ title: "Synchronization failed", variant: "destructive" });
+      toast({ title: "Save failed", variant: "destructive" });
     } finally {
       setIsSaving(false);
     }
@@ -58,11 +58,11 @@ export default function AdminSettings() {
   return (
     <AdminLayout>
       <div className="space-y-12">
-        {/* Header Section */}
+        {/* Header */}
         <div className="flex justify-between items-end gap-8 pb-4 border-b border-slate-200">
           <div className="space-y-1">
             <h1 className="text-xl font-bold tracking-widest text-slate-900 uppercase">
-              Platform Configuration
+              Settings
             </h1>
           </div>
           <div className="flex gap-4">
@@ -71,28 +71,25 @@ export default function AdminSettings() {
                disabled={isSaving || isLoading}
                className="h-10 px-8 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[10px] uppercase tracking-widest rounded-none shadow-none"
              >
-                {isSaving ? 'Processing...' : 'Commit Protocol'}
+                {isSaving ? 'Saving...' : 'Save Settings'}
              </Button>
           </div>
         </div>
 
         {isLoading ? (
           <div className="py-24 text-center">
-             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Synchronizing System Map...</p>
+             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Loading...</p>
           </div>
         ) : (
-          <div className="space-y-16 max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl">
             
-            {/* 1. Governance Module */}
+            {/* 1. General */}
             <section className="space-y-6">
-               <div className="flex justify-between items-center border-b border-slate-200 pb-2">
-                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">Governance & Access</p>
-                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Module 01</span>
-               </div>
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+               <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">General</p>
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
                      <div>
-                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Maintenance Lock</Label>
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Maintenance Mode</Label>
                         <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Suspend platform activity</p>
                      </div>
                      <Switch 
@@ -102,7 +99,7 @@ export default function AdminSettings() {
                   </div>
                   <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
                      <div>
-                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Automated Vetting</Label>
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Self-Verification</Label>
                         <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Merchant self-onboarding</p>
                      </div>
                      <Switch 
@@ -110,26 +107,13 @@ export default function AdminSettings() {
                        onCheckedChange={(val) => updateValue('self_vetting', val ? 'true' : 'false')} 
                      />
                   </div>
-                  <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
-                     <div>
-                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Verbose Audit</Label>
-                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">High-density logging</p>
-                     </div>
-                     <Switch 
-                       checked={settings.verbose_logging === 'true'} 
-                       onCheckedChange={(val) => updateValue('verbose_logging', val ? 'true' : 'false')} 
-                     />
-                  </div>
                </div>
             </section>
 
-            {/* 2. Financial Architecture Module */}
+            {/* 2. Financials */}
             <section className="space-y-6">
-               <div className="flex justify-between items-center border-b border-slate-200 pb-2">
-                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">Financial Parameters</p>
-                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Module 02</span>
-               </div>
-               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+               <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">Financials</p>
+               <div className="grid grid-cols-2 gap-4">
                   <div className="p-6 bg-white border border-slate-200 rounded-none space-y-4">
                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Commission (%)</p>
                      <Input 
@@ -140,7 +124,7 @@ export default function AdminSettings() {
                      />
                   </div>
                   <div className="p-6 bg-white border border-slate-200 rounded-none space-y-4">
-                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Escrow Hold (Days)</p>
+                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Escrow Days</p>
                      <Input 
                        type="number"
                        value={settings.auto_release_days}
@@ -148,119 +132,116 @@ export default function AdminSettings() {
                        className="h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold focus-visible:ring-0 shadow-none"
                      />
                   </div>
+               </div>
+            </section>
+
+            {/* 3. Catalog */}
+            <section className="space-y-6">
+               <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">Catalog</p>
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-6 bg-white border border-slate-200 rounded-none space-y-4">
-                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Payout Floor (KSh)</p>
+                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Images Limit</p>
                      <Input 
                        type="number"
-                       value={settings.min_payout_amount}
-                       onChange={(e) => updateValue('min_payout_amount', e.target.value)}
+                       value={settings.max_images_per_product || 5}
+                       onChange={(e) => updateValue('max_images_per_product', e.target.value)}
                        className="h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold focus-visible:ring-0 shadow-none"
                      />
                   </div>
-                  <div className="p-6 bg-white border border-slate-200 rounded-none space-y-4">
-                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Daily Payout Cap (KSh)</p>
-                     <Input 
-                       type="number"
-                       value={settings.max_daily_payout || 100000}
-                       onChange={(e) => updateValue('max_daily_payout', e.target.value)}
-                       className="h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold focus-visible:ring-0 shadow-none"
+                  <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
+                     <div>
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Product Review</Label>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Manual audit every listing</p>
+                     </div>
+                     <Switch 
+                       checked={settings.require_product_approval === 'true'} 
+                       onCheckedChange={(val) => updateValue('require_product_approval', val ? 'true' : 'false')} 
                      />
                   </div>
                </div>
             </section>
 
-            {/* 3. Gateway & Logistics Module */}
+            {/* 4. Payments */}
             <section className="space-y-6">
-               <div className="flex justify-between items-center border-b border-slate-200 pb-2">
-                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">Gateway & Logistics</p>
-                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Module 03</span>
-               </div>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-6 bg-white border border-slate-200 rounded-none space-y-6">
-                     <div className="flex justify-between items-center">
-                        <Label className="text-[11px] font-bold text-slate-900 uppercase">M-Pesa Payout Shortcode</Label>
-                        <span className="text-[9px] px-2 py-0.5 border border-slate-900 text-slate-900 font-bold uppercase tracking-widest">Active</span>
+               <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">Payments</p>
+               <div className="grid grid-cols-1 gap-4">
+                  <div className="p-6 bg-white border border-slate-200 rounded-none flex flex-col sm:flex-row justify-between items-center gap-6">
+                     <div className="space-y-1 w-full sm:w-auto">
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">M-Pesa Environment</Label>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Status: {settings.mpesa_env || 'sandbox'}</p>
                      </div>
-                     <Input 
-                       value={settings.mpesa_payout_shortcode || '4085600'}
-                       onChange={(e) => updateValue('mpesa_payout_shortcode', e.target.value)}
-                       className="h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold focus-visible:ring-0 shadow-none"
-                     />
-                  </div>
-                  <div className="p-6 bg-white border border-slate-200 rounded-none space-y-6">
-                     <div className="flex justify-between items-center">
-                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Settlement Environment</Label>
-                        <span className={`text-[9px] px-2 py-0.5 border font-bold uppercase tracking-widest ${settings.mpesa_env === 'production' ? 'bg-slate-900 text-white border-slate-900' : 'border-amber-200 text-amber-600'}`}>
-                           {settings.mpesa_env === 'production' ? 'Live Production' : 'Sandbox / Test'}
-                        </span>
-                     </div>
-                     <div className="flex gap-2">
+                     <div className="flex gap-2 w-full sm:w-auto">
                         <Button 
                           onClick={() => updateValue('mpesa_env', 'sandbox')}
-                          className={`flex-1 h-10 rounded-none font-bold text-[9px] uppercase tracking-widest transition-all ${settings.mpesa_env !== 'production' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                          className={`flex-1 h-10 rounded-none font-bold text-[9px] uppercase tracking-widest transition-all ${settings.mpesa_env !== 'production' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-400'}`}
                         >Sandbox</Button>
                         <Button 
                           onClick={() => updateValue('mpesa_env', 'production')}
-                          className={`flex-1 h-10 rounded-none font-bold text-[9px] uppercase tracking-widest transition-all ${settings.mpesa_env === 'production' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
-                        >Live Production</Button>
+                          className={`flex-1 h-10 rounded-none font-bold text-[9px] uppercase tracking-widest transition-all ${settings.mpesa_env === 'production' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-400'}`}
+                        >Production</Button>
                      </div>
                   </div>
                </div>
             </section>
 
-            {/* 4. Security Protocols Module */}
+            {/* 5. Support */}
             <section className="space-y-6">
-               <div className="flex justify-between items-center border-b border-slate-200 pb-2">
-                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">Security Protocols</p>
-                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Module 04</span>
-               </div>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
-                     <div>
-                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Session Timeout (Min)</Label>
-                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Auto-logout duration</p>
-                     </div>
+               <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">Support</p>
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-6 bg-white border border-slate-200 rounded-none space-y-4">
+                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Support Email</p>
+                     <Input 
+                       value={settings.support_email || 'ops@bagcom.com'}
+                       onChange={(e) => updateValue('support_email', e.target.value)}
+                       className="h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold focus-visible:ring-0 shadow-none"
+                     />
+                  </div>
+                  <div className="p-6 bg-white border border-slate-200 rounded-none space-y-4">
+                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Dispute Grace Period</p>
                      <Input 
                        type="number"
-                       value={settings.session_timeout || 60}
-                       onChange={(e) => updateValue('session_timeout', e.target.value)}
-                       className="w-24 h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold text-center focus-visible:ring-0 shadow-none"
-                     />
-                  </div>
-                  <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
-                     <div>
-                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Forced Overrides</Label>
-                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Require 2FA for sensitive actions</p>
-                     </div>
-                     <Switch 
-                       checked={settings.force_2fa === 'true'} 
-                       onCheckedChange={(val) => updateValue('force_2fa', val ? 'true' : 'false')} 
+                       value={settings.dispute_grace_days || 3}
+                       onChange={(e) => updateValue('dispute_grace_days', e.target.value)}
+                       className="h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold focus-visible:ring-0 shadow-none"
                      />
                   </div>
                </div>
             </section>
 
-            {/* Platform Master Reset */}
-            <div className="p-10 bg-slate-900 text-white rounded-none flex flex-col md:flex-row justify-between items-center gap-8">
-               <div className="space-y-1">
-                  <p className="text-xl font-bold uppercase tracking-tight">Platform Master Reset</p>
-                  <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Purge platform indices, flush cache, and synchronize global state</p>
+            {/* 6. Notifications */}
+            <section className="space-y-6">
+               <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">Alerts</p>
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
+                     <div>
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">SMS Alerts</Label>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Global SMS state</p>
+                     </div>
+                     <Switch 
+                       checked={settings.enable_sms_alerts === 'true'} 
+                       onCheckedChange={(val) => updateValue('enable_sms_alerts', val ? 'true' : 'false')} 
+                     />
+                  </div>
+                  <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
+                     <div>
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Email Alerts</Label>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Global Email state</p>
+                     </div>
+                     <Switch 
+                       checked={settings.enable_email_alerts === 'true'} 
+                       onCheckedChange={(val) => updateValue('enable_email_alerts', val ? 'true' : 'false')} 
+                     />
+                  </div>
                </div>
-               <Button 
-                 variant="outline" 
-                 className="h-12 px-12 border-white/20 text-white hover:bg-white hover:text-slate-900 font-bold text-[10px] uppercase tracking-widest rounded-none transition-all"
-               >
-                  Execute Reset
-               </Button>
-            </div>
+            </section>
 
           </div>
         )}
 
-        {/* Forensic Footer */}
+        {/* Footer */}
         <div className="pt-12 border-t border-slate-100 flex justify-between items-center text-[9px] font-bold text-slate-300 uppercase tracking-widest">
-           <p>Last Sync: {new Date().toLocaleTimeString()}</p>
-           <p>Protocol Status: Active</p>
+           <p>Last Sync: {new Date().toLocaleDateString()}</p>
+           <p>Status: {isLoading ? 'Polling...' : 'Ready'}</p>
         </div>
       </div>
     </AdminLayout>
