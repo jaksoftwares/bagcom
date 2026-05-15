@@ -70,6 +70,41 @@ export async function GET() {
       .eq('role', 'SELLER')
       .eq('seller_status', 'PENDING');
 
+    // 5. Fetch Latest M-Pesa Balance
+    const { data: mpesaBalance } = await supabase
+      .from('mpesa_account_status')
+      .select('balance, last_updated')
+      .order('last_updated', { ascending: false })
+      .limit(1)
+      .single();
+
+    // 6. Escrow Integrity Check
+    // Sum of held escrow in orders vs sum of held escrow in escrow_transactions
+    const { data: orderEscrowSum } = await supabase
+      .from('orders')
+      .select('escrow_amount.sum()')
+      .in('status', ['HELD_IN_ESCROW', 'PROCESSING_DELIVERY'])
+      .single();
+    
+    const { data: transactionEscrowSum } = await supabase
+      .from('escrow_transactions')
+      .select('held_amount.sum()')
+      .eq('escrow_status', 'HELD')
+      .single();
+
+    const isEscrowBalanced = (orderEscrowSum as any)?.sum === (transactionEscrowSum as any)?.sum;
+
+    // 7. Daily Payout Spending (Quota Tracker)
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { data: dailySpending } = await supabase
+      .from('payouts')
+      .select('amount.sum()')
+      .eq('status', 'COMPLETED')
+      .gt('processed_at', twentyFourHoursAgo)
+      .single();
+
+    const totalSpentToday = (dailySpending as any)?.sum || 0;
+
     return NextResponse.json({
       financials: financial || {
         total_transactions: 0,
@@ -84,7 +119,15 @@ export async function GET() {
         activeDisputes,
         pendingSellerCount: pendingSellerCount || 0
       },
-      recentActivity: recentActivity || []
+      recentActivity: recentActivity || [],
+      mpesa: {
+        balance: mpesaBalance?.balance || 0,
+        lastUpdated: mpesaBalance?.last_updated,
+        spentToday: totalSpentToday
+      },
+      system: {
+        escrowBalanced: isEscrowBalanced
+      }
     });
 
   } catch (error: any) {

@@ -95,7 +95,10 @@ export async function POST(request: Request) {
               .from('payouts')
               .update({ 
                 status: 'PROCESSING',
-                mpesa_payout_id: payoutResponse.ConversationID || payoutResponse.OriginatorConversationID
+                conversation_id: payoutResponse.ConversationID,
+                originator_conversation_id: payoutResponse.OriginatorConversationID,
+                response_code: payoutResponse.ResponseCode,
+                response_description: payoutResponse.ResponseDescription
               })
               .eq('id', payout.id);
           }

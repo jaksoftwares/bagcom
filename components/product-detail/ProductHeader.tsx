@@ -1,7 +1,7 @@
 'use client';
 
-import { Star, Clock, Eye, Heart, Share2 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Star, Clock, Eye, Heart, Share2, Flag } from 'lucide-react';
+import Link from 'next/link';
 
 interface ProductHeaderProps {
   product: any;
@@ -29,9 +29,16 @@ export default function ProductHeader({ product, viewCount, favoriteCount }: Pro
             </span>
           </div>
         </div>
-        <button className="p-2 text-muted-foreground/40 hover:text-primary transition-all">
-          <Share2 className="h-4 w-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          <Link href={`/contact?topic=Reporting Fraud&product_id=${product.id}`}>
+            <button className="p-2 text-muted-foreground/20 hover:text-rose-500 transition-all group" title="Report Listing">
+              <Flag className="h-4 w-4" />
+            </button>
+          </Link>
+          <button className="p-2 text-muted-foreground/40 hover:text-primary transition-all">
+            <Share2 className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       {/* Title & Reviews */}

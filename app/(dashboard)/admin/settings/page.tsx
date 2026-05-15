@@ -3,19 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Settings, 
-  Shield, 
-  Bell, 
-  Globe, 
-  Database, 
-  Zap,
-  Save,
-  ChevronRight,
-  Loader2
-} from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 
@@ -26,19 +15,20 @@ export default function AdminSettings() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    async function fetchSettings() {
-      try {
-        const res = await fetch('/api/admin/settings');
-        const data = await res.json();
-        setSettings(data.settings || {});
-      } catch (e) {
-        toast({ title: "Failed to load settings", variant: "destructive" });
-      } finally {
-        setIsLoading(false);
-      }
-    }
     fetchSettings();
   }, []);
+
+  async function fetchSettings() {
+    try {
+      const res = await fetch('/api/admin/settings');
+      const data = await res.json();
+      setSettings(data.settings || {});
+    } catch (e) {
+      toast({ title: "Failed to load settings", variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -49,139 +39,228 @@ export default function AdminSettings() {
         body: JSON.stringify({ settings })
       });
       if (res.ok) {
-        toast({ title: "Settings Saved", description: "Settings updated successfully." });
+        toast({ title: "Settings Synchronized", description: "Global platform parameters updated." });
+        fetchSettings();
+      } else {
+        throw new Error('Save failed');
       }
     } catch (e) {
-      toast({ title: "Save failed", variant: "destructive" });
+      toast({ title: "Synchronization failed", variant: "destructive" });
     } finally {
       setIsSaving(false);
     }
   };
 
-  const toggleSetting = (key: string) => {
-    setSettings({
-      ...settings,
-      [key]: settings[key] === 'true' ? 'false' : 'true'
-    });
+  const updateValue = (key: string, value: string) => {
+    setSettings({ ...settings, [key]: value });
   };
 
   return (
     <AdminLayout>
-      <div className="space-y-10">
+      <div className="space-y-12">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-               <span>Admin</span>
-               <ChevronRight className="h-3 w-3 opacity-50" />
-               <span className="text-primary">Settings</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              System Settings
+        <div className="flex justify-between items-end gap-8 pb-4 border-b border-slate-200">
+          <div className="space-y-1">
+            <h1 className="text-xl font-bold tracking-widest text-slate-900 uppercase">
+              Platform Configuration
             </h1>
-            <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Manage platform settings and security.
-            </p>
           </div>
-          <Button 
-            onClick={handleSave}
-            disabled={isSaving}
-            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] uppercase tracking-wider h-11 px-6 rounded-lg shadow-sm transition-all"
-          >
-             {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />} 
-             Save
-          </Button>
+          <div className="flex gap-4">
+             <Button 
+               onClick={handleSave}
+               disabled={isSaving || isLoading}
+               className="h-10 px-8 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[10px] uppercase tracking-widest rounded-none shadow-none"
+             >
+                {isSaving ? 'Processing...' : 'Commit Protocol'}
+             </Button>
+          </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-           {/* Navigation Sidebar */}
-           <div className="space-y-2">
-              {[
-                { name: 'General', icon: Settings, active: true },
-                { name: 'Security', icon: Shield },
-                { name: 'Notifications', icon: Bell },
-                { name: 'Localization', icon: Globe },
-                { name: 'Database', icon: Database },
-                { name: 'API', icon: Zap },
-              ].map((item) => (
-                <Button 
-                  key={item.name}
-                  variant="ghost" 
-                  className={`w-full justify-start h-12 px-4 rounded-lg gap-3 font-bold text-xs transition-all ${
-                    item.active 
-                      ? 'bg-primary text-white shadow-sm' 
-                      : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.name}
-                </Button>
-              ))}
-           </div>
-
-           {/* Content Area */}
-           <div className="lg:col-span-2 space-y-6">
-              {isLoading ? (
-                <div className="py-24 flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-slate-200" /></div>
-              ) : (
-                <Card className="bg-white border-slate-200 p-8 rounded-xl shadow-sm">
-                  <div className="space-y-8">
-                      <div className="space-y-0.5">
-                        <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Global Settings</p>
-                        <h3 className="text-xl font-bold text-slate-900 tracking-tight">General Settings</h3>
-                      </div>
-
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
-                            <div className="space-y-0.5">
-                              <Label className="text-sm font-bold text-slate-900">Maintenance Mode</Label>
-                              <p className="text-[11px] text-slate-500 font-medium">Disable all buyer and seller actions globally.</p>
-                            </div>
-                            <Switch 
-                              checked={settings.maintenance_mode === 'true'} 
-                              onCheckedChange={() => toggleSetting('maintenance_mode')} 
-                            />
-                        </div>
-
-                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
-                            <div className="space-y-0.5">
-                              <Label className="text-sm font-bold text-slate-900">Auto-Release</Label>
-                              <p className="text-[11px] text-slate-500 font-medium">Release funds automatically after period of delivery.</p>
-                            </div>
-                            <Switch 
-                              checked={settings.auto_release_days !== '0'} 
-                              onCheckedChange={() => setSettings({...settings, auto_release_days: settings.auto_release_days === '0' ? '7' : '0'})} 
-                            />
-                        </div>
-
-                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
-                            <div className="space-y-0.5">
-                              <Label className="text-sm font-bold text-slate-900">Self-Vetting</Label>
-                              <p className="text-[11px] text-slate-500 font-medium">Allow low-value sales without full KYC approval.</p>
-                            </div>
-                            <Switch 
-                              checked={settings.self_vetting === 'true'} 
-                              onCheckedChange={() => toggleSetting('self_vetting')}
-                            />
-                        </div>
-                      </div>
+        {isLoading ? (
+          <div className="py-24 text-center">
+             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Synchronizing System Map...</p>
+          </div>
+        ) : (
+          <div className="space-y-16 max-w-6xl">
+            
+            {/* 1. Governance Module */}
+            <section className="space-y-6">
+               <div className="flex justify-between items-center border-b border-slate-200 pb-2">
+                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">Governance & Access</p>
+                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Module 01</span>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
+                     <div>
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Maintenance Lock</Label>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Suspend platform activity</p>
+                     </div>
+                     <Switch 
+                       checked={settings.maintenance_mode === 'true'} 
+                       onCheckedChange={(val) => updateValue('maintenance_mode', val ? 'true' : 'false')} 
+                     />
                   </div>
-                </Card>
-              )}
+                  <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
+                     <div>
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Automated Vetting</Label>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Merchant self-onboarding</p>
+                     </div>
+                     <Switch 
+                       checked={settings.self_vetting === 'true'} 
+                       onCheckedChange={(val) => updateValue('self_vetting', val ? 'true' : 'false')} 
+                     />
+                  </div>
+                  <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
+                     <div>
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Verbose Audit</Label>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">High-density logging</p>
+                     </div>
+                     <Switch 
+                       checked={settings.verbose_logging === 'true'} 
+                       onCheckedChange={(val) => updateValue('verbose_logging', val ? 'true' : 'false')} 
+                     />
+                  </div>
+               </div>
+            </section>
 
-              <Card className="bg-white border-slate-200 p-8 rounded-xl shadow-sm">
-                 <div className="space-y-8">
-                    <div className="space-y-0.5">
-                       <p className="text-[11px] font-bold text-rose-600 uppercase tracking-wider">Restricted Actions</p>
-                       <h3 className="text-xl font-bold text-slate-900 tracking-tight">Danger Zone</h3>
-                    </div>
-                    <div className="p-4 bg-rose-50 rounded-lg border border-rose-100 flex items-center justify-between">
-                       <p className="text-xs text-rose-700 font-bold">Clear Cache</p>
-                       <Button variant="outline" className="border-rose-200 bg-white text-rose-600 hover:bg-rose-50 hover:text-rose-700 font-bold text-[10px] uppercase tracking-wider h-9 px-4 rounded-md">Clear</Button>
-                    </div>
-                 </div>
-              </Card>
-           </div>
+            {/* 2. Financial Architecture Module */}
+            <section className="space-y-6">
+               <div className="flex justify-between items-center border-b border-slate-200 pb-2">
+                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">Financial Parameters</p>
+                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Module 02</span>
+               </div>
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="p-6 bg-white border border-slate-200 rounded-none space-y-4">
+                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Commission (%)</p>
+                     <Input 
+                       type="number"
+                       value={settings.commission_rate}
+                       onChange={(e) => updateValue('commission_rate', e.target.value)}
+                       className="h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold focus-visible:ring-0 shadow-none"
+                     />
+                  </div>
+                  <div className="p-6 bg-white border border-slate-200 rounded-none space-y-4">
+                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Escrow Hold (Days)</p>
+                     <Input 
+                       type="number"
+                       value={settings.auto_release_days}
+                       onChange={(e) => updateValue('auto_release_days', e.target.value)}
+                       className="h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold focus-visible:ring-0 shadow-none"
+                     />
+                  </div>
+                  <div className="p-6 bg-white border border-slate-200 rounded-none space-y-4">
+                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Payout Floor (KSh)</p>
+                     <Input 
+                       type="number"
+                       value={settings.min_payout_amount}
+                       onChange={(e) => updateValue('min_payout_amount', e.target.value)}
+                       className="h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold focus-visible:ring-0 shadow-none"
+                     />
+                  </div>
+                  <div className="p-6 bg-white border border-slate-200 rounded-none space-y-4">
+                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Daily Payout Cap (KSh)</p>
+                     <Input 
+                       type="number"
+                       value={settings.max_daily_payout || 100000}
+                       onChange={(e) => updateValue('max_daily_payout', e.target.value)}
+                       className="h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold focus-visible:ring-0 shadow-none"
+                     />
+                  </div>
+               </div>
+            </section>
+
+            {/* 3. Gateway & Logistics Module */}
+            <section className="space-y-6">
+               <div className="flex justify-between items-center border-b border-slate-200 pb-2">
+                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">Gateway & Logistics</p>
+                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Module 03</span>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-6 bg-white border border-slate-200 rounded-none space-y-6">
+                     <div className="flex justify-between items-center">
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">M-Pesa Payout Shortcode</Label>
+                        <span className="text-[9px] px-2 py-0.5 border border-slate-900 text-slate-900 font-bold uppercase tracking-widest">Active</span>
+                     </div>
+                     <Input 
+                       value={settings.mpesa_payout_shortcode || '4085600'}
+                       onChange={(e) => updateValue('mpesa_payout_shortcode', e.target.value)}
+                       className="h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold focus-visible:ring-0 shadow-none"
+                     />
+                  </div>
+                  <div className="p-6 bg-white border border-slate-200 rounded-none space-y-6">
+                     <div className="flex justify-between items-center">
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Settlement Environment</Label>
+                        <span className={`text-[9px] px-2 py-0.5 border font-bold uppercase tracking-widest ${settings.mpesa_env === 'production' ? 'bg-slate-900 text-white border-slate-900' : 'border-amber-200 text-amber-600'}`}>
+                           {settings.mpesa_env === 'production' ? 'Live Production' : 'Sandbox / Test'}
+                        </span>
+                     </div>
+                     <div className="flex gap-2">
+                        <Button 
+                          onClick={() => updateValue('mpesa_env', 'sandbox')}
+                          className={`flex-1 h-10 rounded-none font-bold text-[9px] uppercase tracking-widest transition-all ${settings.mpesa_env !== 'production' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                        >Sandbox</Button>
+                        <Button 
+                          onClick={() => updateValue('mpesa_env', 'production')}
+                          className={`flex-1 h-10 rounded-none font-bold text-[9px] uppercase tracking-widest transition-all ${settings.mpesa_env === 'production' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                        >Live Production</Button>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            {/* 4. Security Protocols Module */}
+            <section className="space-y-6">
+               <div className="flex justify-between items-center border-b border-slate-200 pb-2">
+                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">Security Protocols</p>
+                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Module 04</span>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
+                     <div>
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Session Timeout (Min)</Label>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Auto-logout duration</p>
+                     </div>
+                     <Input 
+                       type="number"
+                       value={settings.session_timeout || 60}
+                       onChange={(e) => updateValue('session_timeout', e.target.value)}
+                       className="w-24 h-10 rounded-none border-slate-200 bg-slate-50 text-sm font-bold text-center focus-visible:ring-0 shadow-none"
+                     />
+                  </div>
+                  <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
+                     <div>
+                        <Label className="text-[11px] font-bold text-slate-900 uppercase">Forced Overrides</Label>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Require 2FA for sensitive actions</p>
+                     </div>
+                     <Switch 
+                       checked={settings.force_2fa === 'true'} 
+                       onCheckedChange={(val) => updateValue('force_2fa', val ? 'true' : 'false')} 
+                     />
+                  </div>
+               </div>
+            </section>
+
+            {/* Platform Master Reset */}
+            <div className="p-10 bg-slate-900 text-white rounded-none flex flex-col md:flex-row justify-between items-center gap-8">
+               <div className="space-y-1">
+                  <p className="text-xl font-bold uppercase tracking-tight">Platform Master Reset</p>
+                  <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Purge platform indices, flush cache, and synchronize global state</p>
+               </div>
+               <Button 
+                 variant="outline" 
+                 className="h-12 px-12 border-white/20 text-white hover:bg-white hover:text-slate-900 font-bold text-[10px] uppercase tracking-widest rounded-none transition-all"
+               >
+                  Execute Reset
+               </Button>
+            </div>
+
+          </div>
+        )}
+
+        {/* Forensic Footer */}
+        <div className="pt-12 border-t border-slate-100 flex justify-between items-center text-[9px] font-bold text-slate-300 uppercase tracking-widest">
+           <p>Last Sync: {new Date().toLocaleTimeString()}</p>
+           <p>Protocol Status: Active</p>
         </div>
       </div>
     </AdminLayout>

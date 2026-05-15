@@ -3,16 +3,19 @@ import { createServerClient } from '@/lib/supabase/server';
 import { sendEmail, EmailTemplates } from '@/lib/mail';
 import { MpesaService } from '@/services/mpesa';
 
+import { logAdminAction } from '@/lib/admin-audit';
+
 /**
  * Admin Dispute Resolution API
  * URL: /api/admin/disputes/[id]
  */
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createServerClient();
+    const { id } = await params;
     const { action } = await request.json(); // 'RELEASE' or 'REFUND'
 
     // 1. Fetch dispute and order details
@@ -27,7 +30,7 @@ export async function POST(
           seller:users!orders_seller_id_fkey(email, first_name, last_name, phone_number)
         )
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (disputeError || !dispute) {
@@ -41,9 +44,15 @@ export async function POST(
       // RELEASE: Funds go to seller (Order COMPLETED)
       await Promise.all([
         supabase.from('orders').update({ status: 'COMPLETED', updated_at: now }).eq('id', order.id),
-        supabase.from('disputes').update({ status: 'RESOLVED', resolution: 'RELEASED_TO_SELLER', resolved_at: now }).eq('id', params.id),
+        supabase.from('disputes').update({ status: 'RESOLVED', resolution: 'RELEASED_TO_SELLER', resolved_at: now }).eq('id', id),
         supabase.from('escrow_transactions').update({ escrow_status: 'RELEASED', released_at: now }).eq('order_id', order.id)
       ]);
+
+      // Log action
+      const { data: { user: admin } } = await supabase.auth.getUser();
+      if (admin) {
+        await logAdminAction(admin.id, 'RESOLVE_DISPUTE_RELEASE', 'DISPUTE', id, { orderId: order.id });
+      }
 
       // Trigger Payout
       const { data: payout } = await supabase
@@ -70,7 +79,7 @@ export async function POST(
 
       // Notify Parties
       if (order.seller?.email) {
-        const sellerTemplate = EmailTemplates.payoutInitiatedSeller(order.seller.first_name, order.seller_receivable.toLocaleString(), order.order_number);
+        const sellerTemplate = EmailTemplates.payoutInitiatedSeller(order.seller.first_name, (order.seller_receivable || 0).toLocaleString(), order.order_number);
         await sendEmail({ to: order.seller.email, subject: sellerTemplate.subject, html: sellerTemplate.html });
       }
 
@@ -78,15 +87,20 @@ export async function POST(
       // REFUND: Funds go back to buyer (Order REFUNDED)
       await Promise.all([
         supabase.from('orders').update({ status: 'REFUNDED', updated_at: now }).eq('id', order.id),
-        supabase.from('disputes').update({ status: 'RESOLVED', resolution: 'REFUNDED_TO_BUYER', resolved_at: now }).eq('id', params.id),
+        supabase.from('disputes').update({ status: 'RESOLVED', resolution: 'REFUNDED_TO_BUYER', resolved_at: now }).eq('id', id),
         supabase.from('escrow_transactions').update({ escrow_status: 'REFUNDED', released_at: now }).eq('order_id', order.id)
       ]);
+
+      // Log action
+      const { data: { user: admin } } = await supabase.auth.getUser();
+      if (admin) {
+        await logAdminAction(admin.id, 'RESOLVE_DISPUTE_REFUND', 'DISPUTE', id, { orderId: order.id });
+      }
 
       // Trigger Refund Payout (B2C to Buyer)
       if (order.buyer?.phone_number) {
         try {
           const refundRes = await MpesaService.initiateB2CPayout(order.buyer.phone_number, order.total_amount, `REF-${order.id.slice(0,8)}`);
-          // We could track this in a 'refunds' table as well
           console.log('Automated Refund Triggered:', refundRes);
         } catch (e) {
           console.error('Resolution Refund Error:', e);
@@ -98,7 +112,7 @@ export async function POST(
         const buyerTemplate = EmailTemplates.disputeResolvedRefundBuyer(
           order.buyer.first_name,
           order.order_number,
-          order.total_amount.toLocaleString()
+          (order.total_amount || 0).toLocaleString()
         );
         await sendEmail({
           to: order.buyer.email,

@@ -10,7 +10,7 @@ import { logAdminAction } from '@/lib/admin-audit';
 export async function POST(request: Request) {
   try {
     const supabase = createServerClient();
-    const { sellerId, action } = await request.json();
+    const { sellerId, action, reason } = await request.json();
 
     if (!sellerId || !action) {
       return NextResponse.json({ error: 'Seller ID and action are required' }, { status: 400 });
@@ -28,7 +28,8 @@ export async function POST(request: Request) {
       };
     } else if (action === 'REJECT') {
       updateData = {
-        seller_status: 'REJECTED'
+        seller_status: 'REJECTED',
+        kyc_notes: reason ? `Rejected: ${reason}` : 'Rejected by administrator'
       };
     }
 

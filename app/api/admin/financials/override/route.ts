@@ -45,7 +45,7 @@ export async function POST(request: Request) {
         }).eq('id', escrow.order_id)
       ]);
 
-      // Trigger Payout if not already done
+      // Trigger Payout record creation if not already done
       const { data: payout } = await supabase
         .from('payouts')
         .insert({
@@ -62,17 +62,44 @@ export async function POST(request: Request) {
         const { data: seller } = await supabase.from('users').select('phone_number').eq('id', escrow.order.seller_id).single();
         if (seller?.phone_number) {
           try {
+            // Attempt B2C v3 Payout
             const payoutRes = await MpesaService.initiateB2CPayout(seller.phone_number, escrow.order.seller_receivable, payout.id);
             if (payoutRes.ResponseCode === "0") {
-              await supabase.from('payouts').update({ status: 'PROCESSING', mpesa_payout_id: payoutRes.ConversationID }).eq('id', payout.id);
+              await supabase.from('payouts').update({ 
+                status: 'PROCESSING', 
+                conversation_id: payoutRes.ConversationID,
+                originator_conversation_id: payoutRes.OriginatorConversationID
+              }).eq('id', payout.id);
             }
           } catch (e) {
-            console.error('Force Release Payout Error:', e);
+            console.error('Force Release Payout Error (Likely due to Till limitation):', e);
           }
         }
       }
 
       await logAdminAction(user.id, 'FORCE_RELEASE_ESCROW', 'ESCROW', escrowId, { reason, order_id: escrow.order_id });
+
+    } else if (action === 'CONFIRM_MANUAL_PAYOUT') {
+      // Manual Payout: Admin has sent money via phone/app and is recording the receipt
+      const { payoutId, receiptNumber } = await request.json(); // Re-parsing for specific fields
+      
+      await supabase.from('payouts').update({
+        status: 'COMPLETED',
+        processed_at: now,
+        response_description: `Manual Payout confirmed by Admin. Receipt: ${receiptNumber}`,
+        response_code: 'MANUAL'
+      }).eq('id', payoutId);
+
+      // Update Order Status
+      const { data: payoutData } = await supabase.from('payouts').select('order_id').eq('id', payoutId).single();
+      if (payoutData?.order_id) {
+        await supabase.from('orders').update({ 
+          status: 'COMPLETED', 
+          updated_at: now 
+        }).eq('id', payoutData.order_id);
+      }
+
+      await logAdminAction(user.id, 'CONFIRM_MANUAL_PAYOUT', 'PAYOUT', payoutId, { receiptNumber, reason });
 
     } else if (action === 'FREEZE') {
       await supabase.from('escrow_transactions').update({ 

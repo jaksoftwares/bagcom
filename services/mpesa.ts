@@ -104,8 +104,12 @@ export class MpesaService {
 
     const token = await this.getAccessToken();
     const formattedPhone = phoneNumber.startsWith('0') ? `254${phoneNumber.slice(1)}` : phoneNumber;
+    
+    // Generate a unique OriginatorConversationID (Required for B2C v3)
+    const originatorConversationID = `BAG_${payoutId.slice(0, 8)}_${Date.now()}`;
 
     const payload = {
+      OriginatorConversationID: originatorConversationID,
       InitiatorName: this.auth.initiator,
       SecurityCredential: this.auth.securityCredential,
       CommandID: "BusinessPayment",
@@ -115,16 +119,52 @@ export class MpesaService {
       Remarks: "Bagcom Seller Payout",
       QueueTimeOutURL: `${process.env.MPESA_CALLBACK_URL}/timeout`,
       ResultURL: `${process.env.MPESA_CALLBACK_URL}/b2c/callback`,
-      Occasion: payoutId 
+      Occassion: payoutId // Using payoutId as the Occassion for tracking
     };
 
     try {
-      const response = await axios.post(`${this.auth.baseUrl}/mpesa/b2c/v1/paymentrequest`, payload, {
+      const response = await axios.post(`${this.auth.baseUrl}/mpesa/b2c/v3/paymentrequest`, payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Return both the response and the OriginatorConversationID for database tracking
+      return {
+        ...response.data,
+        OriginatorConversationID: originatorConversationID
+      };
+    } catch (error: any) {
+      console.error('B2C Payout Error:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Checks the M-PESA Account Balance
+   */
+  static async getAccountBalance() {
+    if (!this.auth.initiator || !this.auth.securityCredential) {
+      throw new Error('M-PESA Credentials missing');
+    }
+
+    const token = await this.getAccessToken();
+    const payload = {
+      Initiator: this.auth.initiator,
+      SecurityCredential: this.auth.securityCredential,
+      CommandID: "AccountBalance",
+      PartyA: this.auth.b2cShortcode,
+      IdentifierType: "4", // Shortcode
+      Remarks: "Balance Query",
+      QueueTimeOutURL: `${process.env.MPESA_CALLBACK_URL}/timeout`,
+      ResultURL: `${process.env.MPESA_CALLBACK_URL}/balance/callback`
+    };
+
+    try {
+      const response = await axios.post(`${this.auth.baseUrl}/mpesa/accountbalance/v1/query`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
       return response.data;
     } catch (error: any) {
-      console.error('B2C Payout Error:', error.response?.data || error.message);
+      console.error('Account Balance Query Error:', error.response?.data || error.message);
       throw error;
     }
   }

@@ -68,6 +68,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           return;
         }
 
+        if (profile.is_active === false) {
+          console.log('Admin Guard: Account is suspended', user.id);
+          if (mounted) router.push('/suspended');
+          return;
+        }
+
         if (mounted) {
           setAdmin(profile);
           setIsLoading(false);

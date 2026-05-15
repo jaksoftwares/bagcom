@@ -512,5 +512,65 @@ export const EmailTemplates = {
         </div>
       </div>
     `
+  }),
+  /**
+   * Account Suspended Email
+   */
+  accountSuspended: (userName: string, reason: string) => ({
+    subject: "IMPORTANT: Your Bagcom account has been suspended",
+    html: `
+      <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #fee2e2; border-radius: 16px; overflow: hidden;">
+        <div style="background-color: #ef4444; padding: 40px; text-align: center;">
+           <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+        </div>
+        <div style="padding: 40px; background-color: #ffffff;">
+          <h1 style="font-size: 24px; font-weight: 800; color: #991b1b; margin-bottom: 16px; letter-spacing: -0.02em;">Account Suspended</h1>
+          <p style="font-size: 16px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">
+            Hello ${userName}, we are writing to inform you that your Bagcom account has been suspended following a review by our security team.
+          </p>
+          
+          <div style="background-color: #fef2f2; border: 1px solid #fee2e2; border-radius: 12px; padding: 24px; margin-bottom: 32px;">
+             <p style="font-size: 13px; font-weight: 700; color: #991b1b; margin-bottom: 8px;">Reason for Suspension:</p>
+             <p style="font-size: 14px; color: #b91c1c; margin: 0; font-weight: 500;">${reason || 'Violation of platform terms and conditions.'}</p>
+          </div>
+
+          <p style="font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 32px;">
+            While your account is suspended, you will not be able to list products, make purchases, or access your dashboard. Any active escrow funds have been temporarily frozen.
+          </p>
+
+          <div style="text-align: center;">
+            <a href="mailto:support@bagcom.com" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Appeal Suspension</a>
+          </div>
+        </div>
+      </div>
+    `
+  }),
+
+  /**
+   * Account Reactivated Email
+   */
+  accountReactivated: (userName: string) => ({
+    subject: "Account Restored: You can now access Bagcom again",
+    html: `
+      <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
+        <div style="background-color: #10b981; padding: 40px; text-align: center;">
+           <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+        </div>
+        <div style="padding: 40px; background-color: #ffffff;">
+          <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Welcome Back!</h1>
+          <p style="font-size: 16px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">
+            Hello ${userName}, we have completed our review and have successfully reactivated your account.
+          </p>
+          
+          <p style="font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 32px;">
+            You now have full access to all Bagcom features, including buying, selling, and managing your orders.
+          </p>
+
+          <div style="text-align: center;">
+            <a href="https://bagcom.dovepeakdigital.com/auth/login" style="background-color: #10b981; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Login to Your Account</a>
+          </div>
+        </div>
+      </div>
+    `
   })
 };

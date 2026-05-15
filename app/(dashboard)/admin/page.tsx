@@ -212,16 +212,22 @@ export default function AdminDashboard() {
                 <div className="flex justify-between items-center">
                   <div className="space-y-1">
                      <p className="text-sm font-bold text-slate-900">M-Pesa Payouts</p>
-                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Payout Balance</p>
+                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                       {stats?.mpesa?.lastUpdated ? `Last Sync: ${new Date(stats.mpesa.lastUpdated).toLocaleTimeString()}` : 'Payout Balance'}
+                     </p>
                   </div>
                   <Badge className="bg-emerald-50 text-emerald-600 border-none px-2.5 py-0.5 font-bold text-[9px] uppercase tracking-wide">Active</Badge>
                 </div>
                 <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-500 w-[82%]" />
+                  {/* Daily Quota Visualization (based on 500k limit) */}
+                  <div 
+                    className="h-full bg-emerald-500 transition-all duration-500" 
+                    style={{ width: `${Math.min((stats?.mpesa?.spentToday || 0) / 500000 * 100, 100)}%` }}
+                  /> 
                 </div>
                 <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  <span>Balance: KSh 1.2M</span>
-                  <span className="text-slate-600">82% Quota</span>
+                  <span>Balance: KSh {stats?.mpesa?.balance?.toLocaleString() || 0}</span>
+                  <span className="text-slate-600">Usage: {Math.round((stats?.mpesa?.spentToday || 0) / 500000 * 100)}%</span>
                 </div>
               </div>
 
@@ -231,17 +237,32 @@ export default function AdminDashboard() {
                 <div className="flex justify-between items-center">
                   <div className="space-y-1">
                      <p className="text-sm font-bold text-slate-900">Escrow Ledger</p>
-                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Verified</p>
+                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Status Check</p>
                   </div>
-                  <Badge className="bg-emerald-50 text-emerald-600 border-none px-2.5 py-0.5 font-bold text-[9px] uppercase tracking-wide">Verified</Badge>
+                  <Badge className={stats?.system?.escrowBalanced ? "bg-emerald-50 text-emerald-600 border-none px-2.5 py-0.5 font-bold text-[9px] uppercase tracking-wide" : "bg-rose-50 text-rose-600 border-none px-2.5 py-0.5 font-bold text-[9px] uppercase tracking-wide"}>
+                    {stats?.system?.escrowBalanced ? 'Verified' : 'Unbalanced'}
+                  </Badge>
                 </div>
                 <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-slate-900 w-[100%]" />
+                  <div className={`h-full ${stats?.system?.escrowBalanced ? 'bg-slate-900' : 'bg-rose-500'} w-[100%]`} />
                 </div>
               </div>
 
-              <Button className="w-full bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-900 font-bold text-[11px] uppercase tracking-wider h-11 rounded-lg transition-all">
-                View Logs <ChevronRight className="ml-2 h-3.5 w-3.5 opacity-60" />
+              <Button 
+                onClick={async () => {
+                  toast({ title: "Syncing with M-Pesa...", description: "Request sent to Safaricom." });
+                  try {
+                    const res = await fetch('/api/admin/mpesa/balance', { method: 'POST' });
+                    if (res.ok) {
+                      toast({ title: "Sync Initiated", description: "Balance will update in a few seconds." });
+                    }
+                  } catch (e) {
+                    toast({ title: "Sync Failed", variant: "destructive" });
+                  }
+                }}
+                className="w-full bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-900 font-bold text-[11px] uppercase tracking-wider h-11 rounded-lg transition-all"
+              >
+                Sync M-Pesa <Activity className="ml-2 h-3.5 w-3.5 opacity-60" />
               </Button>
             </Card>
 

@@ -64,14 +64,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing buyer_id' }, { status: 400 });
     }
 
-    // 1. Ensure buyer profile exists
-    const { data: existingUser } = await supabase
+    // 1. Ensure buyer profile exists and is active
+    const { data: profile } = await supabase
       .from('users')
-      .select('id')
+      .select('id, is_active')
       .eq('id', buyer_id)
       .single();
 
-    if (!existingUser) {
+    if (profile && profile.is_active === false) {
+      return NextResponse.json({ 
+        error: 'Your account is currently suspended. Please contact support to resolve this issue.' 
+      }, { status: 403 });
+    }
+
+    if (!profile) {
       const { data: { user: authUser }, error: authError } = await supabase.auth.admin.getUserById(buyer_id);
       if (!authError && authUser) {
         await supabase.from('users').insert({

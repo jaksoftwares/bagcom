@@ -177,12 +177,16 @@ export default function SupportSystemPage() {
                  <p className="text-gray-400 text-sm max-w-sm mx-auto">Our support team is available from 8 AM to 10 PM daily for urgent issues.</p>
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
-                 <Button className="h-11 px-8 rounded-lg font-bold gap-2 bg-primary hover:bg-primary/90 text-white border-none">
-                    <MessageCircle className="h-4 w-4" /> Start Live Chat
-                 </Button>
-                 <Button variant="outline" className="h-11 px-8 rounded-lg font-bold gap-2 border-gray-700 text-white hover:bg-white/5">
-                    Send an Email
-                 </Button>
+                 <Link href="/contact">
+                   <Button className="h-11 px-8 rounded-lg font-bold gap-2 bg-primary hover:bg-primary/90 text-white border-none">
+                      <MessageCircle className="h-4 w-4" /> Start Live Chat
+                   </Button>
+                 </Link>
+                 <Link href="/contact">
+                   <Button variant="outline" className="h-11 px-8 rounded-lg font-bold gap-2 border-gray-700 text-white hover:bg-white/5">
+                      Open Support Ticket
+                   </Button>
+                 </Link>
               </div>
               {/* Background detail */}
               <div className="absolute top-0 right-0 h-full w-1/3 bg-white/5 -skew-x-12 translate-x-1/2" />

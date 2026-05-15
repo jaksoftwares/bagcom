@@ -54,6 +54,13 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
           return;
         }
         const profile = await getUserProfile(currentUser.id);
+
+        if (profile?.is_active === false) {
+          console.log('Seller Guard: Account is suspended');
+          if (mounted) router.push('/suspended');
+          return;
+        }
+
         if (mounted) {
           setUser(profile);
           setIsLoading(false);

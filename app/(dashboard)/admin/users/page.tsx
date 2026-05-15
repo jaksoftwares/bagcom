@@ -33,6 +33,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { useToast } from '@/hooks/use-toast';
+import UserDetailDrawer from '@/components/admin/UserDetailDrawer';
 
 export default function UserManagement() {
   const { toast } = useToast();
@@ -40,19 +41,21 @@ export default function UserManagement() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch('/api/admin/users');
+      const data = await res.json();
+      setUsers(data.users || []);
+    } catch (error) {
+      toast({ title: "Failed to load users", variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const res = await fetch('/api/admin/users');
-        const data = await res.json();
-        setUsers(data.users || []);
-      } catch (error) {
-        toast({ title: "Failed to load users", variant: "destructive" });
-      } finally {
-        setIsLoading(false);
-      }
-    }
     fetchUsers();
   }, []);
 
@@ -169,7 +172,11 @@ export default function UserManagement() {
                       <tr><td colSpan={5} className="px-6 py-16 text-center text-slate-400 font-bold uppercase tracking-wider italic">No matching records found.</td></tr>
                     ) : (
                       filteredUsers.map((user) => (
-                        <tr key={user.id} className="hover:bg-slate-50 transition-all duration-200 group">
+                        <tr 
+                          key={user.id} 
+                          onClick={() => setSelectedUserId(user.id)}
+                          className="hover:bg-slate-50 transition-all duration-200 group cursor-pointer"
+                        >
                           <td className="px-6 py-5">
                             <div className="flex items-center gap-4">
                               <div className="h-10 w-10 bg-slate-100 rounded-lg flex-shrink-0 flex items-center justify-center font-bold text-slate-500 group-hover:bg-slate-200 transition-all">
@@ -195,7 +202,7 @@ export default function UserManagement() {
                                 {new Date(user.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                              </div>
                           </td>
-                          <td className="px-6 py-5 text-right">
+                          <td className="px-6 py-5 text-right" onClick={(e) => e.stopPropagation()}>
                              <DropdownMenu>
                                <DropdownMenuTrigger asChild>
                                  <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg h-9 w-9">
@@ -205,6 +212,13 @@ export default function UserManagement() {
                                <DropdownMenuContent align="end" className="w-56 bg-white border border-slate-200 text-slate-700 rounded-lg p-1.5 shadow-lg">
                                  <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 py-2">Actions</DropdownMenuLabel>
                                  
+                                 <DropdownMenuItem 
+                                    className="gap-3 px-3 py-2 rounded-md focus:bg-slate-100 focus:text-slate-900 transition-all cursor-pointer"
+                                    onClick={() => setSelectedUserId(user.id)}
+                                  >
+                                    <Users className="h-4 w-4" /> View Profile
+                                  </DropdownMenuItem>
+
                                  {user.role === 'SELLER' && user.seller_status !== 'APPROVED' && (
                                    <DropdownMenuItem 
                                       className="gap-3 px-3 py-2 rounded-md focus:bg-slate-100 focus:text-slate-900 transition-all cursor-pointer"
@@ -250,6 +264,13 @@ export default function UserManagement() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* User Detail Side Panel */}
+        <UserDetailDrawer 
+          userId={selectedUserId} 
+          onClose={() => setSelectedUserId(null)} 
+          onUpdate={fetchUsers}
+        />
       </div>
     </AdminLayout>
   );

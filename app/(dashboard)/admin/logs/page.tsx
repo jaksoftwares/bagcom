@@ -2,131 +2,144 @@
 
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { 
-  History, 
-  Search, 
-  ChevronRight, 
-  User, 
-  Activity, 
-  Clock,
-  Database,
-  Loader2,
-  Terminal
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLogs() {
+  const { toast } = useToast();
   const [logs, setLogs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    async function fetchLogs() {
-      try {
-        const res = await fetch('/api/admin/logs'); // Need to create this API too
-        const data = await res.json();
-        setLogs(data.logs || []);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setIsLoading(false);
-      }
-    }
     fetchLogs();
   }, []);
+
+  async function fetchLogs() {
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/admin/logs');
+      const data = await res.json();
+      setLogs(data.logs || []);
+    } catch (e) {
+      toast({ title: "Failed to load audit logs", variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const filteredLogs = logs.filter(log => 
+    log.action?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    log.entity_type?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    log.admin?.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    log.admin?.last_name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <AdminLayout>
       <div className="space-y-10">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-               <span>Admin</span>
-               <ChevronRight className="h-3 w-3 opacity-50" />
-               <span className="text-primary">Logs</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              Activity History
+        <div className="flex justify-between items-end gap-8 pb-4 border-b border-slate-200">
+          <div className="space-y-1">
+            <h1 className="text-xl font-bold tracking-widest text-foreground uppercase">
+              Audit Logs
             </h1>
-            <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              A record of all actions performed by administrators.
-            </p>
           </div>
-          <div className="flex items-center gap-3 bg-white border border-slate-200 px-5 py-2.5 rounded-xl shadow-sm">
-             <Terminal className="h-4 w-4 text-primary" />
-             <span className="text-[11px] font-bold text-slate-900 uppercase tracking-wide">{logs.length} Entries</span>
+          <div className="flex gap-4">
+             <Button 
+               onClick={fetchLogs}
+               variant="outline" 
+               className="h-10 px-6 border-slate-200 font-bold text-[10px] uppercase tracking-widest rounded-none shadow-none"
+             >
+                {isLoading ? 'Refreshing...' : 'Refresh Logs'}
+             </Button>
           </div>
         </div>
 
-        <div className="space-y-6">
-           <div className="relative w-full md:w-80 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-600 transition-colors" />
-              <Input 
-                placeholder="Search..." 
-                className="pl-11 bg-white border-slate-200 h-11 rounded-lg text-sm font-medium focus:border-slate-300 shadow-sm transition-all"
-              />
+        {/* Search & Statistics */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+           <div className="flex items-center gap-8">
+              <div>
+                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Actions</p>
+                 <p className="text-xl font-bold text-slate-900 tracking-tight">{logs.length}</p>
+              </div>
+              <div className="h-8 w-px bg-slate-200" />
+              <div>
+                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Retention</p>
+                 <p className="text-xl font-bold text-slate-900 tracking-tight">200 Records</p>
+              </div>
            </div>
 
-           <Card className="bg-white border-slate-200 shadow-sm rounded-xl overflow-hidden">
-              <div className="overflow-x-auto">
-                 <table className="w-full text-left">
-                    <thead className="bg-slate-50 border-b border-slate-100">
-                       <tr>
-                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
-                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Admin</th>
-                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Action</th>
-                          <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Details</th>
-                       </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                       {isLoading ? (
-                         <tr><td colSpan={4} className="px-6 py-16 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-200" /></td></tr>
-                       ) : logs.length === 0 ? (
-                         <tr><td colSpan={4} className="px-6 py-16 text-center text-slate-400 font-bold uppercase tracking-wider">No logs found.</td></tr>
-                       ) : (
-                         logs.map((log) => (
-                           <tr key={log.id} className="hover:bg-slate-50 transition-all duration-200 group">
-                              <td className="px-6 py-5">
-                                 <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400">
-                                    <Clock className="h-3.5 w-3.5 opacity-60" />
-                                    {new Date(log.created_at).toLocaleString()}
-                                 </div>
-                              </td>
-                              <td className="px-6 py-5">
-                                 <div className="flex items-center gap-3">
-                                    <div className="h-8 w-8 bg-slate-100 rounded-lg flex items-center justify-center">
-                                       <User className="h-4 w-4 text-slate-500" />
-                                    </div>
-                                    <div className="space-y-0.5">
-                                       <p className="text-xs text-slate-900 font-bold">{log.admin?.first_name} {log.admin?.last_name}</p>
-                                       <p className="text-[10px] text-slate-400 font-mono uppercase tracking-tighter">{log.admin?.role}</p>
-                                    </div>
-                                 </div>
-                              </td>
-                              <td className="px-6 py-5">
-                                 <div className="space-y-1.5">
-                                    <Badge className="bg-slate-100 text-slate-600 border-none text-[9px] font-bold uppercase tracking-wider px-2 py-0.5">
-                                       {log.action}
-                                    </Badge>
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                                       {log.entity_type}: <span className="text-slate-500">#{log.entity_id?.slice(0,8)}</span>
-                                    </p>
-                                 </div>
-                              </td>
-                              <td className="px-6 py-5">
-                                 <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 font-mono text-[10px] text-slate-600 max-w-md line-clamp-2">
-                                    {JSON.stringify(log.details)}
-                                 </div>
-                              </td>
-                           </tr>
-                         ))
-                       )}
-                    </tbody>
-                 </table>
-              </div>
-           </Card>
+           <div className="relative w-full md:w-72">
+              <Input 
+                placeholder="FILTER ACTIONS..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="border-none bg-transparent pl-0 pr-0 h-10 text-[10px] font-bold uppercase tracking-widest focus-visible:ring-0 placeholder:text-slate-300 shadow-none border-b border-slate-200 rounded-none"
+              />
+           </div>
+        </div>
+
+        {/* Logs Table */}
+        <div className="space-y-1">
+           {/* Table Header */}
+           <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-y border-slate-200">
+              <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Timestamp</div>
+              <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Administrator</div>
+              <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Action</div>
+              <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Entity</div>
+              <div className="col-span-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Payload Details</div>
+           </div>
+
+           {isLoading ? (
+             <div className="py-24 flex flex-col items-center gap-4">
+               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Auditing System...</p>
+             </div>
+           ) : (
+             <div className="divide-y divide-slate-100 border-x border-b border-slate-200">
+               {filteredLogs.map((log) => (
+                 <div key={log.id} className="grid grid-cols-12 gap-4 px-6 py-4 bg-white hover:bg-slate-50 transition-colors items-center">
+                    <div className="col-span-2">
+                       <p className="text-[10px] font-mono text-slate-400">{new Date(log.created_at).toLocaleDateString()}</p>
+                       <p className="text-[10px] font-mono text-slate-900 font-bold">{new Date(log.created_at).toLocaleTimeString()}</p>
+                    </div>
+                    <div className="col-span-2">
+                       <p className="text-[11px] font-bold text-slate-900 uppercase tracking-tight">
+                          {log.admin?.first_name} {log.admin?.last_name}
+                       </p>
+                       <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{log.admin?.role}</p>
+                    </div>
+                    <div className="col-span-2">
+                       <span className="px-2 py-1 bg-slate-900 text-white text-[9px] font-bold uppercase tracking-widest">
+                          {log.action}
+                       </span>
+                    </div>
+                    <div className="col-span-2">
+                       <p className="text-[10px] font-bold text-slate-900 uppercase tracking-tight">{log.entity_type}</p>
+                       <p className="text-[9px] text-slate-400 font-mono">ID: {log.entity_id?.slice(0, 8)}...</p>
+                    </div>
+                    <div className="col-span-4 overflow-hidden">
+                       <p className="text-[9px] font-mono text-slate-400 truncate bg-slate-50 p-2 border border-slate-200">
+                          {JSON.stringify(log.details)}
+                       </p>
+                    </div>
+                 </div>
+               ))}
+               
+               {filteredLogs.length === 0 && (
+                 <div className="py-24 text-center">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No matching logs found in this cycle.</p>
+                 </div>
+               )}
+             </div>
+           )}
+        </div>
+
+        {/* Forensic Footer */}
+        <div className="flex justify-between items-center pt-8 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+           <p>Immutable Record Protocol v1.0</p>
+           <p>Authenticated Session</p>
         </div>
       </div>
     </AdminLayout>

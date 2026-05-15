@@ -5,6 +5,7 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   ShieldCheck, 
   User, 
@@ -18,39 +19,67 @@ import {
   AlertCircle,
   Phone,
   MapPin,
-  ChevronRight
+  ChevronRight,
+  TrendingUp,
+  Clock,
+  Ban,
+  CheckCircle2,
+  ArrowRight
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import UserDetailDrawer from '@/components/admin/UserDetailDrawer';
 
 export default function SellerVerifications() {
   const { toast } = useToast();
   const [sellers, setSellers] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('PENDING');
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchPendingSellers();
-  }, []);
+    fetchSellers();
+    fetchStats();
+  }, [activeTab]);
 
-  async function fetchPendingSellers() {
+  async function fetchSellers() {
+    setIsLoading(true);
     try {
-      const res = await fetch('/api/admin/sellers/pending');
+      const res = await fetch(`/api/admin/sellers?status=${activeTab}`);
       const data = await res.json();
       setSellers(data.sellers || []);
     } catch (error) {
-      toast({ title: "Failed to load pending sellers", variant: "destructive" });
+      toast({ title: "Failed to load sellers", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
   }
 
+  async function fetchStats() {
+    try {
+      const res = await fetch('/api/admin/sellers?type=STATS');
+      const data = await res.json();
+      setStats(data.stats);
+    } catch (error) {
+      console.error('Stats load failed');
+    }
+  }
+
   const handleAction = async (sellerId: string, action: 'APPROVE' | 'REJECT') => {
+    let reason = '';
+    if (action === 'REJECT') {
+      const input = prompt('Please enter a reason for rejection (this will be logged and emailed):');
+      if (input === null) return;
+      reason = input;
+    }
+
     setProcessingId(sellerId);
     try {
       const res = await fetch('/api/admin/sellers/approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sellerId, action })
+        body: JSON.stringify({ sellerId, action, reason })
       });
       
       if (res.ok) {
@@ -58,7 +87,8 @@ export default function SellerVerifications() {
           title: action === 'APPROVE' ? "Seller Approved" : "Seller Rejected",
           description: "Notification email has been sent."
         });
-        setSellers(sellers.filter(s => s.id !== sellerId));
+        fetchSellers();
+        fetchStats();
       } else {
         throw new Error("Failed to process request");
       }
@@ -73,140 +103,170 @@ export default function SellerVerifications() {
     <AdminLayout>
       <div className="space-y-10">
         {/* Breadcrumbs & Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-               <span>Admin</span>
-               <ChevronRight className="h-3 w-3 opacity-50" />
-               <span className="text-primary">Verifications</span>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pb-4">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">
+               <span>Governance</span>
+               <div className="h-1 w-1 bg-border rounded-full" />
+               <span className="text-primary">Verification Hub</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              Seller Verifications
+            <h1 className="text-4xl font-bold tracking-tight text-foreground">
+              Merchant Onboarding
             </h1>
-            <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Review and approve new seller accounts.
+            <p className="text-[13px] text-muted-foreground font-medium max-w-xl leading-relaxed">
+              Review and mediate merchant applications to maintain a high-trust marketplace environment.
             </p>
-          </div>
-          <div className="flex items-center gap-3 bg-white border border-slate-200 px-5 py-2.5 rounded-xl shadow-sm">
-             <ShieldCheck className="h-4 w-4 text-primary" />
-             <span className="text-[11px] font-bold text-slate-900 uppercase tracking-wide">{sellers.length} Pending Applications</span>
           </div>
         </div>
 
-        {isLoading ? (
-          <div className="py-24 flex justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-primary/40" />
-          </div>
-        ) : sellers.length === 0 ? (
-          <Card className="bg-white border-slate-200 py-24 text-center space-y-6 rounded-2xl shadow-sm">
-            <div className="h-16 w-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto border border-emerald-100">
-               <CheckCircle className="h-8 w-8 text-emerald-500" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">Queue is Clear</h3>
-              <p className="text-slate-500 max-w-sm mx-auto font-medium">There are no new seller applications awaiting review at this time.</p>
-            </div>
-          </Card>
-        ) : (
-          <div className="grid gap-6">
-            {sellers.map((seller) => (
-              <Card key={seller.id} className="bg-white border-slate-200 shadow-sm rounded-xl overflow-hidden group hover:border-slate-300 transition-all duration-300">
-                <div className="flex flex-col lg:flex-row">
-                  <div className="p-8 lg:w-2/3 space-y-8">
-                    <div className="flex justify-between items-start">
-                      <div className="flex gap-5">
-                        <div className="h-14 w-14 bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-center text-slate-900 shrink-0 group-hover:bg-slate-200 transition-all">
-                          <Store className="h-7 w-7" />
-                        </div>
-                        <div className="space-y-1">
-                            <h3 className="text-2xl font-bold text-slate-900 tracking-tight group-hover:text-primary transition-colors">{seller.business_name || "New Seller"}</h3>
-                            <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-slate-500">
-                              <span className="flex items-center gap-2 bg-slate-50 px-2.5 py-1 rounded-md"><User className="h-3 w-3" /> {seller.first_name} {seller.last_name}</span>
-                              <span className="flex items-center gap-2 bg-slate-50 px-2.5 py-1 rounded-md"><Mail className="h-3 w-3" /> {seller.email}</span>
+        {/* Stats Ribbon */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+           <div className="p-6 bg-white border border-slate-200 rounded-none flex flex-col justify-between h-32">
+              <div>
+                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Awaiting Audit</p>
+                 <p className="text-2xl font-bold text-slate-900 tracking-tight">{stats?.pending || 0}</p>
+              </div>
+           </div>
+           <div className="p-6 bg-white border border-slate-200 rounded-none flex flex-col justify-between h-32">
+              <div>
+                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Verified</p>
+                 <p className="text-2xl font-bold text-slate-900 tracking-tight">{stats?.approved || 0}</p>
+              </div>
+           </div>
+           <div className="p-6 bg-white border border-slate-200 rounded-none flex flex-col justify-between h-32">
+              <div>
+                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Denied</p>
+                 <p className="text-2xl font-bold text-slate-900 tracking-tight">{stats?.rejected || 0}</p>
+              </div>
+           </div>
+           <div className="p-6 bg-slate-900 border border-slate-900 rounded-none flex flex-col justify-between h-32 text-white">
+              <div>
+                 <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mb-1">Success Rate</p>
+                 <p className="text-2xl font-bold text-white tracking-tight">
+                    {stats?.total > 0 ? Math.round((stats.approved / stats.total) * 100) : 0}%
+                 </p>
+              </div>
+           </div>
+        </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+           <TabsList className="bg-transparent p-0 h-auto border-b border-slate-200 w-full justify-start rounded-none gap-8">
+             <TabsTrigger value="PENDING" className="rounded-none border-b-2 border-transparent px-0 py-4 font-bold text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:border-slate-900 data-[state=active]:shadow-none transition-all">Verification Queue</TabsTrigger>
+             <TabsTrigger value="APPROVED" className="rounded-none border-b-2 border-transparent px-0 py-4 font-bold text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:border-slate-900 data-[state=active]:shadow-none transition-all">Verified Members</TabsTrigger>
+             <TabsTrigger value="REJECTED" className="rounded-none border-b-2 border-transparent px-0 py-4 font-bold text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:border-slate-900 data-[state=active]:shadow-none transition-all">Denied Access</TabsTrigger>
+           </TabsList>
+
+           <TabsContent value={activeTab} className="outline-none">
+              {isLoading ? (
+                <div className="py-24 text-center">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Synchronizing...</p>
+                </div>
+              ) : sellers.length === 0 ? (
+                <div className="py-32 text-center border border-slate-200 bg-slate-50 rounded-none">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Queue is clear</p>
+                </div>
+              ) : (
+                <div className="grid gap-6">
+                  {sellers.map((seller) => (
+                    <div key={seller.id} className="bg-white border border-slate-200 rounded-none p-8 flex flex-col lg:flex-row gap-8 transition-colors hover:bg-slate-50">
+                        <div className="flex-1 space-y-8">
+                          <div className="flex justify-between items-start gap-6">
+                            <div className="space-y-1.5">
+                                <h3 className="text-xl font-bold text-slate-900 tracking-tight uppercase">{seller.business_name || "Merchant Application"}</h3>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{seller.first_name} {seller.last_name} — {seller.email}</p>
                             </div>
+                            <span className={`px-4 py-1.5 font-bold uppercase text-[9px] tracking-widest border ${
+                              seller.seller_status === 'APPROVED' ? 'border-slate-900 bg-slate-900 text-white' : 
+                              seller.seller_status === 'REJECTED' ? 'border-rose-200 text-rose-600' : 'border-amber-200 text-amber-600'
+                            }`}>
+                              {seller.seller_status === 'PENDING' ? 'Awaiting Audit' : seller.seller_status}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                             <div>
+                                <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mb-1">ID Number</p>
+                                <p className="text-sm font-bold text-slate-900 font-mono">{seller.id_number || '—'}</p>
+                             </div>
+                             <div>
+                                <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mb-1">Phone</p>
+                                <p className="text-sm font-bold text-slate-900">{seller.phone_number || '—'}</p>
+                             </div>
+                             <div>
+                                <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mb-1">City</p>
+                                <p className="text-sm font-bold text-slate-900">{seller.city || '—'}</p>
+                             </div>
+                          </div>
+                          
+                          <div className="space-y-4 pt-2">
+                             <div className="space-y-1">
+                                <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Store Intent</p>
+                                <p className="text-sm text-slate-600 font-medium leading-relaxed italic">
+                                   "{seller.store_description || 'No description provided.'}"
+                                </p>
+                             </div>
+                             <div className="flex flex-wrap gap-12">
+                                <div>
+                                   <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mb-1">Categories</p>
+                                   <p className="text-[10px] text-slate-900 font-bold uppercase tracking-tight">{seller.planned_categories || 'Uncategorized'}</p>
+                                </div>
+                                <div>
+                                   <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mb-1">Physical Address</p>
+                                   <p className="text-[10px] text-slate-900 font-bold uppercase tracking-tight">{seller.physical_address || 'Not disclosed'}</p>
+                                </div>
+                                <div>
+                                   <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mb-1">Submitted</p>
+                                   <p className="text-[10px] text-slate-900 font-bold uppercase tracking-tight">{new Date(seller.created_at).toLocaleDateString()}</p>
+                                </div>
+                             </div>
                           </div>
                         </div>
-                        <Badge className="bg-amber-50 text-amber-600 border-none px-3 py-1 font-bold uppercase text-[9px] tracking-wider rounded-full">Requires Review</Badge>
-                      </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                        <div className="p-5 bg-slate-50 border border-slate-100 rounded-xl space-y-2">
-                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                             <FileText className="h-3.5 w-3.5" /> ID Number
-                           </p>
-                           <p className="text-lg font-bold text-slate-900 font-mono tracking-wider">{seller.id_number || 'N/A'}</p>
+                        <div className="lg:w-64 shrink-0 flex flex-col gap-3 pt-8 lg:pt-0 lg:pl-8 lg:border-l border-slate-100">
+                          {seller.seller_status === 'PENDING' && (
+                            <>
+                              <Button 
+                                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold h-12 rounded-none uppercase tracking-widest text-[9px] shadow-none"
+                                onClick={() => handleAction(seller.id, 'APPROVE')}
+                                disabled={processingId === seller.id}
+                              >
+                                {processingId === seller.id ? 'Processing...' : 'Verify Merchant'}
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                className="w-full border-slate-200 text-slate-900 hover:bg-slate-50 font-bold h-12 rounded-none uppercase tracking-widest text-[9px]"
+                                onClick={() => handleAction(seller.id, 'REJECT')}
+                                disabled={processingId === seller.id}
+                              >
+                                Deny Access
+                              </Button>
+                            </>
+                          )}
+                          
+                          <Button 
+                            variant="ghost" 
+                            className="text-slate-400 hover:text-slate-900 font-bold text-[9px] uppercase tracking-widest w-full h-10 rounded-none"
+                            onClick={() => setSelectedUserId(seller.id)}
+                          >
+                            View Record
+                          </Button>
                         </div>
-                        <div className="p-5 bg-slate-50 border border-slate-100 rounded-xl space-y-2">
-                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                             <Phone className="h-3.5 w-3.5" /> Phone
-                           </p>
-                           <p className="text-lg font-bold text-slate-900">{seller.phone_number || 'N/A'}</p>
-                        </div>
-                        <div className="p-5 bg-slate-50 border border-slate-100 rounded-xl space-y-2">
-                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                             <MapPin className="h-3.5 w-3.5" /> City
-                           </p>
-                           <p className="text-lg font-bold text-slate-900">{seller.city || 'N/A'}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="p-6 bg-slate-50 border border-slate-100 rounded-xl space-y-5">
-                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                           <Store className="h-3.5 w-3.5" /> Business Details
-                         </p>
-                         <div className="space-y-4">
-                            <div className="space-y-1">
-                               <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Categories</p>
-                               <p className="text-base text-slate-900 font-bold leading-relaxed">{seller.planned_categories}</p>
-                            </div>
-                            <div className="h-px bg-slate-200/50" />
-                            <div className="space-y-1">
-                               <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Description</p>
-                               <p className="text-sm text-slate-600 font-medium leading-relaxed italic">"{seller.store_description}"</p>
-                            </div>
-                            <div className="h-px bg-slate-200/50" />
-                            <div className="flex items-center gap-3">
-                               <div className="h-9 w-9 bg-white border border-slate-200 rounded-lg flex items-center justify-center">
-                                  <MapPin className="h-4 w-4 text-slate-500" />
-                               </div>
-                               <div className="space-y-0.5">
-                                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Address</p>
-                                  <p className="text-xs text-slate-900 font-bold">{seller.physical_address}</p>
-                               </div>
-                            </div>
-                         </div>
-                      </div>
                     </div>
-
-                    <div className="p-8 lg:w-1/3 bg-slate-50/50 flex flex-col justify-center gap-3 border-t lg:border-t-0 lg:border-l border-slate-100">
-                      <Button 
-                        className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold h-12 rounded-lg gap-2 shadow-sm text-sm transition-all"
-                        onClick={() => handleAction(seller.id, 'APPROVE')}
-                        disabled={processingId === seller.id}
-                      >
-                        {processingId === seller.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                        Approve
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="w-full border-slate-200 bg-white text-rose-600 hover:bg-rose-50 hover:text-rose-700 font-bold h-12 rounded-lg gap-2 text-sm transition-all"
-                        onClick={() => handleAction(seller.id, 'REJECT')}
-                        disabled={processingId === seller.id}
-                      >
-                        <XCircle className="h-4 w-4" /> Reject
-                      </Button>
-                      <div className="pt-2 text-center">
-                         <Button variant="link" className="text-slate-400 hover:text-slate-900 font-bold text-[11px] uppercase tracking-wider gap-2 transition-all">
-                           Full Profile <ExternalLink className="h-3 w-3" />
-                         </Button>
-                      </div>
-                    </div>
+                  ))}
                 </div>
-              </Card>
-            ))}
-          </div>
-        )}
+              )}
+           </TabsContent>
+        </Tabs>
       </div>
+
+      <UserDetailDrawer 
+        userId={selectedUserId}
+        onClose={() => setSelectedUserId(null)}
+        onUpdate={() => {
+          fetchSellers();
+          fetchStats();
+        }}
+      />
     </AdminLayout>
   );
 }
