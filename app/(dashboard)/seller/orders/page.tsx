@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
 import { ShoppingCart, MapPin, Users, Package, Loader2, ArrowRight } from 'lucide-react';
 import SellerLayout from '@/components/layout/SellerLayout';
 import { OrderActions } from '@/components/dashboard/seller/OrderActions';
 import { getCurrentUser } from '@/services/auth/authService';
 import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SellerOrdersPage() {
   const { toast } = useToast();
