@@ -23,7 +23,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
+import { getCurrentUser, getUserProfile, signOut } from '@/services/auth/authService';
 import Logo from '@/components/shared/Logo';
 
 interface SellerLayoutProps {
@@ -42,6 +42,15 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
       setIsSidebarOpen(true);
     }
   }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -225,7 +234,11 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Verified Seller</p>
               </div>
             </div>
-            <Button variant="outline" className="w-full justify-start text-red-500 border-red-100 hover:bg-red-50 font-bold gap-2 rounded-xl">
+            <Button 
+              variant="outline" 
+              onClick={handleSignOut}
+              className="w-full justify-start text-red-500 border-red-100 hover:bg-red-50 font-bold gap-2 rounded-xl"
+            >
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>
           </div>

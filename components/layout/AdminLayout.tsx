@@ -22,7 +22,7 @@ import {
   MessageCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
+import { getCurrentUser, getUserProfile, signOut } from '@/services/auth/authService';
 import Logo from '@/components/shared/Logo';
 
 interface AdminLayoutProps {
@@ -41,6 +41,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       setIsSidebarOpen(true);
     }
   }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -174,7 +183,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <p className="text-[10px] font-bold text-primary uppercase tracking-wide mt-0.5">{admin?.role}</p>
               </div>
             </div>
-            <Button variant="ghost" className="w-full justify-start text-slate-500 hover:text-rose-600 hover:bg-rose-50 font-bold text-xs gap-3 rounded-lg transition-all">
+            <Button 
+              variant="ghost" 
+              onClick={handleSignOut}
+              className="w-full justify-start text-slate-500 hover:text-rose-600 hover:bg-rose-50 font-bold text-xs gap-3 rounded-lg transition-all"
+            >
               <LogOut className="h-4 w-4" /> Logout
             </Button>
           </div>
