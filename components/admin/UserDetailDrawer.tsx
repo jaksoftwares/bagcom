@@ -21,7 +21,9 @@ import {
   Package,
   Activity,
   AlertTriangle,
-  ArrowRight
+  ArrowRight,
+  FileText,
+  Maximize2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -45,6 +47,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [isEditingKyc, setIsEditingKyc] = useState(false);
   const [kycDraft, setKycDraft] = useState('');
+  const [expandedDoc, setExpandedDoc] = useState<{url: string, title: string} | null>(null);
 
   useEffect(() => {
     if (userId) {
@@ -286,20 +289,31 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                              {!data.user.id_document_url && <Badge variant="destructive" className="text-[9px] uppercase tracking-widest h-5 px-2">Missing</Badge>}
                            </div>
                            {data.user.id_document_url ? (
-                              <div className="space-y-3">
-                                <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 relative">
-                                  {data.user.id_document_url.toLowerCase().endsWith('.pdf') ? (
-                                    <iframe src={data.user.id_document_url} className="w-full h-[600px] border-none" title="ID Document PDF" />
-                                  ) : (
-                                    <img src={data.user.id_document_url} alt="ID Document" className="w-full h-auto object-contain max-h-[600px] block mx-auto" />
-                                  )}
+                              <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl group hover:border-primary/30 transition-all">
+                                <div className="flex items-center gap-4">
+                                  <div className="h-10 w-10 rounded bg-primary/10 flex items-center justify-center text-primary">
+                                    <FileText className="h-5 w-5" />
+                                  </div>
+                                  <div>
+                                    <p className="text-xs font-bold text-slate-900">National Identity Card</p>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                                      {data.user.id_document_url.toLowerCase().endsWith('.pdf') ? 'PDF Document' : 'Image Document'}
+                                    </p>
+                                  </div>
                                 </div>
-                                <Button asChild variant="outline" className="w-full h-10 font-bold uppercase tracking-widest text-[10px]">
-                                  <a href={data.user.id_document_url} target="_blank" rel="noreferrer">
-                                    <ExternalLink className="h-4 w-4 mr-2" />
-                                    Open Document in New Tab
-                                  </a>
-                                </Button>
+                                <div className="flex gap-2">
+                                  <Button asChild variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-slate-900">
+                                    <a href={data.user.id_document_url} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /></a>
+                                  </Button>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    onClick={() => setExpandedDoc({ url: data.user.id_document_url, title: 'National Identity Card' })}
+                                    className="h-8 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"
+                                  >
+                                    <Maximize2 className="h-3 w-3" /> Expand
+                                  </Button>
+                                </div>
                               </div>
                            ) : (
                              <div className="p-8 bg-slate-50 border border-dashed border-slate-200 rounded-xl text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
@@ -318,20 +332,31 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                              {!data.user.business_certificate_url && <Badge variant="destructive" className="text-[9px] uppercase tracking-widest h-5 px-2">Missing</Badge>}
                            </div>
                            {data.user.business_certificate_url ? (
-                              <div className="space-y-3">
-                                <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 relative">
-                                  {data.user.business_certificate_url.toLowerCase().endsWith('.pdf') ? (
-                                    <iframe src={data.user.business_certificate_url} className="w-full h-[600px] border-none" title="Business Certificate PDF" />
-                                  ) : (
-                                    <img src={data.user.business_certificate_url} alt="Business Certificate" className="w-full h-auto object-contain max-h-[600px] block mx-auto" />
-                                  )}
+                              <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl group hover:border-primary/30 transition-all">
+                                <div className="flex items-center gap-4">
+                                  <div className="h-10 w-10 rounded bg-primary/10 flex items-center justify-center text-primary">
+                                    <FileText className="h-5 w-5" />
+                                  </div>
+                                  <div>
+                                    <p className="text-xs font-bold text-slate-900">Registration Certificate</p>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                                      {data.user.business_certificate_url.toLowerCase().endsWith('.pdf') ? 'PDF Document' : 'Image Document'}
+                                    </p>
+                                  </div>
                                 </div>
-                                <Button asChild variant="outline" className="w-full h-10 font-bold uppercase tracking-widest text-[10px]">
-                                  <a href={data.user.business_certificate_url} target="_blank" rel="noreferrer">
-                                    <ExternalLink className="h-4 w-4 mr-2" />
-                                    Open Document in New Tab
-                                  </a>
-                                </Button>
+                                <div className="flex gap-2">
+                                  <Button asChild variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-slate-900">
+                                    <a href={data.user.business_certificate_url} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /></a>
+                                  </Button>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    onClick={() => setExpandedDoc({ url: data.user.business_certificate_url, title: 'Registration Certificate' })}
+                                    className="h-8 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"
+                                  >
+                                    <Maximize2 className="h-3 w-3" /> Expand
+                                  </Button>
+                                </div>
                               </div>
                            ) : (
                              <div className="p-8 bg-slate-50 border border-dashed border-slate-200 rounded-xl text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
