@@ -38,6 +38,19 @@ export async function signUp({
   phone_number?: string;
   city?: string;
 }) {
+  // Pre-validate unique fields before attempting signup
+  if (phone_number) {
+    const res = await fetch('/api/auth/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone_number })
+    });
+    const validationData = await res.json();
+    if (!validationData.success) {
+      throw new Error(validationData.error || 'Validation failed');
+    }
+  }
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -63,7 +76,13 @@ export async function signUp({
     }
   });
 
-  if (error) throw error;
+  if (error) {
+    // Translate ambiguous generic database trigger errors into user-friendly text
+    if (error.message.includes('Database error saving new user') || error.message.includes('unexpected_failure')) {
+      throw new Error('An unexpected issue occurred while creating your profile. Please double-check your details and try again.');
+    }
+    throw error;
+  }
 
   // Profile creation is now securely handled by a Postgres Trigger on auth.users
   // No client-side upsert needed.

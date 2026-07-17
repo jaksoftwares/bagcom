@@ -6,7 +6,14 @@ ALTER TABLE public.users
 ADD COLUMN IF NOT EXISTS seller_type TEXT CHECK (seller_type IN ('INDIVIDUAL', 'BUSINESS')),
 ADD COLUMN IF NOT EXISTS business_registration_number TEXT,
 ADD COLUMN IF NOT EXISTS id_document_url TEXT,
-ADD COLUMN IF NOT EXISTS business_certificate_url TEXT;
+ADD COLUMN IF NOT EXISTS business_certificate_url TEXT,
+ADD COLUMN IF NOT EXISTS business_name TEXT,
+ADD COLUMN IF NOT EXISTS id_number TEXT,
+ADD COLUMN IF NOT EXISTS planned_categories TEXT,
+ADD COLUMN IF NOT EXISTS store_description TEXT,
+ADD COLUMN IF NOT EXISTS physical_address TEXT,
+ADD COLUMN IF NOT EXISTS city TEXT,
+ADD COLUMN IF NOT EXISTS seller_status TEXT DEFAULT 'PENDING';
 
 -- 2. Create the function to automatically insert into public.users when auth.users is created
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -37,7 +44,7 @@ BEGIN
     new.email,
     new.raw_user_meta_data->>'first_name',
     new.raw_user_meta_data->>'last_name',
-    COALESCE(new.raw_user_meta_data->>'role', 'BUYER'),
+    COALESCE(new.raw_user_meta_data->>'role', 'BUYER')::public.user_role,
     new.raw_user_meta_data->>'business_name',
     new.raw_user_meta_data->>'id_number',
     new.raw_user_meta_data->>'planned_categories',
