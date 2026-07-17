@@ -203,7 +203,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                       <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Identity Verification</p>
                       <div className="space-y-3">
                         <div className="flex items-center gap-3 text-sm font-bold text-slate-600">
-                          <Shield className="h-4 w-4 opacity-40" /> ID: {data.user.id_number || 'Not provided'}
+                          <Shield className="h-4 w-4 opacity-40" /> ID/Reg: {data.user.id_number || data.user.business_registration_number || 'Not provided'}
                         </div>
                         <div className="flex items-center gap-3 text-sm font-bold text-slate-600">
                           <Package className="h-4 w-4 opacity-40" /> Business: {data.user.business_name || 'N/A'}
@@ -242,7 +242,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                       <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Verification Documents</p>
                       
                       {/* Individual ID Document */}
-                      {data.user.seller_type === 'INDIVIDUAL' && (
+                      {(data.user.seller_type === 'INDIVIDUAL' || data.user.id_document_url || (!data.user.seller_type && !data.user.business_certificate_url)) && (
                         <div className="space-y-2">
                            <div className="flex items-center gap-2">
                              <p className="text-xs font-bold text-slate-600">National ID Document</p>
@@ -266,8 +266,8 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                       )}
 
                       {/* Business Certificate Document */}
-                      {data.user.seller_type === 'BUSINESS' && (
-                        <div className="space-y-2">
+                      {(data.user.seller_type === 'BUSINESS' || data.user.business_certificate_url) && (
+                        <div className="space-y-2 pt-4">
                            <div className="flex items-center gap-2">
                              <p className="text-xs font-bold text-slate-600">Business Registration Certificate</p>
                              {!data.user.business_certificate_url && <Badge variant="destructive" className="text-[9px] uppercase tracking-widest h-5 px-2">Missing</Badge>}
