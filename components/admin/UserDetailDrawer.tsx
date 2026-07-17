@@ -96,11 +96,9 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
   const getSafeDocumentUrl = (url: string) => {
     if (!url) return url;
     if (url.includes('cloudinary.com') && url.toLowerCase().endsWith('.pdf')) {
-      // Add a cache buster query parameter.
-      // Cloudinary heavily caches 401 errors. Since the security setting was just updated, 
-      // the CDN is likely returning a cached 401. This forces a fresh fetch.
-      const separator = url.includes('?') ? '&' : '?';
-      return `${url}${separator}nocache=${new Date().getTime()}`;
+      // Use the Next.js proxy to securely bypass Cloudinary's 401 delivery restriction 
+      // and stream the PDF directly inline to the browser.
+      return `/api/admin/proxy-document?url=${encodeURIComponent(url)}`;
     }
     return url;
   };
@@ -151,7 +149,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
               <div className="flex gap-4">
                 <Button asChild variant="ghost" className="text-white hover:bg-white/10 h-10 px-4 font-bold text-[10px] uppercase tracking-widest">
                   <a 
-                    href={expandedDoc.url.toLowerCase().endsWith('.pdf') ? `https://docs.google.com/viewer?url=${encodeURIComponent(getSafeDocumentUrl(expandedDoc.url))}` : getSafeDocumentUrl(expandedDoc.url)} 
+                    href={getSafeDocumentUrl(expandedDoc.url)} 
                     target="_blank" 
                     rel="noreferrer"
                   >
@@ -166,7 +164,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
             <div className="flex-1 overflow-auto p-4 flex items-center justify-center">
               {expandedDoc.url.toLowerCase().endsWith('.pdf') ? (
                 <iframe 
-                  src={`https://docs.google.com/viewer?url=${encodeURIComponent(getSafeDocumentUrl(expandedDoc.url))}&embedded=true`} 
+                  src={getSafeDocumentUrl(expandedDoc.url)} 
                   className="w-full h-full max-w-5xl bg-white rounded-xl shadow-2xl" 
                   title="Expanded Document" 
                 />
