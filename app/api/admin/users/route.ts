@@ -93,6 +93,10 @@ export async function PUT(request: Request) {
     } else {
       const { data: userData } = await supabase.from('users').select('first_name, email, is_active, seller_status, business_name').eq('id', userId).single();
       
+      if (!userData) {
+        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      }
+
       const { data: updatedUser, error } = await supabase
         .from('users')
         .update(updates)
