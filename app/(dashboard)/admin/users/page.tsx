@@ -169,7 +169,7 @@ export default function UserManagement() {
                   </thead>
                   <tbody className="divide-y divide-slate-50">
                     {filteredUsers.length === 0 ? (
-                      <tr><td colSpan={5} className="px-6 py-16 text-center text-slate-400 font-bold uppercase tracking-wider italic">No matching records found.</td></tr>
+                      <tr><td colSpan={5} className="px-6 py-16 text-center text-slate-400 font-bold uppercase tracking-wider italic">No users found.</td></tr>
                     ) : (
                       filteredUsers.map((user) => (
                         <tr 

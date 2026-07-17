@@ -213,13 +213,13 @@ export default function ProductDetailDrawer({ productId, onClose, onUpdate }: Pr
 
                  {/* Merchant Card */}
                  <div className="space-y-3">
-                    <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">Merchant Store</p>
+                    <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">Seller Store</p>
                     <div className="flex items-center gap-4 p-4 bg-muted/5 rounded-md border border-border/20">
                        <div className="h-10 w-10 bg-white border border-border/20 rounded flex items-center justify-center text-muted-foreground/40">
                           <User className="h-5 w-5" />
                        </div>
                        <div className="flex-1">
-                          <p className="text-xs font-bold text-foreground">{product.seller?.business_name || 'Individual Merchant'}</p>
+                          <p className="text-xs font-bold text-foreground">{product.seller?.business_name || 'Individual Seller'}</p>
                           <p className="text-[10px] font-bold text-muted-foreground/40">{product.seller?.email}</p>
                        </div>
                        <Button variant="ghost" size="sm" className="text-[9px] font-bold uppercase tracking-widest text-primary h-8">

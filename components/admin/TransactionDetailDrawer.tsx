@@ -191,7 +191,7 @@ export default function TransactionDetailDrawer({ transactionId, onClose }: Tran
              </Button>
              {transaction?.order?.id && (
                <Button className="flex-1 h-12 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[10px] uppercase tracking-widest rounded-none shadow-none" onClick={() => window.open(`/admin/orders/${transaction.order.id}`)}>
-                  View Order Record
+                  View Order
                </Button>
              )}
           </div>

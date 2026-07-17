@@ -144,7 +144,7 @@ export default function DisputeCenter() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
            <div className="flex justify-between items-center gap-6 border-b border-slate-200">
               <TabsList className="bg-transparent p-0 h-auto w-full md:w-auto justify-start rounded-none gap-8">
-                <TabsTrigger value="ACTIVE" className="rounded-none border-b-2 border-transparent px-0 py-4 font-bold text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:border-slate-900 data-[state=active]:shadow-none transition-all">Active Queue</TabsTrigger>
+                <TabsTrigger value="ACTIVE" className="rounded-none border-b-2 border-transparent px-0 py-4 font-bold text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:border-slate-900 data-[state=active]:shadow-none transition-all">Active Disputes</TabsTrigger>
                 <TabsTrigger value="RESOLVED" className="rounded-none border-b-2 border-transparent px-0 py-4 font-bold text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:border-slate-900 data-[state=active]:shadow-none transition-all">Settled</TabsTrigger>
                 <TabsTrigger value="ALL" className="rounded-none border-b-2 border-transparent px-0 py-4 font-bold text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:border-slate-900 data-[state=active]:shadow-none transition-all">Historical</TabsTrigger>
               </TabsList>
@@ -166,7 +166,7 @@ export default function DisputeCenter() {
                 </div>
               ) : filteredDisputes.length === 0 ? (
                 <div className="py-32 text-center border border-slate-200 bg-slate-50 rounded-none">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Queue is clear</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">No disputes</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -231,7 +231,7 @@ export default function DisputeCenter() {
                                 className="h-10 px-4 font-bold text-[9px] uppercase tracking-widest text-slate-400 hover:text-slate-900"
                                 onClick={() => setSelectedProductId(order?.product_id)}
                               >
-                                 Record
+                                 Details
                               </Button>
                            </div>
                         </div>

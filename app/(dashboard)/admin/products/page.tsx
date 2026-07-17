@@ -225,7 +225,7 @@ export default function ProductModeration() {
               {isLoading ? (
                 <div className="py-24 flex flex-col items-center gap-6">
                   <div className="h-10 w-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-                  <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">Synchronizing inventory...</p>
+                  <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">Loading...</p>
                 </div>
               ) : filteredProducts.length === 0 ? (
                 <div className="py-32 text-center border border-dashed border-border/40 rounded-md bg-muted/5">
@@ -261,7 +261,7 @@ export default function ProductModeration() {
 
                          {/* Seller Info */}
                          <div className="hidden lg:flex flex-col gap-1 w-48">
-                            <p className="text-[9px] font-bold text-muted-foreground/20 uppercase tracking-widest">Merchant</p>
+                            <p className="text-[9px] font-bold text-muted-foreground/20 uppercase tracking-widest">Seller</p>
                             <button 
                               onClick={() => setSelectedUserId(product.seller?.id)}
                               className="text-[11px] font-bold text-foreground hover:text-primary text-left truncate transition-colors flex items-center gap-2"

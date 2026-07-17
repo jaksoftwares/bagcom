@@ -50,7 +50,7 @@ export default function AdminPayouts() {
   }
 
   const handleExecutePayout = async (payoutId: string) => {
-    if (!confirm('Execute M-Pesa B2C payout to seller?')) return;
+    if (!confirm('Send M-Pesa payout to seller?')) return;
     
     setIsProcessing(payoutId);
     try {
@@ -62,7 +62,7 @@ export default function AdminPayouts() {
       const data = await res.json();
       
       if (res.ok) {
-        toast({ title: "Payout Executed", description: "Request sent to Safaricom." });
+        toast({ title: "Payout Sent", description: "Request sent to Safaricom." });
         fetchPayouts();
       } else {
         throw new Error(data.error || 'Execution failed');
@@ -112,7 +112,7 @@ export default function AdminPayouts() {
                variant="outline" 
                className="h-10 px-6 border-slate-200 font-bold text-[10px] uppercase tracking-widest rounded-none shadow-none"
              >
-                {isLoading ? 'Refreshing...' : 'Refresh Queue'}
+                {isLoading ? 'Refreshing...' : 'Refresh' }
              </Button>
           </div>
         </div>
@@ -149,12 +149,12 @@ export default function AdminPayouts() {
         <div className="space-y-6">
            <div className="flex justify-between items-center gap-6 border-b border-slate-200">
               <div className="pb-4">
-                 <p className="text-[10px] font-bold text-slate-900 uppercase tracking-[0.2em]">Payout Queue</p>
+                 <p className="text-[10px] font-bold text-slate-900 uppercase tracking-[0.2em]">Pending Payouts</p>
               </div>
 
               <div className="relative w-full md:w-72 pb-4">
                  <Input 
-                   placeholder="SEARCH MERCHANTS..." 
+                   placeholder="SEARCH SELLERS..." 
                    value={searchQuery}
                    onChange={(e) => setSearchQuery(e.target.value)}
                    className="border-none bg-transparent pl-0 pr-0 h-10 text-[10px] font-bold uppercase tracking-widest focus-visible:ring-0 placeholder:text-slate-300 shadow-none"
@@ -164,7 +164,7 @@ export default function AdminPayouts() {
 
            {isLoading ? (
              <div className="py-24 flex flex-col items-center gap-4">
-               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Auditing...</p>
+               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Loading...</p>
              </div>
            ) : (
              <div className="space-y-4">
@@ -207,7 +207,7 @@ export default function AdminPayouts() {
                           
                           {(p.status === 'SUCCESS' || p.status === 'COMPLETED') && (
                             <Button variant="ghost" className="h-10 px-4 font-bold text-[9px] uppercase tracking-widest text-slate-400 hover:text-primary transition-colors">
-                               View Record
+                               View Details
                              </Button>
                           )}
                        </div>

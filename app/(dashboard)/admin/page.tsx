@@ -108,7 +108,7 @@ export default function AdminDashboard() {
               Dashboard
             </h1>
             <p className="text-sm text-slate-500 font-medium max-w-xl leading-relaxed">
-              Overview of platform activity, sales, and system status.
+              Overview of sales and activity.
             </p>
           </div>
           <div className="flex gap-3">
@@ -203,7 +203,7 @@ export default function AdminDashboard() {
           {/* System Health / Sidebar */}
           <div className="space-y-8">
             <div className="space-y-1">
-               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">System</p>
+               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status</p>
                <h2 className="text-xl font-bold text-slate-900 tracking-tight">Status</h2>
             </div>
             
@@ -254,7 +254,7 @@ export default function AdminDashboard() {
                   try {
                     const res = await fetch('/api/admin/mpesa/balance', { method: 'POST' });
                     if (res.ok) {
-                      toast({ title: "Sync Initiated", description: "Balance will update in a few seconds." });
+                      toast({ title: "Refresh Started", description: "Balance will update in a few seconds." });
                     }
                   } catch (e) {
                     toast({ title: "Sync Failed", variant: "destructive" });

@@ -79,7 +79,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
         body: JSON.stringify({ userId, ...updates })
       });
       if (res.ok) {
-        toast({ title: `Action: ${actionName}`, description: "User record updated." });
+        toast({ title: `Action: ${actionName}`, description: "User profile updated." });
         fetchDetails();
         onUpdate();
       }

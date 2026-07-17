@@ -23,7 +23,7 @@ export default function AdminLogs() {
       const data = await res.json();
       setLogs(data.logs || []);
     } catch (e) {
-      toast({ title: "Failed to load audit logs", variant: "destructive" });
+      toast({ title: "Failed to load logs", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +67,7 @@ export default function AdminLogs() {
               <div className="h-8 w-px bg-slate-200" />
               <div>
                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Retention</p>
-                 <p className="text-xl font-bold text-slate-900 tracking-tight">200 Records</p>
+                 <p className="text-xl font-bold text-slate-900 tracking-tight">200 Logs</p>
               </div>
            </div>
 
@@ -89,7 +89,7 @@ export default function AdminLogs() {
               <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Administrator</div>
               <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Action</div>
               <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Subject</div>
-              <div className="col-span-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Payload Details</div>
+              <div className="col-span-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Details</div>
            </div>
 
            {isLoading ? (
@@ -138,8 +138,8 @@ export default function AdminLogs() {
 
         {/* Footer */}
         <div className="flex justify-between items-center pt-8 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-           <p>Immutable Record Protocol v1.0</p>
-           <p>Authenticated Session</p>
+           <p>Admin Logs</p>
+           <p>Secure</p>
         </div>
       </div>
     </AdminLayout>

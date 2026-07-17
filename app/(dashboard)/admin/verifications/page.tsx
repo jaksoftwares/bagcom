@@ -111,10 +111,10 @@ export default function SellerVerifications() {
                <span className="text-primary">Verification Hub</span>
             </div>
             <h1 className="text-4xl font-bold tracking-tight text-foreground">
-              Merchant Onboarding
+              Seller Verification
             </h1>
             <p className="text-[13px] text-muted-foreground font-medium max-w-xl leading-relaxed">
-              Review and mediate merchant applications to maintain a high-trust marketplace environment.
+              Review seller applications.
             </p>
           </div>
         </div>
@@ -123,7 +123,7 @@ export default function SellerVerifications() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
            <div className="p-6 bg-white border border-slate-200 rounded-none flex flex-col justify-between h-32">
               <div>
-                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Awaiting Audit</p>
+                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pending Review</p>
                  <p className="text-2xl font-bold text-slate-900 tracking-tight">{stats?.pending || 0}</p>
               </div>
            </div>
@@ -151,7 +151,7 @@ export default function SellerVerifications() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
            <TabsList className="bg-transparent p-0 h-auto border-b border-slate-200 w-full justify-start rounded-none gap-8">
-             <TabsTrigger value="PENDING" className="rounded-none border-b-2 border-transparent px-0 py-4 font-bold text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:border-slate-900 data-[state=active]:shadow-none transition-all">Verification Queue</TabsTrigger>
+             <TabsTrigger value="PENDING" className="rounded-none border-b-2 border-transparent px-0 py-4 font-bold text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:border-slate-900 data-[state=active]:shadow-none transition-all">Applications</TabsTrigger>
              <TabsTrigger value="APPROVED" className="rounded-none border-b-2 border-transparent px-0 py-4 font-bold text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:border-slate-900 data-[state=active]:shadow-none transition-all">Verified Members</TabsTrigger>
              <TabsTrigger value="REJECTED" className="rounded-none border-b-2 border-transparent px-0 py-4 font-bold text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:border-slate-900 data-[state=active]:shadow-none transition-all">Denied Access</TabsTrigger>
            </TabsList>
@@ -159,11 +159,11 @@ export default function SellerVerifications() {
            <TabsContent value={activeTab} className="outline-none">
               {isLoading ? (
                 <div className="py-24 text-center">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Synchronizing...</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Loading...</p>
                 </div>
               ) : sellers.length === 0 ? (
                 <div className="py-32 text-center border border-slate-200 bg-slate-50 rounded-none">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Queue is clear</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">No pending applications</p>
                 </div>
               ) : (
                 <div className="grid gap-6">
@@ -172,14 +172,14 @@ export default function SellerVerifications() {
                         <div className="flex-1 space-y-8">
                           <div className="flex justify-between items-start gap-6">
                             <div className="space-y-1.5">
-                                <h3 className="text-xl font-bold text-slate-900 tracking-tight uppercase">{seller.business_name || "Merchant Application"}</h3>
+                                <h3 className="text-xl font-bold text-slate-900 tracking-tight uppercase">{seller.business_name || "Seller Application"}</h3>
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{seller.first_name} {seller.last_name} — {seller.email}</p>
                             </div>
                             <span className={`px-4 py-1.5 font-bold uppercase text-[9px] tracking-widest border ${
                               seller.seller_status === 'APPROVED' ? 'border-slate-900 bg-slate-900 text-white' : 
                               seller.seller_status === 'REJECTED' ? 'border-rose-200 text-rose-600' : 'border-amber-200 text-amber-600'
                             }`}>
-                              {seller.seller_status === 'PENDING' ? 'Awaiting Audit' : seller.seller_status}
+                              {seller.seller_status === 'PENDING' ? 'Pending Review' : seller.seller_status}
                             </span>
                           </div>
 
@@ -230,7 +230,7 @@ export default function SellerVerifications() {
                                 onClick={() => handleAction(seller.id, 'APPROVE')}
                                 disabled={processingId === seller.id}
                               >
-                                {processingId === seller.id ? 'Processing...' : 'Verify Merchant'}
+                                {processingId === seller.id ? 'Processing...' : 'Verify Seller'}
                               </Button>
                               <Button 
                                 variant="outline" 
@@ -248,7 +248,7 @@ export default function SellerVerifications() {
                             className="text-slate-400 hover:text-slate-900 font-bold text-[9px] uppercase tracking-widest w-full h-10 rounded-none"
                             onClick={() => setSelectedUserId(seller.id)}
                           >
-                            View Record
+                            View Details
                           </Button>
                         </div>
                     </div>

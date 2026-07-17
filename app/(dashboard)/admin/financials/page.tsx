@@ -51,7 +51,7 @@ export default function AdminFinancials() {
       const data = await res.json();
       setEscrowList(data.transactions || []);
     } catch (error) {
-      toast({ title: "Failed to load records", variant: "destructive" });
+      toast({ title: "Failed to load data", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +72,7 @@ export default function AdminFinancials() {
     try {
       const res = await fetch('/api/admin/mpesa/balance', { method: 'POST' });
       if (res.ok) {
-        toast({ title: "Sync Initiated", description: "Requesting real-time balance from Safaricom..." });
+        toast({ title: "Refresh Started", description: "Requesting real-time balance from Safaricom..." });
       }
     } catch (e) {
       toast({ title: "Sync failed", variant: "destructive" });
@@ -93,7 +93,7 @@ export default function AdminFinancials() {
       });
       
       if (res.ok) {
-        toast({ title: "State updated", description: "Audit log recorded." });
+        toast({ title: "State updated", description: "Action logged." });
         fetchFinancials();
         fetchStats();
       }
@@ -178,7 +178,7 @@ export default function AdminFinancials() {
 
            {isLoading ? (
              <div className="py-24 flex flex-col items-center gap-4">
-               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Auditing...</p>
+               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Loading...</p>
              </div>
            ) : (
              <div className="space-y-4">

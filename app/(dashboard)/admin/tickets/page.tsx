@@ -213,7 +213,7 @@ export default function SupportTickets() {
               {isLoading ? (
                 <div className="py-24 flex flex-col items-center gap-6">
                   <div className="h-10 w-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-                  <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">Synchronizing queue...</p>
+                  <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">Loading...</p>
                 </div>
               ) : filteredTickets.length === 0 ? (
                 <div className="py-32 text-center border border-dashed border-border/40 rounded-md bg-muted/5">
@@ -322,7 +322,7 @@ export default function SupportTickets() {
 
                              <div className="flex gap-4">
                                 <Input 
-                                  placeholder="SYSTEM RESPONSE..." 
+                                  placeholder="REPLY..." 
                                   value={reply}
                                   onChange={(e) => setReply(e.target.value)}
                                   className="h-12 bg-white border-border/40 rounded shadow-none text-[11px] font-medium tracking-wide focus-visible:ring-1 focus-visible:ring-primary/20"

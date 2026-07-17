@@ -39,7 +39,7 @@ export default function AdminSettings() {
         body: JSON.stringify({ settings })
       });
       if (res.ok) {
-        toast({ title: "Settings Saved", description: "System parameters updated." });
+        toast({ title: "Settings Saved", description: "Settings updated." });
         fetchSettings();
       } else {
         throw new Error('Save failed');
@@ -100,7 +100,7 @@ export default function AdminSettings() {
                   <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
                      <div>
                         <Label className="text-[11px] font-bold text-slate-900 uppercase">Self-Verification</Label>
-                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Merchant self-onboarding</p>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Seller self-onboarding</p>
                      </div>
                      <Switch 
                        checked={settings.self_vetting === 'true'} 
@@ -151,7 +151,7 @@ export default function AdminSettings() {
                   <div className="p-6 bg-white border border-slate-200 rounded-none flex items-center justify-between">
                      <div>
                         <Label className="text-[11px] font-bold text-slate-900 uppercase">Product Review</Label>
-                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Manual audit every listing</p>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Require approval for new listings</p>
                      </div>
                      <Switch 
                        checked={settings.require_product_approval === 'true'} 
