@@ -22,9 +22,7 @@ export async function POST(request: Request) {
     let updateData: any = {};
     if (action === 'APPROVE') {
       updateData = {
-        seller_status: 'APPROVED',
-        approved_at: now,
-        approved_by: admin?.id
+        seller_status: 'APPROVED'
       };
     } else if (action === 'REJECT') {
       updateData = {

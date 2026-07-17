@@ -87,9 +87,12 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
         toast({ title: `Action: ${actionName}`, description: "User profile updated." });
         fetchDetails();
         onUpdate();
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        toast({ title: "Action failed", description: errorData.error || "An error occurred.", variant: "destructive" });
       }
     } catch (e) {
-      toast({ title: "Action failed", variant: "destructive" });
+      toast({ title: "Action failed", description: "Network error", variant: "destructive" });
     }
   };
 
@@ -441,7 +444,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                         {data.user.role === 'SELLER' && data.user.seller_status !== 'APPROVED' && (
                           <Button 
                             className="bg-slate-900 text-white hover:bg-slate-800 font-bold text-[11px] uppercase tracking-wider h-11 px-6 rounded-xl transition-all"
-                            onClick={() => handleAction({ seller_status: 'APPROVED', approved_at: new Date().toISOString() }, 'Verify Seller')}
+                            onClick={() => handleAction({ seller_status: 'APPROVED' }, 'Verify Seller')}
                           >
                              <ShieldCheck className="h-4 w-4 mr-2" /> Verify Identity
                           </Button>

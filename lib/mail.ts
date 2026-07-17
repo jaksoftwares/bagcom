@@ -20,15 +20,19 @@ export async function sendEmail({ to, subject, html, text }: MailOptions) {
   }
 
   try {
-    const response = await fetch('https://api.postmarkapp.com/email', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Postmark-Server-Token': POSTMARK_API_TOKEN,
-      },
-      body: JSON.stringify({
-        From: POSTMARK_FROM_EMAIL,
+      // Ensure the sender name is 'Bagcom Marketplace' regardless of env variable formatting
+      const rawEmail = POSTMARK_FROM_EMAIL.match(/<([^>]+)>/)?.[1] || POSTMARK_FROM_EMAIL;
+      const formattedFrom = `Bagcom Marketplace <${rawEmail.trim()}>`;
+
+      const response = await fetch('https://api.postmarkapp.com/email', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Postmark-Server-Token': POSTMARK_API_TOKEN,
+        },
+        body: JSON.stringify({
+          From: formattedFrom,
         To: to,
         Subject: subject,
         HtmlBody: html,

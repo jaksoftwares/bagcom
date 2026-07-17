@@ -91,7 +91,7 @@ export async function PUT(request: Request) {
         .update({ is_available: false })
         .eq('seller_id', userId);
     } else {
-      const { data: userData } = await supabase.from('users').select('first_name, email, is_active').eq('id', userId).single();
+      const { data: userData } = await supabase.from('users').select('first_name, email, is_active, seller_status, business_name').eq('id', userId).single();
       
       const { data: updatedUser, error } = await supabase
         .from('users')
@@ -102,7 +102,7 @@ export async function PUT(request: Request) {
 
       if (error) throw error;
 
-      // Send Suspension/Reactivation Email
+      // Send Account Status Change Emails (Suspension/Reactivation)
       if (updates.is_active === false && userData?.is_active === true) {
         await sendEmail({
           to: userData.email,
@@ -112,6 +112,24 @@ export async function PUT(request: Request) {
         await sendEmail({
           to: userData.email,
           ...EmailTemplates.accountReactivated(userData.first_name || 'User')
+        });
+      }
+
+      // Send Seller Verification Emails (Approval/Rejection)
+      if (updates.seller_status === 'APPROVED' && userData?.seller_status !== 'APPROVED') {
+        await sendEmail({
+          to: userData.email,
+          ...EmailTemplates.sellerApprovedEmail(userData.first_name || 'Seller', userData.business_name || 'your store')
+        });
+      } else if (updates.seller_status === 'REJECTED' && userData?.seller_status !== 'REJECTED') {
+        // Extract reason from kyc_notes if provided
+        let reason = 'The provided documents did not meet our compliance requirements.';
+        if (updates.kyc_notes && updates.kyc_notes.startsWith('Rejected: ')) {
+          reason = updates.kyc_notes.replace('Rejected: ', '');
+        }
+        await sendEmail({
+          to: userData.email,
+          ...EmailTemplates.sellerRejectedEmail(userData.first_name || 'Seller', reason)
         });
       }
 
