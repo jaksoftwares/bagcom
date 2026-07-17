@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
 import {
   Package, 
   Plus, 
@@ -25,6 +24,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import SellerLayout from '@/components/layout/SellerLayout';
 import { ProductFormDrawer } from '@/components/dashboard/seller/ProductFormDrawer';
 import { getCurrentUser } from '@/services/auth/authService';
