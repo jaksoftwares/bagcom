@@ -43,6 +43,8 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [isEditingKyc, setIsEditingKyc] = useState(false);
+  const [kycDraft, setKycDraft] = useState('');
 
   useEffect(() => {
     if (userId) {
@@ -219,21 +221,56 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">KYC Verification Notes</p>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-7 text-[10px] font-bold uppercase tracking-wider text-primary hover:bg-primary/5"
-                        onClick={() => {
-                          const note = prompt('Update KYC Notes:', data.user.kyc_notes || '');
-                          if (note !== null) handleAction({ kyc_notes: note }, 'Update Notes');
-                        }}
-                      >
-                        Edit Notes
-                      </Button>
+                      {!isEditingKyc && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 text-[10px] font-bold uppercase tracking-wider text-primary hover:bg-primary/5"
+                          onClick={() => {
+                            setKycDraft(data.user.kyc_notes || '');
+                            setIsEditingKyc(true);
+                          }}
+                        >
+                          Edit Notes
+                        </Button>
+                      )}
                     </div>
-                    <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl text-sm text-slate-600 font-medium leading-relaxed italic">
-                      {data.user.kyc_notes || 'No internal notes recorded for this user.'}
-                    </div>
+                    
+                    {isEditingKyc ? (
+                      <div className="space-y-3">
+                        <textarea 
+                          value={kycDraft}
+                          onChange={(e) => setKycDraft(e.target.value)}
+                          className="w-full min-h-[100px] p-4 bg-white border border-primary/20 rounded-xl text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                          placeholder="Enter internal verification notes..."
+                          autoFocus
+                        />
+                        <div className="flex justify-end gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => setIsEditingKyc(false)}
+                            className="h-8 text-[10px] font-bold uppercase tracking-widest text-slate-500"
+                          >
+                            Cancel
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            onClick={() => {
+                              handleAction({ kyc_notes: kycDraft }, 'Update Notes');
+                              setIsEditingKyc(false);
+                            }}
+                            className="h-8 text-[10px] font-bold uppercase tracking-widest"
+                          >
+                            Save Notes
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl text-sm text-slate-600 font-medium leading-relaxed italic">
+                        {data.user.kyc_notes || 'No internal notes recorded for this user.'}
+                      </div>
+                    )}
                   </div>
 
                   {/* Verification Documents (Inline Viewer) */}
