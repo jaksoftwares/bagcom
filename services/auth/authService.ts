@@ -11,6 +11,10 @@ export async function signUp({
   role = 'BUYER',
   business_name,
   id_number,
+  seller_type,
+  business_registration_number,
+  id_document_url,
+  business_certificate_url,
   planned_categories,
   store_description,
   physical_address,
@@ -24,6 +28,10 @@ export async function signUp({
   role: UserRole;
   business_name?: string;
   id_number?: string;
+  seller_type?: 'INDIVIDUAL' | 'BUSINESS';
+  business_registration_number?: string;
+  id_document_url?: string;
+  business_certificate_url?: string;
   planned_categories?: string;
   store_description?: string;
   physical_address?: string;
@@ -40,6 +48,10 @@ export async function signUp({
         role,
         business_name,
         id_number,
+        seller_type,
+        business_registration_number,
+        id_document_url,
+        business_certificate_url,
         planned_categories,
         store_description,
         physical_address,
@@ -53,46 +65,40 @@ export async function signUp({
 
   if (error) throw error;
 
-  // Best-effort profile synchronization to public.users
-  if (data.user) {
-    await supabase.from('users').upsert({
-      id: data.user.id,
-      email: data.user.email!,
-      first_name,
-      last_name,
-      role,
-      business_name,
-      id_number,
-      planned_categories,
-      store_description,
-      physical_address,
-      phone_number,
-      city,
-      is_active: true,
-      seller_status: role === 'SELLER' ? 'PENDING' : 'APPROVED'
-    }, { onConflict: 'id' });
+  // Profile creation is now securely handled by a Postgres Trigger on auth.users
+  // No client-side upsert needed.
 
-    // Trigger professional email notifications for sellers
-    if (role === 'SELLER') {
-      try {
-        await fetch('/api/auth/notify-signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email,
-            first_name,
-            last_name,
-            role,
-            business_name,
-            id_number
-          })
-        });
-      } catch (e) {
-        console.error('NOTIFICATION_TRIGGER_FAILED:', e);
-      }
+  // Trigger professional email notifications for sellers
+  if (data.user && role === 'SELLER') {
+    try {
+      await fetch('/api/auth/notify-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          first_name,
+          last_name,
+          role,
+          business_name,
+          id_number
+        })
+      });
+    } catch (e) {
+      console.error('NOTIFICATION_TRIGGER_FAILED:', e);
     }
   }
 
+  return data;
+}
+
+export async function signInWithGoogle() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    },
+  });
+  if (error) throw error;
   return data;
 }
 

@@ -25,6 +25,10 @@ export interface Database {
           role: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPER_ADMIN'
           business_name: string | null
           id_number: string | null
+          seller_type: 'INDIVIDUAL' | 'BUSINESS' | null
+          business_registration_number: string | null
+          id_document_url: string | null
+          business_certificate_url: string | null
           seller_status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'INACTIVE'
           kyc_notes: string | null
           approved_at: string | null
@@ -46,6 +50,10 @@ export interface Database {
           role?: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPER_ADMIN'
           business_name?: string | null
           id_number?: string | null
+          seller_type?: 'INDIVIDUAL' | 'BUSINESS' | null
+          business_registration_number?: string | null
+          id_document_url?: string | null
+          business_certificate_url?: string | null
           seller_status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'INACTIVE'
           kyc_notes?: string | null
           approved_at?: string | null
@@ -64,6 +72,10 @@ export interface Database {
           last_name?: string | null
           profile_photo_url?: string | null
           role?: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPER_ADMIN'
+          seller_type?: 'INDIVIDUAL' | 'BUSINESS' | null
+          business_registration_number?: string | null
+          id_document_url?: string | null
+          business_certificate_url?: string | null
           is_active?: boolean
           is_email_verified?: boolean
           is_phone_verified?: boolean
