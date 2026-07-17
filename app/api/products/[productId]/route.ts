@@ -45,6 +45,21 @@ export async function PUT(
     const { data: { user } } = await supabase.auth.getUser();
     const { data: profile } = user ? await supabase.from('users').select('role').eq('id', user.id).single() : { data: null };
 
+    // Handle empty location_id (Use Store Default Location)
+    if (body.location_id === '') {
+      const { data: sellerProfile } = await supabase
+        .from('seller_profiles')
+        .select('location_id')
+        .eq('user_id', body.seller_id)
+        .maybeSingle();
+        
+      if (sellerProfile && sellerProfile.location_id) {
+        body.location_id = sellerProfile.location_id;
+      } else {
+        delete body.location_id;
+      }
+    }
+
     // 2. Update basic info
     const { data: product, error } = await supabase
       .from('products')

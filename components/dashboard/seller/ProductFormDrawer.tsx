@@ -183,10 +183,11 @@ export function ProductFormDrawer({ isOpen, onClose, product, sellerId, onSucces
           </div>
 
           <div className="space-y-2">
-            <Label>Location</Label>
-            <Select required value={formData.location_id} onValueChange={(val) => setFormData({...formData, location_id: val})}>
-              <SelectTrigger><SelectValue placeholder="Select Location" /></SelectTrigger>
+            <Label>Location (Optional)</Label>
+            <Select value={formData.location_id} onValueChange={(val) => setFormData({...formData, location_id: val === 'default' ? '' : val})}>
+              <SelectTrigger><SelectValue placeholder="Use Store Default Location" /></SelectTrigger>
               <SelectContent>
+                <SelectItem value="default" className="font-bold text-primary">Use Store Default Location</SelectItem>
                 {locations.map((l) => (
                   <SelectItem key={l.id} value={l.id}>{l.formatted_address || l.city}</SelectItem>
                 ))}
