@@ -93,6 +93,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    if (images && Array.isArray(images) && images.length > 5) {
+      return NextResponse.json({ error: 'A maximum of 5 images are allowed per product' }, { status: 400 });
+    }
+
     const slug = title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') + '-' + Math.random().toString(36).substring(2, 7);
 
     let finalLocationId = location_id === '' ? null : location_id;

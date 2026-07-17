@@ -60,6 +60,14 @@ export async function PUT(
       }
     }
 
+    // Extract images and validate limit
+    const images = body.images;
+    delete body.images; // Remove from body so it doesn't break products table update
+
+    if (images && Array.isArray(images) && images.length > 5) {
+      return NextResponse.json({ error: 'A maximum of 5 images are allowed per product' }, { status: 400 });
+    }
+
     // 2. Update basic info
     const { data: product, error } = await supabase
       .from('products')
@@ -72,6 +80,30 @@ export async function PUT(
       .single();
 
     if (error) throw error;
+
+    // 3. Sync images
+    if (images && Array.isArray(images)) {
+      // First delete existing images
+      await supabase
+        .from('product_images')
+        .delete()
+        .eq('product_id', params.productId);
+
+      // Then insert new images
+      if (images.length > 0) {
+        const imageInserts = images.map((url: string, index: number) => ({
+          product_id: params.productId,
+          image_url: url,
+          display_order: index
+        }));
+
+        const { error: imageError } = await supabase
+          .from('product_images')
+          .insert(imageInserts);
+
+        if (imageError) console.error('Image syncing error:', imageError);
+      }
+    }
 
     // Record Audit Log if admin is moderating status
     if (profile?.role === 'ADMIN' && body.status) {
