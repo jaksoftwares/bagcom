@@ -84,17 +84,32 @@ export function ProductFormDrawer({ isOpen, onClose, product, sellerId, onSucces
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
+    
+    // Calculate how many slots are left
+    const remainingSlots = 5 - images.length;
+    if (remainingSlots <= 0) return;
+
+    // Convert FileList to Array and slice to remaining slots
+    const filesToUpload = Array.from(e.target.files).slice(0, remainingSlots);
+    
     setUploading(true);
     try {
-      const file = e.target.files[0];
-      const res = await uploadToCloudinary(file);
-      if (res && res.secure_url) {
-        setImages((prev) => [...prev, res.secure_url]);
+      // Upload all selected files concurrently
+      const uploadPromises = filesToUpload.map(file => uploadToCloudinary(file));
+      const results = await Promise.all(uploadPromises);
+      
+      const newUrls = results
+        .filter((res): res is any => !!(res && res.secure_url))
+        .map(res => res.secure_url);
+
+      if (newUrls.length > 0) {
+        setImages((prev) => [...prev, ...newUrls]);
       }
     } catch (err) {
       toast({ title: "Upload Failed", variant: "destructive" });
     } finally {
       setUploading(false);
+      e.target.value = ''; // Reset input so same files can be selected again
     }
   };
 
@@ -171,13 +186,13 @@ export function ProductFormDrawer({ isOpen, onClose, product, sellerId, onSucces
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div className="space-y-2">
             <Label>Product Title</Label>
-            <Input required value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} placeholder="e.g. MacBook Pro M1" />
+            <Input required value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} placeholder="e.g. Gently used oak dining table" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Price (KSh)</Label>
-              <Input type="number" required min="1" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} placeholder="0" />
+              <Input type="number" required min="1" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} placeholder="e.g. 2500" />
             </div>
             <div className="space-y-2">
               <Label>Condition</Label>
@@ -234,7 +249,7 @@ export function ProductFormDrawer({ isOpen, onClose, product, sellerId, onSucces
 
           <div className="space-y-2">
             <Label>Description</Label>
-            <Textarea required className="h-32" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} placeholder="Describe your product..." />
+            <Textarea required className="h-32" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} placeholder="Tell buyers about your product. Be sure to mention any wear and tear..." />
           </div>
 
           <div className="space-y-2">
@@ -252,7 +267,7 @@ export function ProductFormDrawer({ isOpen, onClose, product, sellerId, onSucces
                 <label className="border-2 border-dashed border-gray-200 rounded-lg aspect-square flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-gray-50 transition-colors">
                   {uploading ? <Loader2 className="h-5 w-5 animate-spin text-gray-400" /> : <Upload className="h-5 w-5 text-gray-400" />}
                   <span className="text-[10px] mt-1 font-bold text-gray-400">Upload</span>
-                  <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                  <input type="file" multiple className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
                 </label>
               )}
             </div>
