@@ -26,6 +26,7 @@ export function ProductFormDrawer({ isOpen, onClose, product, sellerId, onSucces
   const [locations, setLocations] = useState<any[]>([]);
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [customLocation, setCustomLocation] = useState({ city: '', address: '' });
 
   const [formData, setFormData] = useState({
     title: '',
@@ -103,8 +104,30 @@ export function ProductFormDrawer({ isOpen, onClose, product, sellerId, onSucces
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (formData.location_id === 'custom' && (!customLocation.city || !customLocation.address)) {
+      toast({ title: "Custom location requires both city and address", variant: "destructive" });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
+      let finalLocationId = formData.location_id;
+
+      if (finalLocationId === 'custom') {
+        const locRes = await fetch('/api/locations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            city: customLocation.city,
+            formatted_address: customLocation.address
+          })
+        });
+        const locData = await locRes.json();
+        if (!locRes.ok) throw new Error(locData.error || 'Failed to save custom location');
+        finalLocationId = locData.location.id;
+      }
+
       const url = product ? `/api/products/${product.id}` : '/api/products';
       const method = product ? 'PUT' : 'POST';
 
@@ -113,6 +136,7 @@ export function ProductFormDrawer({ isOpen, onClose, product, sellerId, onSucces
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
+          location_id: finalLocationId,
           seller_id: sellerId,
           images
         })
@@ -183,17 +207,30 @@ export function ProductFormDrawer({ isOpen, onClose, product, sellerId, onSucces
           </div>
 
           <div className="space-y-2">
-            <Label>Location (Optional)</Label>
-            <Select value={formData.location_id} onValueChange={(val) => setFormData({...formData, location_id: val === 'default' ? '' : val})}>
-              <SelectTrigger><SelectValue placeholder="Use Store Default Location" /></SelectTrigger>
+            <Label>Location</Label>
+            <Select required value={formData.location_id} onValueChange={(val) => setFormData({...formData, location_id: val})}>
+              <SelectTrigger><SelectValue placeholder="Select a location" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="default" className="font-bold text-primary">Use Store Default Location</SelectItem>
+                <SelectItem value="custom" className="font-bold text-primary">+ Add New Location</SelectItem>
                 {locations.map((l) => (
                   <SelectItem key={l.id} value={l.id}>{l.formatted_address || l.city}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
+
+          {formData.location_id === 'custom' && (
+            <div className="grid grid-cols-2 gap-4 mt-2 p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <div className="space-y-2">
+                <Label className="text-xs">City / Town</Label>
+                <Input required value={customLocation.city} onChange={(e) => setCustomLocation({...customLocation, city: e.target.value})} placeholder="e.g. Nairobi" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs">Physical Address</Label>
+                <Input required value={customLocation.address} onChange={(e) => setCustomLocation({...customLocation, address: e.target.value})} placeholder="e.g. CBD, Moi Ave" />
+              </div>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label>Description</Label>
