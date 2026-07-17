@@ -6,6 +6,9 @@ const nextConfig = {
   },
   images: { unoptimized: true },
   webpack: (config, { isServer }) => {
+    config.ignoreWarnings = [
+      { module: /node_modules\/@supabase\/realtime-js/ }
+    ];
     if (isServer) {
       config.externals = [...(config.externals || []), 'bufferutil', 'utf-8-validate'];
     }

@@ -16,6 +16,8 @@ export async function GET(request: Request) {
     const minPrice = searchParams.get('minPrice');
     const maxPrice = searchParams.get('maxPrice');
     const limit = searchParams.get('limit');
+    const page = searchParams.get('page');
+    const statusParam = searchParams.get('status');
     const sellerId = searchParams.get('sellerId');
     const sellerView = searchParams.get('sellerView') === 'true';
     
@@ -28,11 +30,14 @@ export async function GET(request: Request) {
         seller:users!products_seller_id_fkey(id, first_name, last_name, profile_photo_url),
         category:categories(id, name),
         images:product_images(id, image_url, display_order)
-      `);
+      `, { count: 'exact' });
 
     // If not in sellerView, only show available/active products
     if (!sellerView) {
       query = query.eq('is_available', true).eq('status', 'ACTIVE');
+    } else {
+      if (statusParam === 'ACTIVE') query = query.eq('is_available', true);
+      if (statusParam === 'DRAFT') query = query.eq('is_available', false);
     }
 
     if (sellerId) {
@@ -42,7 +47,6 @@ export async function GET(request: Request) {
     if (category) {
       query = query.eq('category_id', category);
     }
-
 
     if (location) {
       query = query.eq('location_id', location);
@@ -60,15 +64,24 @@ export async function GET(request: Request) {
       query = query.lte('price', parseFloat(maxPrice));
     }
 
-    if (limit) {
+    query = query.order('created_at', { ascending: false });
+
+    // Pagination
+    if (page && limit) {
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      const from = (pageNum - 1) * limitNum;
+      const to = from + limitNum - 1;
+      query = query.range(from, to);
+    } else if (limit) {
       query = query.limit(parseInt(limit));
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error, count } = await query;
 
     if (error) throw error;
 
-    return NextResponse.json({ products: data });
+    return NextResponse.json({ products: data, count });
   } catch (error: any) {
     console.error('Products GET Error:', error);
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
