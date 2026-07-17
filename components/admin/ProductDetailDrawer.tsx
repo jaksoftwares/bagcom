@@ -233,10 +233,10 @@ export default function ProductDetailDrawer({ productId, onClose, onUpdate }: Pr
               <div className="space-y-6 pt-10 border-t border-border/40">
                  <div className="flex items-center gap-2">
                     <Activity className="h-4 w-4 text-muted-foreground/20" />
-                    <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">Forensic Audit</p>
+                    <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">Moderation History</p>
                  </div>
                  {product.audit_logs?.length === 0 ? (
-                   <p className="text-[10px] font-bold text-muted-foreground/20 uppercase tracking-widest text-center py-8">No previous moderation recorded.</p>
+                   <p className="text-[10px] font-bold text-muted-foreground/20 uppercase tracking-widest text-center py-8">No previous moderation history.</p>
                  ) : (
                    <div className="space-y-4">
                       {product.audit_logs.map((log: any) => (

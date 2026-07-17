@@ -82,7 +82,7 @@ export default function TransactionDetailDrawer({ transactionId, onClose }: Tran
           {/* Header */}
           <div className="p-8 border-b border-border/40 flex justify-between items-center bg-muted/5">
              <div className="space-y-1">
-                <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Transaction Audit</p>
+                <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Transaction Details</p>
                 <h2 className="text-xl font-bold text-foreground tracking-tight uppercase tracking-widest">
                    {transaction?.id?.slice(0, 8) || 'Loading...'}
                 </h2>
@@ -94,7 +94,7 @@ export default function TransactionDetailDrawer({ transactionId, onClose }: Tran
 
           {isLoading ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-4">
-               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Auditing...</p>
+               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Loading...</p>
             </div>
           ) : transaction && (
             <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
@@ -112,7 +112,7 @@ export default function TransactionDetailDrawer({ transactionId, onClose }: Tran
 
                {/* Parties Section */}
                <div className="space-y-6">
-                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">Counterparties</p>
+                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">Transaction Parties</p>
                   <div className="grid grid-cols-2 gap-8">
                      <div className="space-y-2">
                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Buyer</p>
@@ -133,7 +133,7 @@ export default function TransactionDetailDrawer({ transactionId, onClose }: Tran
 
                {/* M-Pesa Record */}
                <div className="space-y-6">
-                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">M-Pesa Reconciliation</p>
+                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">M-Pesa Record</p>
                   <div className="border border-slate-200 rounded-none p-6 space-y-4">
                      <div className="flex justify-between items-center">
                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Receipt Number</span>
@@ -154,7 +154,7 @@ export default function TransactionDetailDrawer({ transactionId, onClose }: Tran
 
                {/* Audit Timeline */}
                <div className="space-y-6">
-                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">Lifecycle Audit</p>
+                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">Transaction Timeline</p>
                   <div className="space-y-6 relative ml-2 before:absolute before:left-0 before:top-2 before:bottom-2 before:w-px before:bg-slate-200">
                      <div className="relative pl-6">
                         <div className="absolute left-[-2.5px] top-1.5 h-1.5 w-1.5 bg-slate-900 rounded-full" />

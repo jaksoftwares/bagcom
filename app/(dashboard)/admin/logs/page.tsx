@@ -88,13 +88,13 @@ export default function AdminLogs() {
               <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Timestamp</div>
               <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Administrator</div>
               <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Action</div>
-              <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Entity</div>
+              <div className="col-span-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Subject</div>
               <div className="col-span-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Payload Details</div>
            </div>
 
            {isLoading ? (
              <div className="py-24 flex flex-col items-center gap-4">
-               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Auditing System...</p>
+               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Loading...</p>
              </div>
            ) : (
              <div className="divide-y divide-slate-100 border-x border-b border-slate-200">
@@ -136,7 +136,7 @@ export default function AdminLogs() {
            )}
         </div>
 
-        {/* Forensic Footer */}
+        {/* Footer */}
         <div className="flex justify-between items-center pt-8 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
            <p>Immutable Record Protocol v1.0</p>
            <p>Authenticated Session</p>

@@ -151,7 +151,7 @@ export default function DisputeCenter() {
 
               <div className="relative w-full md:w-72">
                  <Input 
-                   placeholder="FILTER BY ORDER/ENTITY..." 
+                   placeholder="FILTER BY ORDER..." 
                    value={searchQuery}
                    onChange={(e) => setSearchQuery(e.target.value)}
                    className="border-none bg-transparent pl-0 pr-0 h-10 text-[10px] font-bold uppercase tracking-widest focus-visible:ring-0 placeholder:text-slate-300 shadow-none"
@@ -162,7 +162,7 @@ export default function DisputeCenter() {
            <TabsContent value={activeTab} className="outline-none">
               {isLoading ? (
                 <div className="py-24 text-center">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Synchronizing...</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Loading...</p>
                 </div>
               ) : filteredDisputes.length === 0 ? (
                 <div className="py-32 text-center border border-slate-200 bg-slate-50 rounded-none">

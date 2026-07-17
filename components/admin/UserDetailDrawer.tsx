@@ -200,7 +200,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                     </div>
                     
                     <div className="space-y-4">
-                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Identity & KYC</p>
+                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Identity Verification</p>
                       <div className="space-y-3">
                         <div className="flex items-center gap-3 text-sm font-bold text-slate-600">
                           <Shield className="h-4 w-4 opacity-40" /> ID: {data.user.id_number || 'Not provided'}
@@ -293,7 +293,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
 
                   {/* Quick Actions */}
                   <div className="pt-4 border-t border-slate-100">
-                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-6">Management Actions</p>
+                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-6">Actions</p>
                      <div className="flex flex-wrap gap-4">
                         {data.user.is_active ? (
                           <Button 
@@ -367,7 +367,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                           variant="ghost"
                           className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 font-bold text-[11px] uppercase tracking-wider h-11 px-6 rounded-xl transition-all"
                           onClick={() => {
-                            if (confirm('Are you sure you want to PERMANENTLY delete this user account? This cannot be undone easily.')) handleAction({ action: 'DELETE_ACCOUNT' }, 'Delete Account');
+                            if (confirm('Are you sure you want to permanently delete this user account? This action cannot be undone.')) handleAction({ action: 'DELETE_ACCOUNT' }, 'Delete Account');
                           }}
                         >
                            <AlertTriangle className="h-4 w-4 mr-2" /> Delete Account
@@ -412,7 +412,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                 {data.user.role === 'SELLER' && (
                   <TabsContent value="store" className="space-y-6 outline-none">
                     <div className="flex items-center justify-between">
-                       <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Merchant Catalog</p>
+                       <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Store Products</p>
                        <Button 
                          variant="ghost" 
                          size="sm" 
@@ -420,7 +420,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                          asChild
                        >
                          <a href={`/admin/products?sellerId=${userId}`}>
-                           Full Store Audit <ExternalLink className="h-3 w-3" />
+                           View All Products <ExternalLink className="h-3 w-3" />
                          </a>
                        </Button>
                     </div>
@@ -496,12 +496,12 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                 {/* SECURITY TAB (AUDIT LOGS) */}
                 <TabsContent value="security" className="space-y-6 outline-none">
                    <div className="flex items-center justify-between">
-                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Forensic Activity Log</p>
+                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Activity Log</p>
                      <Activity className="h-4 w-4 text-slate-200" />
                    </div>
                    <div className="space-y-4">
                       {data.activity.auditLogs.length === 0 ? (
-                        <div className="py-12 text-center text-slate-400 font-bold uppercase tracking-wider italic text-sm">No forensic logs found for this entity.</div>
+                        <div className="py-12 text-center text-slate-400 font-bold uppercase tracking-wider italic text-sm">No activity logs found for this user.</div>
                       ) : (
                         data.activity.auditLogs.map((log: any) => (
                           <div key={log.id} className="p-5 bg-slate-50/50 border border-slate-100 rounded-2xl space-y-4 transition-all hover:bg-white hover:shadow-md group">
