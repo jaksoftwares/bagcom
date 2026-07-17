@@ -93,18 +93,14 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
     }
   };
 
-  const getPreviewUrl = (url: string) => {
+  const getSafeDocumentUrl = (url: string) => {
     if (!url) return url;
     if (url.includes('cloudinary.com') && url.toLowerCase().endsWith('.pdf')) {
-      return url.replace(/\.pdf$/i, '.jpg');
-    }
-    return url;
-  };
-
-  const getDownloadUrl = (url: string) => {
-    if (!url) return url;
-    if (url.includes('cloudinary.com') && url.toLowerCase().endsWith('.pdf')) {
-      return url.replace('/upload/', '/upload/fl_attachment/');
+      // Add a cache buster query parameter.
+      // Cloudinary heavily caches 401 errors. Since the security setting was just updated, 
+      // the CDN is likely returning a cached 401. This forces a fresh fetch.
+      const separator = url.includes('?') ? '&' : '?';
+      return `${url}${separator}nocache=${new Date().getTime()}`;
     }
     return url;
   };
@@ -154,8 +150,8 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
               <h3 className="font-bold text-sm tracking-widest uppercase">{expandedDoc.title}</h3>
               <div className="flex gap-4">
                 <Button asChild variant="ghost" className="text-white hover:bg-white/10 h-10 px-4 font-bold text-[10px] uppercase tracking-widest">
-                  <a href={getDownloadUrl(expandedDoc.url)} target="_blank" rel="noreferrer">
-                     Download <ExternalLink className="h-4 w-4 ml-2" />
+                  <a href={getSafeDocumentUrl(expandedDoc.url)} target="_blank" rel="noreferrer">
+                     Open Externally <ExternalLink className="h-4 w-4 ml-2" />
                   </a>
                 </Button>
                 <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full h-10 w-10" onClick={() => setExpandedDoc(null)}>
@@ -165,9 +161,9 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
             </div>
             <div className="flex-1 overflow-auto p-4 flex items-center justify-center">
               {expandedDoc.url.toLowerCase().endsWith('.pdf') ? (
-                <img src={getPreviewUrl(expandedDoc.url)} alt={expandedDoc.title} className="max-w-full max-h-full object-contain rounded-xl shadow-2xl bg-white" />
+                <iframe src={getSafeDocumentUrl(expandedDoc.url)} className="w-full h-full max-w-5xl bg-white rounded-xl shadow-2xl" title="Expanded Document" />
               ) : (
-                <img src={getPreviewUrl(expandedDoc.url)} alt={expandedDoc.title} className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" />
+                <img src={expandedDoc.url} alt={expandedDoc.title} className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" />
               )}
             </div>
           </div>
@@ -348,7 +344,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                                 </div>
                                 <div className="flex gap-2">
                                   <Button asChild variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-slate-900" onClick={(e) => e.stopPropagation()}>
-                                    <a href={getDownloadUrl(data.user.id_document_url)} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /></a>
+                                    <a href={getSafeDocumentUrl(data.user.id_document_url)} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /></a>
                                   </Button>
                                   <Button 
                                     variant="outline" 
@@ -393,7 +389,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                                 </div>
                                 <div className="flex gap-2">
                                   <Button asChild variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-slate-900" onClick={(e) => e.stopPropagation()}>
-                                    <a href={getDownloadUrl(data.user.business_certificate_url)} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /></a>
+                                    <a href={getSafeDocumentUrl(data.user.business_certificate_url)} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /></a>
                                   </Button>
                                   <Button 
                                     variant="outline" 
