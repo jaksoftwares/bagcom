@@ -93,6 +93,22 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
     }
   };
 
+  const getPreviewUrl = (url: string) => {
+    if (!url) return url;
+    if (url.includes('cloudinary.com') && url.toLowerCase().endsWith('.pdf')) {
+      return url.replace(/\.pdf$/i, '.jpg');
+    }
+    return url;
+  };
+
+  const getDownloadUrl = (url: string) => {
+    if (!url) return url;
+    if (url.includes('cloudinary.com') && url.toLowerCase().endsWith('.pdf')) {
+      return url.replace('/upload/', '/upload/fl_attachment/');
+    }
+    return url;
+  };
+
   if (!userId) return null;
 
   return (
@@ -130,6 +146,32 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
             <X className="h-5 w-5" />
           </Button>
         </div>
+
+        {/* Expanded Document Modal */}
+        {expandedDoc && (
+          <div className="absolute inset-0 z-50 bg-slate-900 flex flex-col">
+            <div className="flex justify-between items-center p-6 text-white border-b border-white/10">
+              <h3 className="font-bold text-sm tracking-widest uppercase">{expandedDoc.title}</h3>
+              <div className="flex gap-4">
+                <Button asChild variant="ghost" className="text-white hover:bg-white/10 h-10 px-4 font-bold text-[10px] uppercase tracking-widest">
+                  <a href={getDownloadUrl(expandedDoc.url)} target="_blank" rel="noreferrer">
+                     Download <ExternalLink className="h-4 w-4 ml-2" />
+                  </a>
+                </Button>
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full h-10 w-10" onClick={() => setExpandedDoc(null)}>
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+            <div className="flex-1 overflow-auto p-4 flex items-center justify-center">
+              {expandedDoc.url.toLowerCase().endsWith('.pdf') ? (
+                <img src={getPreviewUrl(expandedDoc.url)} alt={expandedDoc.title} className="max-w-full max-h-full object-contain rounded-xl shadow-2xl bg-white" />
+              ) : (
+                <img src={getPreviewUrl(expandedDoc.url)} alt={expandedDoc.title} className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" />
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Content Scroll Area */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8">
@@ -289,8 +331,11 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                              {!data.user.id_document_url && <Badge variant="destructive" className="text-[9px] uppercase tracking-widest h-5 px-2">Missing</Badge>}
                            </div>
                            {data.user.id_document_url ? (
-                              <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl group hover:border-primary/30 transition-all">
-                                <div className="flex items-center gap-4">
+                              <div 
+                                className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl group hover:border-primary/30 transition-all cursor-pointer"
+                                onClick={() => setExpandedDoc({ url: data.user.id_document_url, title: 'National Identity Card' })}
+                              >
+                                <div className="flex items-center gap-4 pointer-events-none">
                                   <div className="h-10 w-10 rounded bg-primary/10 flex items-center justify-center text-primary">
                                     <FileText className="h-5 w-5" />
                                   </div>
@@ -302,14 +347,13 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                                   </div>
                                 </div>
                                 <div className="flex gap-2">
-                                  <Button asChild variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-slate-900">
-                                    <a href={data.user.id_document_url} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /></a>
+                                  <Button asChild variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-slate-900" onClick={(e) => e.stopPropagation()}>
+                                    <a href={getDownloadUrl(data.user.id_document_url)} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /></a>
                                   </Button>
                                   <Button 
                                     variant="outline" 
                                     size="sm" 
-                                    onClick={() => setExpandedDoc({ url: data.user.id_document_url, title: 'National Identity Card' })}
-                                    className="h-8 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"
+                                    className="h-8 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 pointer-events-none"
                                   >
                                     <Maximize2 className="h-3 w-3" /> Expand
                                   </Button>
@@ -332,8 +376,11 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                              {!data.user.business_certificate_url && <Badge variant="destructive" className="text-[9px] uppercase tracking-widest h-5 px-2">Missing</Badge>}
                            </div>
                            {data.user.business_certificate_url ? (
-                              <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl group hover:border-primary/30 transition-all">
-                                <div className="flex items-center gap-4">
+                              <div 
+                                className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl group hover:border-primary/30 transition-all cursor-pointer"
+                                onClick={() => setExpandedDoc({ url: data.user.business_certificate_url, title: 'Registration Certificate' })}
+                              >
+                                <div className="flex items-center gap-4 pointer-events-none">
                                   <div className="h-10 w-10 rounded bg-primary/10 flex items-center justify-center text-primary">
                                     <FileText className="h-5 w-5" />
                                   </div>
@@ -345,14 +392,13 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                                   </div>
                                 </div>
                                 <div className="flex gap-2">
-                                  <Button asChild variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-slate-900">
-                                    <a href={data.user.business_certificate_url} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /></a>
+                                  <Button asChild variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-slate-900" onClick={(e) => e.stopPropagation()}>
+                                    <a href={getDownloadUrl(data.user.business_certificate_url)} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /></a>
                                   </Button>
                                   <Button 
                                     variant="outline" 
                                     size="sm" 
-                                    onClick={() => setExpandedDoc({ url: data.user.business_certificate_url, title: 'Registration Certificate' })}
-                                    className="h-8 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"
+                                    className="h-8 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 pointer-events-none"
                                   >
                                     <Maximize2 className="h-3 w-3" /> Expand
                                   </Button>
