@@ -150,7 +150,11 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
               <h3 className="font-bold text-sm tracking-widest uppercase">{expandedDoc.title}</h3>
               <div className="flex gap-4">
                 <Button asChild variant="ghost" className="text-white hover:bg-white/10 h-10 px-4 font-bold text-[10px] uppercase tracking-widest">
-                  <a href={getSafeDocumentUrl(expandedDoc.url)} target="_blank" rel="noreferrer">
+                  <a 
+                    href={expandedDoc.url.toLowerCase().endsWith('.pdf') ? `https://docs.google.com/viewer?url=${encodeURIComponent(getSafeDocumentUrl(expandedDoc.url))}` : getSafeDocumentUrl(expandedDoc.url)} 
+                    target="_blank" 
+                    rel="noreferrer"
+                  >
                      Open Externally <ExternalLink className="h-4 w-4 ml-2" />
                   </a>
                 </Button>
@@ -161,7 +165,11 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
             </div>
             <div className="flex-1 overflow-auto p-4 flex items-center justify-center">
               {expandedDoc.url.toLowerCase().endsWith('.pdf') ? (
-                <iframe src={getSafeDocumentUrl(expandedDoc.url)} className="w-full h-full max-w-5xl bg-white rounded-xl shadow-2xl" title="Expanded Document" />
+                <iframe 
+                  src={`https://docs.google.com/viewer?url=${encodeURIComponent(getSafeDocumentUrl(expandedDoc.url))}&embedded=true`} 
+                  className="w-full h-full max-w-5xl bg-white rounded-xl shadow-2xl" 
+                  title="Expanded Document" 
+                />
               ) : (
                 <img src={expandedDoc.url} alt={expandedDoc.title} className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" />
               )}
