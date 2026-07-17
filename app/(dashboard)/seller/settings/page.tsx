@@ -21,11 +21,13 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
+import { uploadToCloudinary } from '@/lib/cloudinary/cloudinary';
 
 export default function SellerSettings() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
@@ -40,17 +42,56 @@ export default function SellerSettings() {
     loadProfile();
   }, []);
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setIsUploading(true);
+    try {
+      const file = e.target.files[0];
+      const res = await uploadToCloudinary(file);
+      if (res && res.secure_url) {
+        setProfile((prev: any) => ({ ...prev, profile_photo_url: res.secure_url }));
+        toast({ title: "Photo uploaded", description: "Remember to save your settings." });
+      }
+    } catch (err) {
+      toast({ title: "Upload Failed", variant: "destructive" });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    // Simulate save
-    setTimeout(() => {
-      setIsSaving(false);
+    try {
+      const user = await getCurrentUser();
+      if (!user) throw new Error("Not authenticated");
+      
+      const res = await fetch('/api/seller/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          shop_name: profile.seller_profiles?.[0]?.shop_name || profile.shop_name,
+          bio: profile.seller_profiles?.[0]?.bio || profile.bio,
+          mpesa_number: profile.phone_number,
+          profile_photo_url: profile.profile_photo_url
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
       toast({ 
         title: "Settings Saved", 
         description: "Your seller profile has been updated successfully." 
       });
-    }, 1000);
+    } catch (err: any) {
+      toast({ title: "Update Failed", description: err.message, variant: "destructive" });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (isLoading) {
@@ -94,10 +135,17 @@ export default function SellerSettings() {
                 </CardHeader>
                 <CardContent className="p-8 space-y-6">
                   <div className="flex items-center gap-6 pb-6 border-b border-gray-50">
-                    <div className="h-20 w-20 rounded-2xl bg-gray-100 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 group cursor-pointer hover:border-primary/50 transition-colors">
-                       <Upload className="h-5 w-5 mb-1" />
-                       <span className="text-[10px] font-bold uppercase tracking-widest">Update</span>
-                    </div>
+                    <label className="relative h-20 w-20 rounded-2xl bg-gray-100 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 group cursor-pointer hover:border-primary/50 transition-colors overflow-hidden">
+                       {profile?.profile_photo_url ? (
+                         <img src={profile.profile_photo_url} alt="Profile" className="absolute inset-0 w-full h-full object-cover" />
+                       ) : (
+                         <>
+                           {isUploading ? <Loader2 className="h-5 w-5 mb-1 animate-spin" /> : <Upload className="h-5 w-5 mb-1" />}
+                           <span className="text-[10px] font-bold uppercase tracking-widest">{isUploading ? 'WAIT' : 'Update'}</span>
+                         </>
+                       )}
+                       <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={isUploading} />
+                    </label>
                     <div>
                       <p className="text-sm font-bold text-gray-900">Store Logo / Profile Photo</p>
                       <p className="text-xs text-gray-500 mt-1">Recommended size: 400x400px. JPG or PNG.</p>
@@ -107,17 +155,17 @@ export default function SellerSettings() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">First Name</Label>
-                      <Input defaultValue={profile?.first_name} className="h-12 border-gray-200 font-medium" />
+                      <Input value={profile?.first_name || ''} onChange={(e) => setProfile({...profile, first_name: e.target.value})} className="h-12 border-gray-200 font-medium" />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">Last Name</Label>
-                      <Input defaultValue={profile?.last_name} className="h-12 border-gray-200 font-medium" />
+                      <Input value={profile?.last_name || ''} onChange={(e) => setProfile({...profile, last_name: e.target.value})} className="h-12 border-gray-200 font-medium" />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">Shop Name</Label>
-                    <Input placeholder="e.g. Joseph's Tech Store" className="h-12 border-gray-200 font-medium" />
+                    <Input placeholder="e.g. Joseph's Tech Store" value={profile?.shop_name || profile?.seller_profiles?.[0]?.shop_name || ''} onChange={(e) => setProfile({...profile, shop_name: e.target.value})} className="h-12 border-gray-200 font-medium" />
                   </div>
 
                   <div className="space-y-2">
@@ -125,6 +173,8 @@ export default function SellerSettings() {
                     <Textarea 
                       placeholder="Tell buyers about your shop and what you specialize in..." 
                       className="min-h-[120px] border-gray-200 font-medium p-4"
+                      value={profile?.bio || profile?.seller_profiles?.[0]?.bio || ''} 
+                      onChange={(e) => setProfile({...profile, bio: e.target.value})}
                     />
                   </div>
                 </CardContent>
@@ -147,7 +197,7 @@ export default function SellerSettings() {
 
                   <div className="space-y-2">
                     <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">M-PESA Number</Label>
-                    <Input defaultValue={profile?.phone_number} className="h-12 border-gray-200 font-medium" />
+                    <Input value={profile?.phone_number || ''} onChange={(e) => setProfile({...profile, phone_number: e.target.value})} className="h-12 border-gray-200 font-medium" />
                   </div>
                 </CardContent>
               </Card>
