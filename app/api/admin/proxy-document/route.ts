@@ -31,13 +31,9 @@ export async function GET(request: Request) {
 
     let fetchUrl = url;
     
-    // Bypass Cloudinary strict PDF delivery by forcing attachment on their side
-    if (url.includes('cloudinary.com') && url.toLowerCase().endsWith('.pdf')) {
-      if (!url.includes('/fl_attachment/')) {
-        fetchUrl = url.replace('/upload/', '/upload/fl_attachment/');
-      }
-    }
-
+    // We do NOT add any transformations (like fl_attachment) here because the user's 
+    // Cloudinary settings have "Restricted Image Types: Uploaded", meaning any 
+    // transformation requires a signature. The original URL is permitted!
     const response = await fetch(fetchUrl);
 
     if (!response.ok) {
