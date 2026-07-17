@@ -106,7 +106,7 @@ export default function SellerDashboardOverview() {
 
   const sellerStats = [
     { title: 'Total Earnings', value: `KSh ${stats.totalEarnings.toLocaleString()}`, icon: DollarSign, trend: 'Lifetime', color: 'text-green-600', bg: 'bg-green-50' },
-    { title: 'Pending Escrow', value: `KSh ${stats.pendingEscrow.toLocaleString()}`, icon: Clock, trend: 'Action Required', color: 'text-amber-600', bg: 'bg-amber-50' },
+    { title: 'Pending Funds', value: `KSh ${stats.pendingEscrow.toLocaleString()}`, icon: Clock, trend: 'Action Required', color: 'text-amber-600', bg: 'bg-amber-50' },
     { title: 'Live Products', value: stats.activeListings.toString(), icon: Package, trend: 'Active', color: 'text-blue-600', bg: 'bg-blue-50' },
     { title: 'Total Orders', value: stats.totalOrders.toString(), icon: ShoppingCart, trend: 'Lifetime', color: 'text-purple-600', bg: 'bg-purple-50' }
   ];
@@ -118,7 +118,7 @@ export default function SellerDashboardOverview() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Performance Overview</h1>
-            <p className="text-gray-500 font-medium">Track your sales, pending escrow, and active orders.</p>
+            <p className="text-gray-500 font-medium">Monitor your store's performance and active orders.</p>
           </div>
           <div className="flex gap-3">
              <Link href="/seller/inventory">
@@ -186,7 +186,14 @@ export default function SellerDashboardOverview() {
                           </td>
                           <td className="px-6 py-4">
                             <Badge className={`${getStatusColor(order.status)} text-[10px] h-5 px-2 border-none`}>
-                              {order.status.replace(/_/g, ' ')}
+                              {{
+                                COMPLETED: 'Completed',
+                                PAYMENT_SUCCESS: 'Processing',
+                                HELD_IN_ESCROW: 'Processing',
+                                PENDING_PAYMENT: 'Pending',
+                                DISPUTED: 'Disputed',
+                                DELIVERED: 'Delivered'
+                              }[order.status as string] || order.status}
                             </Badge>
                           </td>
                           <td className="px-6 py-4 text-right">
@@ -214,8 +221,8 @@ export default function SellerDashboardOverview() {
                    <CheckCircle className="h-5 w-5 text-white" />
                  </div>
                </div>
-               <p className="text-xs text-indigo-100/80 leading-relaxed pt-2">
-                 Your KYC is verified and you are eligible to receive M-PESA payouts immediately after escrow release.
+                <p className="text-xs text-indigo-100/80 leading-relaxed pt-2">
+                 Your account is verified and you are eligible to receive M-PESA payouts immediately after funds are released.
                </p>
              </Card>
              
@@ -226,7 +233,7 @@ export default function SellerDashboardOverview() {
                     <h4 className="text-sm font-bold">Action Required</h4>
                  </div>
                  <p className="text-xs text-amber-700 leading-relaxed font-medium">
-                    You have <span className="font-bold">KSh {stats.pendingEscrow.toLocaleString()}</span> held in escrow. Please deliver the pending orders and enter the buyer's Verification Code to release the funds.
+                    You have <span className="font-bold">KSh {stats.pendingEscrow.toLocaleString()}</span> pending. Please deliver the pending orders and enter the buyer's Verification Code to release the funds.
                  </p>
                  <Link href="/seller/orders" className="block pt-2">
                    <Button size="sm" variant="outline" className="w-full font-bold border-amber-300 text-amber-800 hover:bg-amber-100">

@@ -67,7 +67,7 @@ export default function SellerOrdersPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Active Orders</h1>
-            <p className="text-gray-500 font-medium">Manage pending deliveries and verify completed transactions.</p>
+            <p className="text-gray-500 font-medium">Manage and track your customer orders.</p>
           </div>
         </div>
 
@@ -75,7 +75,7 @@ export default function SellerOrdersPage() {
           <Card className="py-20 text-center border-dashed">
             <ShoppingCart className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-bold text-gray-900">No orders received yet</h3>
-            <p className="text-gray-500 max-w-sm mx-auto mt-2">When buyers purchase your items, their orders will appear here for processing.</p>
+            <p className="text-gray-500 max-w-sm mx-auto mt-2">Your customer orders will appear here.</p>
           </Card>
         ) : (
           <div className="space-y-4">
@@ -86,7 +86,16 @@ export default function SellerOrdersPage() {
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <Badge className={`${getStatusColor(order.status)} border-none`}>{order.status.replace(/_/g, ' ')}</Badge>
+                          <Badge className={`${getStatusColor(order.status)} border-none`}>
+                            {{
+                              COMPLETED: 'Completed',
+                              PAYMENT_SUCCESS: 'Processing',
+                              HELD_IN_ESCROW: 'Processing',
+                              PENDING_PAYMENT: 'Pending',
+                              DISPUTED: 'Disputed',
+                              DELIVERED: 'Delivered'
+                            }[order.status as string] || order.status}
+                          </Badge>
                           <span className="text-xs font-mono text-gray-400 font-bold">#{order.order_number}</span>
                         </div>
                         <h3 className="text-xl font-bold text-gray-900 mt-2">{order.product?.title || 'Unknown Product'}</h3>
@@ -110,9 +119,9 @@ export default function SellerOrdersPage() {
                         <p className="text-sm font-bold text-gray-700">{order.buyer?.phone_number || 'Confidential'}</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5"><Package className="h-3 w-3" /> Escrow Status</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5"><Package className="h-3 w-3" /> Payment Status</p>
                         <p className={`text-sm font-bold ${order.status === 'COMPLETED' ? 'text-green-600' : 'text-amber-600'}`}>
-                           {order.status === 'COMPLETED' ? 'FUNDS RELEASED' : 'HELD IN ESCROW'}
+                           {order.status === 'COMPLETED' ? 'RELEASED' : 'PROCESSING'}
                         </p>
                       </div>
                     </div>

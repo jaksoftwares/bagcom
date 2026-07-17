@@ -33,7 +33,7 @@ export default function ProductHeader({ product, viewCount, favoriteCount }: Pro
         </div>
         <div className="flex items-center gap-2">
           <Link href={`/contact?topic=Reporting Fraud&product_id=${product.id}`}>
-            <button className="p-2 text-muted-foreground/20 hover:text-rose-500 transition-all group" title="Report Listing">
+            <button className="p-2 text-muted-foreground/20 hover:text-rose-500 transition-all group" title="Report Product">
               <Flag className="h-4 w-4" />
             </button>
           </Link>

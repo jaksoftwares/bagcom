@@ -223,7 +223,7 @@ export function ProductFormDrawer({ isOpen, onClose, product, sellerId, onSucces
           {product && (
             <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
               <input type="checkbox" id="is_available" checked={formData.is_available} onChange={(e) => setFormData({...formData, is_available: e.target.checked})} className="rounded text-primary focus:ring-primary" />
-              <label htmlFor="is_available" className="text-sm font-bold text-gray-900">Listing is Active</label>
+              <label htmlFor="is_available" className="text-sm font-bold text-gray-900">Product is Active</label>
             </div>
           )}
 

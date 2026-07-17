@@ -52,7 +52,7 @@ export default function SellerInventoryPage() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this listing?')) return;
+    if (!confirm('Are you sure you want to delete this product?')) return;
     try {
       const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
       if (res.ok) {
@@ -92,14 +92,14 @@ export default function SellerInventoryPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Inventory Management</h1>
-            <p className="text-gray-500 font-medium">Manage your listings, update prices, and track product visibility.</p>
+            <p className="text-gray-500 font-medium">Manage your products and their visibility.</p>
           </div>
           <div className="flex gap-3">
             <Button variant="outline" className="font-bold">
               <Filter className="h-4 w-4 mr-2" /> Filter
             </Button>
             <Button onClick={openAddDrawer} className="font-bold shadow-md">
-              <Plus className="h-4 w-4 mr-2" /> Add Listing
+              <Plus className="h-4 w-4 mr-2" /> Add Product
             </Button>
           </div>
         </div>
@@ -109,9 +109,9 @@ export default function SellerInventoryPage() {
             <div className="col-span-full py-20 text-center bg-white rounded-2xl border border-dashed border-gray-200">
               <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-bold text-gray-900">No products listed yet</h3>
-              <p className="text-gray-500 mt-1 mb-6">Create your first listing to start selling.</p>
+              <p className="text-gray-500 mt-1 mb-6">Create your first product to start selling.</p>
               <Button onClick={openAddDrawer} className="font-bold">
-                <Plus className="h-4 w-4 mr-2" /> Create First Listing
+                <Plus className="h-4 w-4 mr-2" /> Create First Product
               </Button>
             </div>
           ) : (

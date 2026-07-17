@@ -112,8 +112,8 @@ export default function SellerPayoutsPage() {
       <div className="space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Payments & Escrow</h1>
-            <p className="text-gray-500 font-medium">Track your earnings and manage your M-PESA withdrawals.</p>
+            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Payments & Withdrawals</h1>
+            <p className="text-gray-500 font-medium">Manage your earnings and withdrawals.</p>
           </div>
         </div>
 
@@ -140,12 +140,12 @@ export default function SellerPayoutsPage() {
           <Card className="border-gray-200/60 shadow-sm">
             <CardContent className="p-6 space-y-4">
               <div className="flex justify-between items-center text-gray-400">
-                <p className="font-bold uppercase tracking-widest text-xs">Pending Escrow</p>
+                <p className="font-bold uppercase tracking-widest text-xs">Pending Funds</p>
                 <Clock className="h-4 w-4" />
               </div>
               <h2 className="text-3xl font-black text-amber-600 tracking-tight">KSh {stats.pendingEscrow.toLocaleString()}</h2>
               <p className="text-sm font-medium text-gray-500 pt-2 border-t border-gray-100">
-                Held until delivery confirmation.
+                Awaiting buyer delivery confirmation.
               </p>
             </CardContent>
           </Card>

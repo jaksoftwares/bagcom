@@ -174,7 +174,7 @@ export default function ProductDetailDrawer({ productId, onClose, onUpdate }: Pr
               <div className="space-y-6">
                  <div className="flex justify-between items-start gap-6">
                     <div className="space-y-1">
-                       <h1 className="text-2xl font-bold text-foreground tracking-tight">{product.title || 'Untitled Listing'}</h1>
+                       <h1 className="text-2xl font-bold text-foreground tracking-tight">{product.title || 'Untitled Product'}</h1>
                        <p className="text-primary font-bold text-xl tracking-tight">KSh {(product.price || 0).toLocaleString()}</p>
                     </div>
                     <Badge className={`border-none px-3 py-1 font-bold uppercase text-[9px] tracking-widest rounded ${
@@ -267,7 +267,7 @@ export default function ProductDetailDrawer({ productId, onClose, onUpdate }: Pr
                   onClick={() => moderate('FLAGGED')}
                   className="flex-1 h-12 bg-amber-500 hover:bg-amber-600 text-white font-bold uppercase tracking-widest text-[10px] rounded-md shadow-none"
                 >
-                  <AlertTriangle className="h-4 w-4 mr-2" /> Flag Listing
+                  <AlertTriangle className="h-4 w-4 mr-2" /> Flag Product
                 </Button>
              ) : (
                 <Button 

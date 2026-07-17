@@ -557,7 +557,7 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                       {data.activity.products.length === 0 ? (
                         <div className="py-20 text-center border border-dashed border-slate-100 rounded-2xl bg-slate-50/30">
                           <Package className="h-8 w-8 text-slate-200 mx-auto mb-4" />
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No listings found</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No products found</p>
                         </div>
                       ) : (
                         data.activity.products.map((product: any) => (
