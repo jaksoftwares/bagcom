@@ -9,9 +9,27 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = createServerClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    
+    if (!error && data?.user) {
+      // Check user role for dynamic redirection
+      const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', data.user.id)
+        .maybeSingle();
+
+      let redirectPath = next;
+      // Only override the default root path with role-based routing
+      if (next === '/') { 
+        if (profile?.role === 'SELLER') {
+          redirectPath = '/seller';
+        } else if (profile?.role === 'ADMIN' || profile?.role === 'SUPER_ADMIN') {
+          redirectPath = '/admin';
+        }
+      }
+
+      return NextResponse.redirect(`${origin}${redirectPath}`);
     }
   }
 
