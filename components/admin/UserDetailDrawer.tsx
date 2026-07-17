@@ -236,6 +236,61 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                     </div>
                   </div>
 
+                  {/* Verification Documents (Inline Viewer) */}
+                  {data.user.role === 'SELLER' && (
+                    <div className="space-y-4 pt-4 border-t border-slate-100">
+                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Verification Documents</p>
+                      
+                      {/* Individual ID Document */}
+                      {data.user.seller_type === 'INDIVIDUAL' && (
+                        <div className="space-y-2">
+                           <div className="flex items-center gap-2">
+                             <p className="text-xs font-bold text-slate-600">National ID Document</p>
+                             {!data.user.id_document_url && <Badge variant="destructive" className="text-[9px] uppercase tracking-widest h-5 px-2">Missing</Badge>}
+                           </div>
+                           {data.user.id_document_url ? (
+                              <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 relative">
+                                {data.user.id_document_url.toLowerCase().endsWith('.pdf') ? (
+                                  <iframe src={data.user.id_document_url} className="w-full h-[600px] border-none" title="ID Document PDF" />
+                                ) : (
+                                  <img src={data.user.id_document_url} alt="ID Document" className="w-full h-auto object-contain max-h-[600px] block mx-auto" />
+                                )}
+                              </div>
+                           ) : (
+                             <div className="p-8 bg-slate-50 border border-dashed border-slate-200 rounded-xl text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                               <ShieldAlert className="h-8 w-8 mx-auto mb-3 opacity-20" />
+                               No identity document provided
+                             </div>
+                           )}
+                        </div>
+                      )}
+
+                      {/* Business Certificate Document */}
+                      {data.user.seller_type === 'BUSINESS' && (
+                        <div className="space-y-2">
+                           <div className="flex items-center gap-2">
+                             <p className="text-xs font-bold text-slate-600">Business Registration Certificate</p>
+                             {!data.user.business_certificate_url && <Badge variant="destructive" className="text-[9px] uppercase tracking-widest h-5 px-2">Missing</Badge>}
+                           </div>
+                           {data.user.business_certificate_url ? (
+                              <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 relative">
+                                {data.user.business_certificate_url.toLowerCase().endsWith('.pdf') ? (
+                                  <iframe src={data.user.business_certificate_url} className="w-full h-[600px] border-none" title="Business Certificate PDF" />
+                                ) : (
+                                  <img src={data.user.business_certificate_url} alt="Business Certificate" className="w-full h-auto object-contain max-h-[600px] block mx-auto" />
+                                )}
+                              </div>
+                           ) : (
+                             <div className="p-8 bg-slate-50 border border-dashed border-slate-200 rounded-xl text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                               <ShieldAlert className="h-8 w-8 mx-auto mb-3 opacity-20" />
+                               No registration certificate provided
+                             </div>
+                           )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Quick Actions */}
                   <div className="pt-4 border-t border-slate-100">
                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-6">Management Actions</p>

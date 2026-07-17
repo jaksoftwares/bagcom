@@ -54,7 +54,7 @@ export async function POST(request: Request) {
         if (action === 'APPROVE') {
           template = EmailTemplates.sellerApprovedEmail(user.first_name || 'Seller', user.business_name || 'your store');
         } else {
-          template = EmailTemplates.sellerRejectedEmail(user.first_name || 'Seller');
+          template = EmailTemplates.sellerRejectedEmail(user.first_name || 'Seller', reason);
         }
 
         if (template) {

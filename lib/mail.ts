@@ -328,75 +328,6 @@ export const EmailTemplates = {
     `
   }),
 
-  /**
-   * Seller Approved
-   */
-  sellerApprovedEmail: (sellerName: string, businessName: string) => ({
-    subject: "Congratulations! Your Bagcom Seller Account is Active",
-    html: `
-      <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
-        <div style="background-color: #4f46e5; padding: 40px; text-align: center;">
-           <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
-        </div>
-        <div style="padding: 40px; background-color: #ffffff;">
-          <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Welcome to the Marketplace!</h1>
-          <p style="font-size: 16px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">
-            Hello ${sellerName}, we are excited to inform you that your seller application for <strong>${businessName || 'your store'}</strong> has been approved.
-          </p>
-          
-          <div style="background-color: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 12px; padding: 24px; margin-bottom: 32px; text-align: center;">
-             <div style="font-size: 40px; margin-bottom: 16px;">🚀</div>
-             <p style="font-size: 14px; font-weight: 700; color: #4f46e5;">Your Seller Dashboard is now unlocked.</p>
-          </div>
-
-          <p style="font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 32px;">
-            You can now start listing your products, managing your inventory, and receiving payments via M-PESA.
-          </p>
-
-          <div style="text-align: center;">
-            <a href="https://bagcom.dovepeakdigital.com/seller" style="background-color: #4f46e5; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Go to Seller Dashboard</a>
-          </div>
-        </div>
-      </div>
-    `
-  }),
-
-  /**
-   * Seller Rejected
-   */
-  sellerRejectedEmail: (sellerName: string) => ({
-    subject: "Update regarding your Bagcom Seller Application",
-    html: `
-      <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
-        <div style="background-color: #0F172A; padding: 40px; text-align: center;">
-           <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
-        </div>
-        <div style="padding: 40px; background-color: #ffffff;">
-          <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Application Status</h1>
-          <p style="font-size: 16px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">
-            Hello ${sellerName}, thank you for your interest in selling on Bagcom. 
-          </p>
-          
-          <p style="font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 24px;">
-            At this time, we require further information or documentation to verify your account. Please ensure your ID and business details are accurate.
-          </p>
-
-          <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 20px; margin-bottom: 32px;">
-             <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin-bottom: 8px;">Next Steps:</p>
-             <ul style="font-size: 13px; color: #64748b; padding-left: 20px; margin: 0;">
-               <li>Verify your ID number is correct</li>
-               <li>Ensure your business name matches your registration</li>
-               <li>Contact support if you believe this was an error</li>
-             </ul>
-          </div>
-
-          <div style="text-align: center;">
-            <a href="mailto:support@bagcom.com" style="color: #4f46e5; text-decoration: none; font-weight: 700; font-size: 14px;">Contact Support Team</a>
-          </div>
-        </div>
-      </div>
-    `
-  }),
 
   /**
    * Payout Initiated (Seller)
@@ -569,6 +500,83 @@ export const EmailTemplates = {
           <div style="text-align: center;">
             <a href="https://bagcom.dovepeakdigital.com/auth/login" style="background-color: #10b981; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Login to Your Account</a>
           </div>
+        </div>
+      </div>
+    `
+  }),
+
+  /**
+   * Merchant Approved (Seller)
+   */
+  sellerApprovedEmail: (sellerName: string, businessName: string) => ({
+    subject: `Welcome to Bagcom Marketplace! Your Merchant Account is Approved 🎉`,
+    html: `
+      <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
+        <div style="background-color: #0F172A; padding: 40px; text-align: center;">
+          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+        </div>
+        <div style="padding: 40px; background-color: #ffffff; text-align: center;">
+          <div style="height: 64px; width: 64px; background-color: #f0fdf4; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+             <span style="color: #16a34a; font-size: 32px;">✓</span>
+          </div>
+          <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Account Approved!</h1>
+          <p style="font-size: 16px; line-height: 1.6; color: #64748b; margin-bottom: 32px; text-align: left;">
+            Hello ${sellerName},<br><br>
+            Congratulations! We have reviewed your identity documents and your merchant application for <strong>${businessName}</strong> has been fully approved. You are now officially a verified merchant on Bagcom.
+          </p>
+          
+          <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 24px; margin-bottom: 32px; text-align: left;">
+            <p style="font-size: 14px; font-weight: 700; color: #0F172A; margin-bottom: 12px;">Quick Start Guide</p>
+            <ol style="font-size: 14px; color: #64748b; padding-left: 20px; line-height: 1.6; margin: 0;">
+              <li>Log in to your Seller Dashboard to set up your store profile.</li>
+              <li>Add high-quality photos and detailed descriptions for your first product.</li>
+              <li>Manage your secure Payout settings.</li>
+            </ol>
+          </div>
+
+          <div style="margin-top: 40px;">
+            <a href="https://bagcom.dovepeakdigital.com/seller" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Access Seller Dashboard</a>
+          </div>
+        </div>
+        <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #f1f5f9;">
+          <p style="font-size: 12px; color: #94a3b8; margin: 0;">&copy; ${new Date().getFullYear()} Bagcom Marketplace. All rights reserved.</p>
+        </div>
+      </div>
+    `
+  }),
+
+  /**
+   * Merchant Rejected (Seller)
+   */
+  sellerRejectedEmail: (sellerName: string, reason: string) => ({
+    subject: `Action Required: Important Update Regarding Your Bagcom Application`,
+    html: `
+      <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
+        <div style="background-color: #0F172A; padding: 40px; text-align: center;">
+          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+        </div>
+        <div style="padding: 40px; background-color: #ffffff;">
+          <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Application Update</h1>
+          <p style="font-size: 16px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">
+            Hello ${sellerName},<br><br>
+            Thank you for applying to be a merchant on Bagcom Marketplace. Our compliance team has reviewed your application and documents. Unfortunately, we are unable to approve your account at this time.
+          </p>
+          
+          <div style="background-color: #fff1f2; border: 1px solid #ffe4e6; border-radius: 12px; padding: 24px; margin-bottom: 32px;">
+            <p style="text-transform: uppercase; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: #e11d48; margin-bottom: 8px;">Reason for Denial</p>
+            <p style="font-size: 14px; font-weight: 500; color: #9f1239; margin: 0; line-height: 1.6;">${reason || 'The provided documents did not meet our compliance requirements or were illegible.'}</p>
+          </div>
+
+          <p style="font-size: 14px; line-height: 1.6; color: #64748b; margin-bottom: 32px;">
+            If you believe this was a mistake, or if you now have the correct documentation, you may contact our compliance team directly to appeal this decision.
+          </p>
+
+          <div style="margin-top: 40px; text-align: center;">
+            <a href="mailto:compliance@dovepeakdigital.com" style="background-color: #ffffff; border: 2px solid #e2e8f0; color: #0F172A; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Contact Support Team</a>
+          </div>
+        </div>
+        <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #f1f5f9;">
+          <p style="font-size: 12px; color: #94a3b8; margin: 0;">&copy; ${new Date().getFullYear()} Bagcom Marketplace. All rights reserved.</p>
         </div>
       </div>
     `
