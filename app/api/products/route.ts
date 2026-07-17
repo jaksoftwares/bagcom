@@ -95,6 +95,16 @@ export async function POST(request: Request) {
 
     const slug = title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') + '-' + Math.random().toString(36).substring(2, 7);
 
+    let finalLocationId = location_id;
+    if (!finalLocationId) {
+      const { data: profile } = await supabase
+        .from('seller_profiles')
+        .select('location_id')
+        .eq('user_id', seller_id)
+        .maybeSingle();
+      if (profile) finalLocationId = profile.location_id;
+    }
+
     const { data: product, error: productError } = await supabase
       .from('products')
       .insert({
@@ -105,7 +115,7 @@ export async function POST(request: Request) {
         description,
         price,
         condition,
-        location_id,
+        location_id: finalLocationId,
         status: 'ACTIVE',
         is_available: true
       })

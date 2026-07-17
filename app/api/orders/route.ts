@@ -22,9 +22,9 @@ export async function GET(request: Request) {
       .from('orders')
       .select(`
         *,
-        product:products(id, title, slug, price, condition),
+        product:products(id, title, slug, price, condition, location:locations(city, formatted_address)),
         buyer:users!orders_buyer_id_fkey(id, first_name, last_name, phone_number),
-        seller:users!orders_seller_id_fkey(id, first_name, last_name, phone_number)
+        seller:users!orders_seller_id_fkey(id, first_name, last_name, phone_number, city)
       `);
 
     if (role === 'buyer') {

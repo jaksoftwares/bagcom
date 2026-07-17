@@ -76,7 +76,9 @@ export default function SellerSettings() {
           shop_name: profile.seller_profiles?.[0]?.shop_name || profile.shop_name,
           bio: profile.seller_profiles?.[0]?.bio || profile.bio,
           mpesa_number: profile.phone_number,
-          profile_photo_url: profile.profile_photo_url
+          profile_photo_url: profile.profile_photo_url,
+          city: profile.city,
+          physical_address: profile.physical_address
         })
       });
 
@@ -176,6 +178,24 @@ export default function SellerSettings() {
                       value={profile?.bio || profile?.seller_profiles?.[0]?.bio || ''} 
                       onChange={(e) => setProfile({...profile, bio: e.target.value})}
                     />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-gray-200/60 shadow-sm overflow-hidden">
+                <CardHeader className="p-8 border-b border-gray-50">
+                  <CardTitle className="text-xl font-black">Store Location</CardTitle>
+                </CardHeader>
+                <CardContent className="p-8 space-y-6">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">City / Town</Label>
+                      <Input placeholder="e.g. Nairobi" value={profile?.city || ''} onChange={(e) => setProfile({...profile, city: e.target.value})} className="h-12 border-gray-200 font-medium" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">Physical Address</Label>
+                      <Input placeholder="e.g. Moi Avenue, Biashara Street" value={profile?.physical_address || ''} onChange={(e) => setProfile({...profile, physical_address: e.target.value})} className="h-12 border-gray-200 font-medium" />
+                    </div>
                   </div>
                 </CardContent>
               </Card>

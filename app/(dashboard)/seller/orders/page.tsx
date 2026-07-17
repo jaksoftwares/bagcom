@@ -112,7 +112,9 @@ export default function SellerOrdersPage() {
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-6 border-t border-gray-50">
                       <div className="space-y-1">
                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5"><MapPin className="h-3 w-3" /> Delivery Preference</p>
-                        <p className="text-sm font-bold text-gray-700 truncate">Standard Pickup Location</p>
+                        <p className="text-sm font-bold text-gray-700 truncate">
+                          {order.product?.location?.city || order.product?.location?.formatted_address || order.seller?.city || 'Default Pickup'}
+                        </p>
                       </div>
                       <div className="space-y-1">
                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5"><Users className="h-3 w-3" /> Buyer Phone</p>
