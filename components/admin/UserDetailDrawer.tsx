@@ -286,12 +286,20 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                              {!data.user.id_document_url && <Badge variant="destructive" className="text-[9px] uppercase tracking-widest h-5 px-2">Missing</Badge>}
                            </div>
                            {data.user.id_document_url ? (
-                              <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 relative">
-                                {data.user.id_document_url.toLowerCase().endsWith('.pdf') ? (
-                                  <iframe src={data.user.id_document_url} className="w-full h-[600px] border-none" title="ID Document PDF" />
-                                ) : (
-                                  <img src={data.user.id_document_url} alt="ID Document" className="w-full h-auto object-contain max-h-[600px] block mx-auto" />
-                                )}
+                              <div className="space-y-3">
+                                <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 relative">
+                                  {data.user.id_document_url.toLowerCase().endsWith('.pdf') ? (
+                                    <iframe src={data.user.id_document_url} className="w-full h-[600px] border-none" title="ID Document PDF" />
+                                  ) : (
+                                    <img src={data.user.id_document_url} alt="ID Document" className="w-full h-auto object-contain max-h-[600px] block mx-auto" />
+                                  )}
+                                </div>
+                                <Button asChild variant="outline" className="w-full h-10 font-bold uppercase tracking-widest text-[10px]">
+                                  <a href={data.user.id_document_url} target="_blank" rel="noreferrer">
+                                    <ExternalLink className="h-4 w-4 mr-2" />
+                                    Open Document in New Tab
+                                  </a>
+                                </Button>
                               </div>
                            ) : (
                              <div className="p-8 bg-slate-50 border border-dashed border-slate-200 rounded-xl text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
@@ -310,12 +318,20 @@ export default function UserDetailDrawer({ userId, onClose, onUpdate }: UserDeta
                              {!data.user.business_certificate_url && <Badge variant="destructive" className="text-[9px] uppercase tracking-widest h-5 px-2">Missing</Badge>}
                            </div>
                            {data.user.business_certificate_url ? (
-                              <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 relative">
-                                {data.user.business_certificate_url.toLowerCase().endsWith('.pdf') ? (
-                                  <iframe src={data.user.business_certificate_url} className="w-full h-[600px] border-none" title="Business Certificate PDF" />
-                                ) : (
-                                  <img src={data.user.business_certificate_url} alt="Business Certificate" className="w-full h-auto object-contain max-h-[600px] block mx-auto" />
-                                )}
+                              <div className="space-y-3">
+                                <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 relative">
+                                  {data.user.business_certificate_url.toLowerCase().endsWith('.pdf') ? (
+                                    <iframe src={data.user.business_certificate_url} className="w-full h-[600px] border-none" title="Business Certificate PDF" />
+                                  ) : (
+                                    <img src={data.user.business_certificate_url} alt="Business Certificate" className="w-full h-auto object-contain max-h-[600px] block mx-auto" />
+                                  )}
+                                </div>
+                                <Button asChild variant="outline" className="w-full h-10 font-bold uppercase tracking-widest text-[10px]">
+                                  <a href={data.user.business_certificate_url} target="_blank" rel="noreferrer">
+                                    <ExternalLink className="h-4 w-4 mr-2" />
+                                    Open Document in New Tab
+                                  </a>
+                                </Button>
                               </div>
                            ) : (
                              <div className="p-8 bg-slate-50 border border-dashed border-slate-200 rounded-xl text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
