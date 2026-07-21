@@ -31,7 +31,7 @@ BEGIN
     SELECT COALESCE(SUM(amount), 0)
     INTO v_total_withdrawn
     FROM payouts
-    WHERE seller_id = p_seller_id AND status IN ('COMPLETED', 'PROCESSING', 'PENDING');
+    WHERE seller_id = p_seller_id AND status IN ('SUCCESS', 'PROCESSING', 'PENDING');
 
     -- 4. Calculate available balance
     v_available_balance := GREATEST(0, v_total_earnings - v_total_withdrawn);
