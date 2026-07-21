@@ -180,13 +180,17 @@ export default function BuyerDashboard() {
                     {orders.slice(0, 5).map((order) => {
                       const StatusIcon = getStatusIcon(order.status);
                       return (
-                        <div key={order.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 sm:p-6 hover:bg-gray-50/50 transition-colors gap-4">
+                        <Link 
+                          key={order.id} 
+                          href={`/buyer/orders/${order.id}`}
+                          className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 sm:p-6 hover:bg-gray-50 transition-colors gap-4 group cursor-pointer"
+                        >
                           <div className="flex items-center space-x-4">
-                            <div className="h-14 w-14 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center shrink-0">
-                              <Package className="h-6 w-6 text-gray-400" />
+                            <div className="h-14 w-14 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center shrink-0 group-hover:border-primary/20 transition-colors">
+                              <Package className="h-6 w-6 text-gray-400 group-hover:text-primary transition-colors" />
                             </div>
                             <div>
-                              <h3 className="font-semibold text-gray-900 truncate max-w-[200px] sm:max-w-[300px]">{order.product?.title}</h3>
+                              <h3 className="font-semibold text-gray-900 truncate max-w-[200px] sm:max-w-[300px] group-hover:text-primary transition-colors">{order.product?.title}</h3>
                               <p className="text-xs font-medium text-gray-500 mt-0.5">Order #{order.order_number}</p>
                               <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mt-1">{new Date(order.created_at).toLocaleDateString()}</p>
                             </div>
@@ -200,14 +204,12 @@ export default function BuyerDashboard() {
                                 {order.status.replace('_', ' ')}
                               </Badge>
                             </div>
-                            <Link href={`/buyer/orders/${order.id}`}>
-                              <Button variant="outline" size="sm" className="rounded-lg bg-white border-gray-200">
-                                <Eye className="h-4 w-4 sm:mr-2" />
-                                <span className="hidden sm:inline">Details</span>
-                              </Button>
-                            </Link>
+                            <Button variant="outline" size="sm" className="rounded-lg bg-white border-gray-200 group-hover:border-primary/30 group-hover:bg-primary/5 transition-colors">
+                              <Eye className="h-4 w-4 sm:mr-2" />
+                              <span className="hidden sm:inline">Details</span>
+                            </Button>
                           </div>
-                        </div>
+                        </Link>
                       );
                     })}
                   </div>
