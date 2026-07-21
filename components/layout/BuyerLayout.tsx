@@ -19,7 +19,7 @@ import {
   Loader2,
   MessageCircle,
   ShieldCheck,
-  ShoppingBasket
+    LifeBuoy
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCurrentUser, getUserProfile, signOut } from '@/services/auth/authService';
@@ -101,6 +101,7 @@ export default function BuyerLayout({ children }: BuyerLayoutProps) {
       items: [
         { name: 'Notifications', href: '/buyer/notifications', icon: Bell },
         { name: 'Settings', href: '/buyer/settings', icon: Settings },
+        { name: 'Help & Support', href: '/buyer/support', icon: LifeBuoy },
       ]
     }
   ];

@@ -20,7 +20,7 @@ export async function GET(request: Request) {
     if (statsError) {
       console.error('Stats RPC Error:', statsError);
       // Fallback if RPC is not yet created in the DB (for graceful degradation)
-      return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
+      // We will let it continue and use defaultStats below instead of crashing with 500
     }
 
     // 2. Fetch Recent Orders (Limit to 5)

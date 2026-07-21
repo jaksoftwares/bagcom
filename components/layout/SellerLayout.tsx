@@ -242,10 +242,10 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
 
           {/* Help & Support Section */}
           <div className="p-4 mt-auto">
-             <button className={`flex items-center ${isDesktopCollapsed ? 'justify-center w-full' : 'w-full px-3 gap-3'} py-2.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors`}>
-                <LifeBuoy className="h-5 w-5 shrink-0 text-gray-400" />
-                {!isDesktopCollapsed && <span>Help & Support</span>}
-             </button>
+             <Link href="/seller/support" className={`flex items-center ${isDesktopCollapsed ? 'justify-center w-full' : 'w-full px-3 gap-3'} py-2.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors`}>
+                <LifeBuoy className={`h-5 w-5 shrink-0 ${pathname === '/seller/support' ? 'text-gray-900' : 'text-gray-400'}`} />
+                {!isDesktopCollapsed && <span className={pathname === '/seller/support' ? 'text-gray-900 font-semibold' : ''}>Help & Support</span>}
+             </Link>
           </div>
         </div>
       </aside>
