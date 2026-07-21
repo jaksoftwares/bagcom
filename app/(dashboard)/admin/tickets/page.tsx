@@ -32,6 +32,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import UserDetailDrawer from '@/components/admin/UserDetailDrawer';
+import { getCurrentUser } from '@/services/auth/authService';
 
 export default function SupportTickets() {
   const { toast } = useToast();
@@ -45,10 +46,16 @@ export default function SupportTickets() {
   const [reply, setReply] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [adminId, setAdminId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchTickets();
-    fetchStats();
+    async function init() {
+      const user = await getCurrentUser();
+      if (user) setAdminId(user.id);
+      fetchTickets();
+      fetchStats();
+    }
+    init();
   }, [activeTab]);
 
   async function fetchTickets() {
@@ -91,7 +98,7 @@ export default function SupportTickets() {
       const res = await fetch(`/api/admin/tickets/${ticketId}/respond`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: reply })
+        body: JSON.stringify({ adminId, message: reply })
       });
       if (res.ok) {
         setReply('');
@@ -110,7 +117,7 @@ export default function SupportTickets() {
       const res = await fetch('/api/admin/tickets', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ticketId, status })
+        body: JSON.stringify({ ticketId, status, priority: 'NORMAL', adminId })
       });
       if (res.ok) {
         toast({ title: `Ticket status: ${status}` });

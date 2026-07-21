@@ -12,17 +12,27 @@ export async function POST(
 ) {
   try {
     const supabase = createServerClient();
-    const { message, isInternal = false } = await request.json();
+    const { message, isInternal = false, adminId } = await request.json();
 
-    const { data: { user: admin } } = await supabase.auth.getUser();
-    if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!adminId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // Validate admin is actually an admin
+    const { data: adminUser } = await supabase
+      .from('users')
+      .select('id, role')
+      .eq('id', adminId)
+      .single();
+      
+    if (!adminUser || (adminUser.role !== 'ADMIN' && adminUser.role !== 'SUPER_ADMIN')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     // 1. Insert the response
     const { data: response, error: responseError } = await supabase
       .from('support_responses')
       .insert({
         ticket_id: params.id,
-        sender_id: admin.id,
+        sender_id: adminId,
         message,
         is_internal: isInternal
       })
@@ -60,7 +70,7 @@ export async function POST(
       }
     }
 
-    await logAdminAction(admin.id, 'RESPOND_TO_TICKET', 'TICKET', params.id, { isInternal });
+    await logAdminAction(adminId, 'RESPOND_TO_TICKET', 'TICKET', params.id, { isInternal });
 
     return NextResponse.json({ success: true, response });
   } catch (error: any) {
