@@ -5,6 +5,7 @@
 
 const POSTMARK_API_TOKEN = process.env.POSTMARK_API_TOKEN;
 const POSTMARK_FROM_EMAIL = process.env.POSTMARK_FROM_EMAIL || 'contact@dovepeakdigital.com';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || '${APP_URL}';
 
 interface MailOptions {
   to: string;
@@ -66,7 +67,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #0F172A; padding: 40px; text-align: center;">
-          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+          <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff;">
           <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Payment Confirmed!</h1>
@@ -101,7 +102,7 @@ export const EmailTemplates = {
           </div>
 
           <div style="margin-top: 40px; text-align: center;">
-            <a href="https://bagcom.dovepeakdigital.com/buyer/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Track Your Order</a>
+            <a href="${APP_URL}/buyer/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Track Your Order</a>
           </div>
         </div>
         <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #f1f5f9;">
@@ -119,7 +120,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #0F172A; padding: 40px; text-align: center;">
-          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+          <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff;">
           <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">New Order Received!</h1>
@@ -143,7 +144,7 @@ export const EmailTemplates = {
           </div>
 
           <div style="margin-top: 40px; text-align: center;">
-            <a href="https://bagcom.dovepeakdigital.com/seller/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Manage Order</a>
+            <a href="${APP_URL}/seller/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Manage Order</a>
           </div>
         </div>
         <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #f1f5f9;">
@@ -161,7 +162,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #0F172A; padding: 40px; text-align: center;">
-          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+          <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff; text-align: center;">
           <div style="height: 64px; width: 64px; background-color: #f0fdf4; border-radius: 50%; display: inline-flex; align-items: center; justify-center; margin-bottom: 24px;">
@@ -173,7 +174,7 @@ export const EmailTemplates = {
           </p>
           
           <div style="margin-top: 40px;">
-            <a href="https://bagcom.dovepeakdigital.com/buyer/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Rate Your Experience</a>
+            <a href="${APP_URL}/buyer/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Rate Your Experience</a>
           </div>
         </div>
       </div>
@@ -188,7 +189,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #0F172A; padding: 40px; text-align: center;">
-          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+          <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff;">
           <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">It's on the way!</h1>
@@ -206,7 +207,7 @@ export const EmailTemplates = {
           </p>
 
           <div style="text-align: center;">
-            <a href="https://bagcom.dovepeakdigital.com/buyer/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">View Tracking Details</a>
+            <a href="${APP_URL}/buyer/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">View Tracking Details</a>
           </div>
         </div>
       </div>
@@ -221,7 +222,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #0F172A; padding: 40px; text-align: center;">
-          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+          <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff;">
           <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Item Reserved</h1>
@@ -234,7 +235,7 @@ export const EmailTemplates = {
           </p>
 
           <div style="text-align: center;">
-            <a href="https://bagcom.dovepeakdigital.com/buyer/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">View Order Hub</a>
+            <a href="${APP_URL}/buyer/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">View Order Hub</a>
           </div>
         </div>
       </div>
@@ -249,7 +250,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #ef4444; padding: 40px; text-align: center;">
-           <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+           <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff;">
           <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Dispute Case Opened</h1>
@@ -280,7 +281,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #ef4444; padding: 40px; text-align: center;">
-           <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+           <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff;">
           <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Order Disputed</h1>
@@ -296,7 +297,7 @@ export const EmailTemplates = {
           </div>
 
           <div style="text-align: center;">
-            <a href="https://bagcom.dovepeakdigital.com/seller/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Manage Dispute</a>
+            <a href="${APP_URL}/seller/orders" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Manage Dispute</a>
           </div>
         </div>
       </div>
@@ -311,7 +312,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #10b981; padding: 40px; text-align: center;">
-           <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+           <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff;">
           <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Refund Processed</h1>
@@ -341,7 +342,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #0F172A; padding: 40px; text-align: center;">
-          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+          <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff;">
           <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Funds Released!</h1>
@@ -370,7 +371,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #0F172A; padding: 40px; text-align: center;">
-          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+          <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff; text-align: center;">
           <div style="height: 64px; width: 64px; background-color: #f8fafc; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px; border: 1px solid #f1f5f9;">
@@ -396,7 +397,7 @@ export const EmailTemplates = {
           </div>
 
           <div style="margin-top: 40px;">
-            <a href="https://bagcom.dovepeakdigital.com" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Return to Marketplace</a>
+            <a href="${APP_URL}" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Return to Marketplace</a>
           </div>
         </div>
       </div>
@@ -442,7 +443,7 @@ export const EmailTemplates = {
           </div>
 
           <div style="margin-top: 40px; text-align: center;">
-            <a href="https://bagcom.dovepeakdigital.com/admin/verifications" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Open Verification Hub</a>
+            <a href="${APP_URL}/admin/verifications" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Open Verification Hub</a>
           </div>
         </div>
       </div>
@@ -456,7 +457,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #fee2e2; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #ef4444; padding: 40px; text-align: center;">
-           <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+           <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff;">
           <h1 style="font-size: 24px; font-weight: 800; color: #991b1b; margin-bottom: 16px; letter-spacing: -0.02em;">Account Suspended</h1>
@@ -489,7 +490,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #10b981; padding: 40px; text-align: center;">
-           <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+           <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff;">
           <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Welcome Back!</h1>
@@ -502,7 +503,7 @@ export const EmailTemplates = {
           </p>
 
           <div style="text-align: center;">
-            <a href="https://bagcom.dovepeakdigital.com/auth/login" style="background-color: #10b981; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Login to Your Account</a>
+            <a href="${APP_URL}/login" style="background-color: #10b981; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Login to Your Account</a>
           </div>
         </div>
       </div>
@@ -517,7 +518,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #0F172A; padding: 40px; text-align: center;">
-          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+          <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff; text-align: center;">
           <div style="height: 64px; width: 64px; background-color: #f0fdf4; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px;">
@@ -539,7 +540,7 @@ export const EmailTemplates = {
           </div>
 
           <div style="margin-top: 40px;">
-            <a href="https://bagcom.dovepeakdigital.com/seller" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Access Seller Dashboard</a>
+            <a href="${APP_URL}/seller" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Access Seller Dashboard</a>
           </div>
         </div>
         <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #f1f5f9;">
@@ -557,7 +558,7 @@ export const EmailTemplates = {
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
         <div style="background-color: #0F172A; padding: 40px; text-align: center;">
-          <img src="https://bagcom.dovepeakdigital.com/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
+          <img src="${APP_URL}/brand/assets/logo/logo-dark-bg.png" alt="Bagcom" style="height: 40px; width: auto;" />
         </div>
         <div style="padding: 40px; background-color: #ffffff;">
           <h1 style="font-size: 24px; font-weight: 800; color: #0F172A; margin-bottom: 16px; letter-spacing: -0.02em;">Application Update</h1>
