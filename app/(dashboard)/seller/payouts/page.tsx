@@ -146,27 +146,21 @@ export default function SellerPayoutsPage() {
 
   return (
     <SellerLayout>
-      <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-8">
+      <div className="w-full mx-auto space-y-4 sm:space-y-6 pb-8 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl overflow-x-hidden">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Wallet</h1>
-            <p className="text-gray-500 font-medium mt-1">Manage your earnings and withdraw to M-PESA.</p>
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 tracking-tight">Wallet</h1>
+            <p className="text-gray-500 font-medium mt-1 text-sm">Manage and withdraw your earnings.</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           
           {/* Main Wallet Card */}
-          <Card className="lg:col-span-2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white border-none shadow-xl overflow-hidden relative rounded-[2rem]">
-            {/* Background elements */}
-            <div className="absolute top-0 right-0 p-8 opacity-5">
-              <Wallet className="h-48 w-48 -rotate-12 transform scale-150" />
-            </div>
-            <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl"></div>
-            
-            <CardContent className="p-8 md:p-10 relative z-10 flex flex-col h-full justify-between gap-8">
+          <Card className="lg:col-span-2 bg-slate-900 text-white border-none shadow-sm overflow-hidden rounded-2xl">
+            <CardContent className="p-6 md:p-8 flex flex-col h-full justify-between gap-8">
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
                   <p className="text-slate-400 font-medium uppercase tracking-widest text-xs flex items-center gap-2">
@@ -210,38 +204,36 @@ export default function SellerPayoutsPage() {
           </Card>
 
           {/* Secondary Stats */}
-          <div className="space-y-6 flex flex-col justify-between">
-            <Card className="border-none shadow-sm rounded-[2rem] bg-white relative overflow-hidden group hover:shadow-md transition-shadow">
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-50"></div>
-              <CardContent className="p-8 space-y-4 relative z-10">
+          <div className="space-y-4 sm:space-y-6 flex flex-col justify-between">
+            <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white overflow-hidden transition-shadow hover:shadow-md">
+              <CardContent className="p-6 space-y-4">
                 <div className="flex justify-between items-center text-amber-600/80">
                   <p className="font-medium uppercase tracking-widest text-xs">Pending Funds</p>
                   <Clock className="h-5 w-5" />
                 </div>
-                <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
                   <span className="text-lg font-medium text-gray-400 mr-1">KSh</span>
                   {stats.pendingEscrow.toLocaleString()}
                 </h2>
                 <div className="pt-4 border-t border-gray-50 flex items-start gap-2 text-xs font-medium text-gray-500 leading-relaxed">
                   <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
-                  Funds held safely. They will be released to you once delivery is confirmed.
+                  Held in Escrow until delivery is confirmed.
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-none shadow-sm rounded-[2rem] bg-white relative overflow-hidden group hover:shadow-md transition-shadow">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-50"></div>
-              <CardContent className="p-8 space-y-4 relative z-10">
+            <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white overflow-hidden transition-shadow hover:shadow-md">
+              <CardContent className="p-6 space-y-4">
                 <div className="flex justify-between items-center text-emerald-600/80">
                   <p className="font-medium uppercase tracking-widest text-xs">Total Earnings</p>
                   <CheckCircle2 className="h-5 w-5" />
                 </div>
-                <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
                   <span className="text-lg font-medium text-gray-400 mr-1">KSh</span>
                   {stats.totalEarned.toLocaleString()}
                 </h2>
                 <div className="pt-4 border-t border-gray-50 text-xs font-medium text-gray-500 leading-relaxed">
-                  Total amount earned from all completed orders.
+                  Total earned from all completed orders.
                 </div>
               </CardContent>
             </Card>
@@ -249,8 +241,8 @@ export default function SellerPayoutsPage() {
         </div>
 
         {/* Payout History Table */}
-        <Card className="border-gray-100 shadow-sm overflow-hidden rounded-[2rem] bg-white">
-          <div className="p-6 md:p-8 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
+        <Card className="border-gray-100 shadow-sm overflow-hidden rounded-2xl bg-white">
+          <div className="p-5 sm:p-6 md:p-8 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
             <h2 className="text-lg font-semibold text-gray-900">Withdrawal History</h2>
             <Badge variant="outline" className="bg-white border-gray-200 text-gray-500">
               {totalCount} total
@@ -318,20 +310,20 @@ export default function SellerPayoutsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between bg-white px-8 py-4 border-t border-gray-50">
-              <p className="text-sm text-gray-500 font-medium hidden sm:block">
+            <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 sm:px-6 sm:py-4 border-t border-gray-50 gap-4">
+              <p className="text-sm text-gray-500 font-medium">
                 Showing <span className="font-semibold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-semibold text-gray-900">{Math.min(currentPage * itemsPerPage, totalCount)}</span>
               </p>
-              <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+              <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                 <Button
                   variant="outline"
-                  className="font-semibold rounded-xl h-10 px-4 border-gray-200 hover:bg-gray-50"
+                  className="font-medium rounded-xl h-10 px-4 border-gray-200 hover:bg-gray-50"
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+                  <ChevronLeft className="h-4 w-4 mr-2" /> Prev
                 </Button>
-                <span className="text-sm font-semibold text-gray-900 px-3 sm:hidden">
+                <span className="text-sm font-medium text-gray-900 px-2 sm:hidden">
                   {currentPage} / {totalPages}
                 </span>
                 <Button
@@ -340,7 +332,7 @@ export default function SellerPayoutsPage() {
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
                 >
-                  Next <ChevronRight className="h-4 w-4 ml-1" />
+                  Next <ChevronRight className="h-4 w-4 ml-2" />
                 </Button>
               </div>
             </div>

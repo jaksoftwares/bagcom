@@ -43,14 +43,14 @@ export function SellerAnalytics({ stats }: SellerAnalyticsProps) {
 
   return (
     <div className="space-y-8">
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {/* Revenue Trend */}
-        <Card className="lg:col-span-2 border-none shadow-sm overflow-hidden">
-          <CardHeader className="p-8 border-b border-gray-50">
-            <CardTitle className="text-xl font-black text-gray-900">Revenue Trend</CardTitle>
-            <p className="text-sm text-gray-500 font-medium">Daily earnings from completed sales over the last 30 days.</p>
+        <Card className="lg:col-span-2 border border-gray-100 shadow-sm overflow-hidden rounded-2xl">
+          <CardHeader className="p-5 sm:p-6 border-b border-gray-100">
+            <CardTitle className="text-lg font-semibold text-gray-900">Revenue Trend</CardTitle>
+            <p className="text-sm text-gray-500 font-medium">Daily earnings from completed sales.</p>
           </CardHeader>
-          <CardContent className="p-8">
+          <CardContent className="p-5 sm:p-6">
             <div className="h-[300px] w-full">
                <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={chartData}>
@@ -93,12 +93,12 @@ export function SellerAnalytics({ stats }: SellerAnalyticsProps) {
         </Card>
 
         {/* Status Distribution */}
-        <Card className="border-none shadow-sm overflow-hidden">
-          <CardHeader className="p-8 border-b border-gray-50">
-            <CardTitle className="text-xl font-black text-gray-900">Order Status</CardTitle>
-            <p className="text-sm text-gray-500 font-medium">Breakdown of all orders by lifecycle stage.</p>
+        <Card className="border border-gray-100 shadow-sm overflow-hidden rounded-2xl">
+          <CardHeader className="p-5 sm:p-6 border-b border-gray-100">
+            <CardTitle className="text-lg font-semibold text-gray-900">Order Status</CardTitle>
+            <p className="text-sm text-gray-500 font-medium">Orders by stage.</p>
           </CardHeader>
-          <CardContent className="p-8 flex flex-col items-center justify-center">
+          <CardContent className="p-5 sm:p-6 flex flex-col items-center justify-center">
             {pieData.length > 0 ? (
               <>
                 <div className="h-[200px] w-full">

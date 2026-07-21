@@ -73,12 +73,12 @@ export default function SellerOrderDetails() {
 
   return (
     <SellerLayout>
-      <div className="max-w-5xl">
-        <Link href="/seller" className="flex items-center text-sm font-medium text-gray-500 hover:text-primary mb-6 transition-colors">
-          <ArrowLeft className="h-4 w-4 mr-2" /> Back to Dashboard
+      <div className="w-full mx-auto space-y-6 pb-8 px-4 sm:px-6 lg:px-8 py-6 max-w-5xl">
+        <Link href="/seller/orders" className="flex items-center text-sm font-medium text-gray-500 hover:text-primary mb-6 transition-colors">
+          <ArrowLeft className="h-4 w-4 mr-2" /> Back to Orders
         </Link>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-semibold text-gray-900">Order #{order.order_number}</h1>
@@ -137,8 +137,10 @@ export default function SellerOrderDetails() {
                   </div>
                   <div>
                     <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Pickup/Delivery Point</p>
-                    <p className="text-base font-semibold text-gray-900">Student Center, Gate A, Strathmore University</p>
-                    <p className="text-sm text-gray-500 mt-1 italic">Note: "Please meet at the fountain outside the student center."</p>
+                    <p className="text-base font-semibold text-gray-900">
+                      {order.product?.location?.formatted_address || order.product?.location?.city || order.seller?.city || 'Default Pickup Location'}
+                    </p>
+                    <p className="text-sm text-gray-500 mt-1 italic">Note: "{order.delivery_notes || "Please contact the buyer to arrange meeting details."}"</p>
                   </div>
                 </div>
 
@@ -148,7 +150,7 @@ export default function SellerOrderDetails() {
                   </div>
                   <div>
                     <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Preferred Time</p>
-                    <p className="text-base font-semibold text-gray-900">After 4:00 PM (Weekdays)</p>
+                    <p className="text-base font-semibold text-gray-900">{order.delivery_time_preference || "Contact buyer to arrange"}</p>
                   </div>
                 </div>
               </CardContent>
@@ -189,13 +191,13 @@ export default function SellerOrderDetails() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 text-white p-6 space-y-4">
+            <Card className="bg-gray-900 text-white p-6 space-y-4 rounded-2xl shadow-sm border-none">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-primary" />
                 <h4 className="text-sm font-medium uppercase tracking-wider">Escrow Protected</h4>
               </div>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                The buyer has paid **KSh {order.total_amount.toLocaleString()}**. These funds are safely held by Bagcom and will be released to you once you enter the buyer's verification code upon delivery.
+              <p className="text-sm text-gray-300 leading-relaxed">
+                The buyer paid <strong className="text-white">KSh {order.total_amount.toLocaleString()}</strong>. Funds are securely held in Escrow and will be released to you upon successful delivery.
               </p>
             </Card>
           </div>

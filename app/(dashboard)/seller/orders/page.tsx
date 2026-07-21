@@ -109,10 +109,10 @@ export default function SellerOrdersPage() {
 
   return (
     <SellerLayout>
-      <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-8">
+      <div className="w-full mx-auto space-y-4 sm:space-y-6 pb-8 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl overflow-x-hidden">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100">
           <div>
             <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Orders</h1>
             <p className="text-gray-500 font-medium mt-1 text-sm">Manage active and completed orders.</p>
@@ -139,17 +139,15 @@ export default function SellerOrdersPage() {
               <p className="text-gray-500 mt-2 max-w-sm mx-auto font-medium text-sm">New orders will appear here.</p>
             </Card>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {orders.map((order) => {
                 const statusConf = getStatusConfig(order.status);
                 
                 return (
-                  <Card key={order.id} className="border-none shadow-md overflow-hidden bg-white rounded-3xl group transition-all duration-300 hover:shadow-xl relative">
-                    <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-gray-100 to-transparent group-hover:from-primary/20 transition-colors"></div>
-                    
+                  <Card key={order.id} className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-2xl group transition-all duration-300 hover:shadow-md">
                     <div className="flex flex-col md:flex-row">
                       {/* Left Pane: Order Info */}
-                      <div className="p-6 md:p-8 flex-1 border-b md:border-b-0 md:border-r border-gray-100/80">
+                      <div className="p-5 sm:p-6 md:p-8 flex-1 border-b md:border-b-0 md:border-r border-gray-100">
                         <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
                           <div className="flex items-center gap-3">
                             <span className="text-sm font-mono font-medium text-gray-500 bg-gray-50 px-3 py-1 rounded-lg">#{order.order_number}</span>
@@ -164,9 +162,9 @@ export default function SellerOrdersPage() {
                           </div>
                         </div>
 
-                        <h3 className="text-xl font-semibold text-gray-900 mb-6 group-hover:text-primary transition-colors">{order.product?.title || 'Unknown Product'}</h3>
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6 group-hover:text-primary transition-colors">{order.product?.title || 'Unknown Product'}</h3>
 
-                        <div className="grid sm:grid-cols-2 gap-6 bg-gray-50/50 p-5 rounded-2xl border border-gray-100/50">
+                        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 bg-gray-50/50 p-4 sm:p-5 rounded-xl border border-gray-100">
                           <div className="space-y-1">
                             <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
                               <MapPin className="h-3 w-3" /> Delivery Preference
@@ -185,18 +183,14 @@ export default function SellerOrdersPage() {
                       </div>
 
                       {/* Right Pane: Financials & Actions */}
-                      <div className="p-6 md:p-8 md:w-[320px] bg-gradient-to-br from-white to-gray-50/50 flex flex-col justify-between gap-6 shrink-0 relative">
-                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                           <CreditCard className="h-24 w-24" />
-                        </div>
-                        
-                        <div className="relative z-10">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                            Your Earnings
+                      <div className="p-5 sm:p-6 md:p-8 md:w-[320px] bg-gray-50/30 flex flex-col justify-between gap-6 shrink-0">
+                        <div>
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                            Earnings
                           </p>
                           <div className="flex items-baseline gap-1">
                             <span className="text-lg font-medium text-gray-500">KSh</span>
-                            <span className="text-3xl font-semibold text-gray-900 tracking-tight">
+                            <span className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
                               {Number(order.seller_receivable).toLocaleString()}
                             </span>
                           </div>
@@ -214,11 +208,11 @@ export default function SellerOrdersPage() {
                           </div>
                         </div>
 
-                        <div className="space-y-3 relative z-10 mt-6">
+                        <div className="space-y-3 mt-4">
                           <OrderActions order={order} onUpdate={() => fetchOrders(user.id, currentPage)} />
                           <Link href={`/seller/orders/${order.id}`} className="block">
-                            <Button variant="outline" className="w-full font-medium h-11 rounded-xl bg-white border-gray-200 text-gray-600 hover:text-primary hover:border-primary/20 hover:bg-primary/5 transition-all">
-                              View Full Details <ArrowRight className="h-4 w-4 ml-2" />
+                            <Button variant="outline" className="w-full font-medium h-10 sm:h-11 rounded-xl bg-white border-gray-200 text-gray-600 hover:text-primary hover:border-primary/20 hover:bg-primary/5 transition-all">
+                              View Details <ArrowRight className="h-4 w-4 ml-2" />
                             </Button>
                           </Link>
                         </div>
@@ -232,14 +226,14 @@ export default function SellerOrdersPage() {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between bg-white px-8 py-5 rounded-3xl shadow-sm mt-8 border border-gray-100">
-              <p className="text-sm text-gray-500 font-medium hidden sm:block">
-                Showing <span className="font-semibold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-semibold text-gray-900">{Math.min(currentPage * itemsPerPage, totalCount)}</span> of <span className="font-semibold text-gray-900">{totalCount}</span> orders
+            <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 sm:px-6 sm:py-4 rounded-2xl shadow-sm mt-6 border border-gray-100 gap-4">
+              <p className="text-sm text-gray-500 font-medium">
+                Showing <span className="font-semibold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-semibold text-gray-900">{Math.min(currentPage * itemsPerPage, totalCount)}</span> of <span className="font-semibold text-gray-900">{totalCount}</span>
               </p>
               <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                 <Button
                   variant="outline"
-                  className="font-medium rounded-xl h-11 px-5 border-gray-200 hover:bg-gray-50"
+                  className="font-medium rounded-xl h-10 px-4 border-gray-200 hover:bg-gray-50"
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
                 >
@@ -250,7 +244,7 @@ export default function SellerOrdersPage() {
                 </span>
                 <Button
                   variant="outline"
-                  className="font-medium rounded-xl h-11 px-5 border-gray-200 hover:bg-gray-50"
+                  className="font-medium rounded-xl h-10 px-4 border-gray-200 hover:bg-gray-50"
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
                 >

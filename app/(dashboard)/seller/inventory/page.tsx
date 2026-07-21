@@ -174,31 +174,30 @@ export default function SellerInventoryPage() {
 
   return (
     <SellerLayout>
-      <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-8">
+      <div className="w-full mx-auto space-y-4 sm:space-y-6 pb-8 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl overflow-x-hidden">
         
         {/* Header & Actions */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <div>
             <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Inventory</h1>
-            <p className="text-sm text-gray-500 font-medium mt-1">Manage your products and pricing.</p>
+            <p className="text-sm text-gray-500 font-medium mt-1">Manage your products.</p>
           </div>
-          <Button onClick={openAddDrawer} className="font-medium shadow-sm h-12 px-6 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all">
-            <Plus className="h-5 w-5 mr-2" /> Add New Product
+          <Button onClick={openAddDrawer} className="w-full md:w-auto font-medium shadow-sm h-11 px-6 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all">
+            <Plus className="h-5 w-5 mr-2" /> Add Product
           </Button>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {statCards.map((stat, idx) => (
-            <Card key={idx} className="border-none shadow-sm overflow-hidden bg-white rounded-3xl relative group transition-all duration-300 hover:shadow-md">
-              <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-50`}></div>
-              <CardContent className="p-6 flex items-center gap-5 relative z-10">
-                <div className={`h-14 w-14 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300`}>
-                  <stat.icon className="h-7 w-7" />
+            <Card key={idx} className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-2xl transition-all duration-300 hover:shadow-md">
+              <CardContent className="p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className={`h-12 w-12 rounded-xl flex-shrink-0 ${stat.bg} ${stat.color} flex items-center justify-center`}>
+                  <stat.icon className="h-6 w-6" />
                 </div>
-                <div className="space-y-1">
+                <div>
                   <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{stat.title}</p>
-                  <p className="text-2xl font-semibold text-gray-900 tracking-tight">{stat.value}</p>
+                  <p className="text-xl md:text-2xl font-semibold text-gray-900 tracking-tight">{stat.value}</p>
                 </div>
               </CardContent>
             </Card>
@@ -281,8 +280,8 @@ export default function SellerInventoryPage() {
             <>
               {/* --- LIST VIEW --- */}
               {viewMode === 'list' && (
-                <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-                  <div className="overflow-x-auto">
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto w-full">
                     <table className="w-full text-left whitespace-nowrap">
                       <thead className="bg-gray-50/80 border-b border-gray-100">
                         <tr>
@@ -330,11 +329,11 @@ export default function SellerInventoryPage() {
                               </div>
                             </td>
                             <td className="px-6 py-4 text-right">
-                              <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Button onClick={() => openEditDrawer(product)} variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-gray-500 hover:text-primary hover:bg-primary/10">
-                                  <Edit className="h-4 w-4" />
+                              <div className="flex items-center justify-end gap-2">
+                                <Button onClick={() => openEditDrawer(product)} variant="outline" size="sm" className="h-9 rounded-lg text-gray-600 hover:text-primary bg-white border-gray-200">
+                                  <Edit className="h-4 w-4 sm:mr-1.5" /> <span className="hidden sm:inline">Edit</span>
                                 </Button>
-                                <Button onClick={() => handleDelete(product.id)} variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50">
+                                <Button onClick={() => handleDelete(product.id)} variant="outline" size="icon" className="h-9 w-9 rounded-lg text-red-600 hover:bg-red-50 hover:border-red-200 border-gray-200 bg-white shrink-0">
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
@@ -363,34 +362,37 @@ export default function SellerInventoryPage() {
                         )}
                         
                         {/* Top Badges */}
-                        <div className="absolute top-4 left-4 flex gap-2">
+                        <div className="absolute top-3 left-3 flex gap-2">
                           {product.is_available ? (
-                            <Badge className="bg-emerald-500/90 text-white border-none shadow-md backdrop-blur-md px-3">Active</Badge>
+                            <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-none px-2 shadow-sm">Active</Badge>
                           ) : (
-                            <Badge variant="secondary" className="bg-gray-900/80 text-white border-none shadow-md backdrop-blur-md px-3">Draft</Badge>
+                            <Badge variant="secondary" className="bg-gray-100 text-gray-700 hover:bg-gray-200 border-none px-2 shadow-sm">Draft</Badge>
                           )}
-                        </div>
-                        
-                        {/* Action Overlay (Glassmorphism) */}
-                        <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-end gap-3 backdrop-blur-[2px]">
-                          <Button onClick={() => openEditDrawer(product)} variant="secondary" size="icon" className="h-10 w-10 rounded-xl bg-white/90 hover:bg-white text-gray-900 shadow-lg">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button onClick={() => handleDelete(product.id)} variant="destructive" size="icon" className="h-10 w-10 rounded-xl shadow-lg">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
                         </div>
                       </div>
                       
-                      <CardContent className="p-5 flex flex-col flex-1">
+                      <CardContent className="p-4 flex flex-col flex-1">
                         <div className="space-y-1 mb-4">
-                          <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">{product.title}</h3>
-                          <p className="text-lg font-semibold text-gray-900 tracking-tight">KSh {Number(product.price).toLocaleString()}</p>
+                          <h3 className="text-sm font-semibold text-gray-900 line-clamp-2">{product.title}</h3>
+                          <p className="text-lg font-bold text-gray-900">KSh {Number(product.price).toLocaleString()}</p>
                         </div>
-                        <div className="mt-auto flex justify-between items-center text-xs font-bold text-gray-400 border-t border-gray-50 pt-4">
-                          <span className="truncate pr-2 uppercase tracking-wider text-[10px]">{product.category?.name || 'Uncategorized'}</span>
-                          <div className="flex gap-3 shrink-0">
-                            <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{product.view_count || 0}</span>
+                        
+                        <div className="mt-auto space-y-3">
+                          <div className="flex justify-between items-center text-xs font-medium text-gray-500 border-t border-gray-50 pt-3">
+                            <span className="truncate pr-2 uppercase tracking-wider text-[10px]">{product.category?.name || 'Uncategorized'}</span>
+                            <div className="flex gap-2 shrink-0">
+                              <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{product.view_count || 0}</span>
+                            </div>
+                          </div>
+                          
+                          {/* Visible Actions */}
+                          <div className="flex items-center gap-2 pt-2 border-t border-gray-50">
+                            <Button onClick={() => openEditDrawer(product)} variant="outline" className="flex-1 h-9 rounded-lg text-gray-600 hover:text-primary hover:bg-primary/5 border-gray-200">
+                              <Edit className="h-4 w-4 mr-1.5" /> Edit
+                            </Button>
+                            <Button onClick={() => handleDelete(product.id)} variant="outline" size="icon" className="h-9 w-9 shrink-0 rounded-lg text-red-600 hover:bg-red-50 hover:border-red-200 border-gray-200">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </div>
                       </CardContent>
@@ -401,29 +403,29 @@ export default function SellerInventoryPage() {
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between bg-white px-6 py-4 rounded-2xl shadow-sm mt-8 border border-gray-100">
-                  <p className="text-sm text-gray-500 font-medium hidden sm:block">
-                    Showing <span className="font-semibold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-semibold text-gray-900">{Math.min(currentPage * itemsPerPage, totalCount)}</span> of <span className="font-semibold text-gray-900">{totalCount}</span> results
+                <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 sm:px-6 sm:py-4 rounded-2xl shadow-sm mt-6 border border-gray-100 gap-4">
+                  <p className="text-sm text-gray-500 font-medium">
+                    Showing <span className="font-semibold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-semibold text-gray-900">{Math.min(currentPage * itemsPerPage, totalCount)}</span> of <span className="font-semibold text-gray-900">{totalCount}</span>
                   </p>
-                  <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                  <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                     <Button
                       variant="outline"
-                      className="font-semibold rounded-xl h-10 px-4 border-gray-200"
+                      className="font-medium rounded-xl h-10 px-4 border-gray-200 hover:bg-gray-50"
                       onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
                     >
-                      <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+                      <ChevronLeft className="h-4 w-4 mr-2" /> Prev
                     </Button>
-                    <span className="text-sm font-semibold text-gray-900 px-3 sm:hidden">
+                    <span className="text-sm font-medium text-gray-900 px-2 sm:hidden">
                       {currentPage} / {totalPages}
                     </span>
                     <Button
                       variant="outline"
-                      className="font-semibold rounded-xl h-10 px-4 border-gray-200"
+                      className="font-medium rounded-xl h-10 px-4 border-gray-200 hover:bg-gray-50"
                       onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                       disabled={currentPage === totalPages}
                     >
-                      Next <ChevronRight className="h-4 w-4 ml-1" />
+                      Next <ChevronRight className="h-4 w-4 ml-2" />
                     </Button>
                   </div>
                 </div>

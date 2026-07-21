@@ -180,43 +180,43 @@ export default function SellerSettings() {
 
   return (
     <SellerLayout>
-      <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-8">
+      <div className="w-full mx-auto space-y-4 sm:space-y-6 pb-8 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Settings</h1>
-            <p className="text-gray-500 font-medium mt-1">Manage your profile, payments, and verification.</p>
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 tracking-tight">Settings</h1>
+            <p className="text-gray-500 font-medium mt-1 text-sm">Manage your account.</p>
           </div>
           <Button 
             onClick={handleSubmit(onSubmit)} 
             disabled={isSaving}
-            className="h-12 px-8 font-medium text-sm rounded-xl bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-all"
+            className="w-full sm:w-auto h-11 px-8 font-medium text-sm rounded-xl bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-all"
           >
             {isSaving ? <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Saving...</> : <><Save className="h-5 w-5 mr-2" /> Save Changes</>}
           </Button>
         </div>
 
-        <div className="grid lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 items-start">
           {/* Navigation Sidebar */}
-          <div className="lg:col-span-1 space-y-2 sticky top-6">
+          <div className="lg:col-span-1 lg:sticky lg:top-6 flex flex-row lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide shrink-0">
              <button 
                 onClick={() => setActiveTab('profile')}
-                className={cn("w-full flex items-center gap-3 px-5 py-4 rounded-2xl font-medium transition-all text-sm", activeTab === 'profile' ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:bg-white hover:shadow-sm")}
+                className={cn("whitespace-nowrap flex-1 lg:flex-none lg:w-full flex items-center justify-center lg:justify-start gap-2 lg:gap-3 px-4 lg:px-5 py-3 lg:py-4 rounded-xl lg:rounded-2xl font-medium transition-all text-sm", activeTab === 'profile' ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:bg-gray-50 lg:hover:bg-white lg:hover:shadow-sm")}
              >
-                <User className="h-5 w-5" /> Public Profile
+                <User className="h-4 w-4 lg:h-5 lg:w-5" /> Profile
              </button>
              <button 
                 onClick={() => setActiveTab('payments')}
-                className={cn("w-full flex items-center gap-3 px-5 py-4 rounded-2xl font-medium transition-all text-sm", activeTab === 'payments' ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:bg-white hover:shadow-sm")}
+                className={cn("whitespace-nowrap flex-1 lg:flex-none lg:w-full flex items-center justify-center lg:justify-start gap-2 lg:gap-3 px-4 lg:px-5 py-3 lg:py-4 rounded-xl lg:rounded-2xl font-medium transition-all text-sm", activeTab === 'payments' ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:bg-gray-50 lg:hover:bg-white lg:hover:shadow-sm")}
              >
-                <CreditCard className="h-5 w-5" /> Payout Methods
+                <CreditCard className="h-4 w-4 lg:h-5 lg:w-5" /> Payouts
              </button>
              <button 
                 onClick={() => setActiveTab('verification')}
-                className={cn("w-full flex items-center justify-between gap-3 px-5 py-4 rounded-2xl font-medium transition-all text-sm", activeTab === 'verification' ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:bg-white hover:shadow-sm")}
+                className={cn("whitespace-nowrap flex-1 lg:flex-none lg:w-full flex items-center justify-center lg:justify-start lg:justify-between gap-2 lg:gap-3 px-4 lg:px-5 py-3 lg:py-4 rounded-xl lg:rounded-2xl font-medium transition-all text-sm", activeTab === 'verification' ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:bg-gray-50 lg:hover:bg-white lg:hover:shadow-sm")}
              >
-                <span className="flex items-center gap-3"><ShieldCheck className="h-5 w-5" /> Verification</span>
-                {sellerStatus !== 'APPROVED' && <div className="h-2 w-2 rounded-full bg-amber-500"></div>}
+                <span className="flex items-center gap-2 lg:gap-3"><ShieldCheck className="h-4 w-4 lg:h-5 lg:w-5" /> Verification</span>
+                {sellerStatus !== 'APPROVED' && <div className="h-2 w-2 rounded-full bg-amber-500 ml-1 lg:ml-0"></div>}
              </button>
           </div>
 
@@ -227,14 +227,14 @@ export default function SellerSettings() {
               {/* TAB: PROFILE */}
               {activeTab === 'profile' && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white">
-                    <CardHeader className="px-8 pt-8 pb-4 border-b border-gray-50">
-                      <CardTitle className="text-xl font-semibold">Store Profile</CardTitle>
+                  <Card className="border border-gray-100 shadow-sm rounded-2xl overflow-hidden bg-white">
+                    <CardHeader className="p-5 sm:p-6 border-b border-gray-50">
+                      <CardTitle className="text-lg font-semibold text-gray-900">Store Profile</CardTitle>
                     </CardHeader>
-                    <CardContent className="p-8 space-y-8">
+                    <CardContent className="p-5 sm:p-6 space-y-6">
                       {/* Avatar Editor */}
-                      <div className="flex flex-col sm:flex-row items-start gap-8">
-                        <label className="relative h-32 w-32 shrink-0 rounded-[2rem] bg-gray-50 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 group cursor-pointer hover:border-primary/50 transition-colors overflow-hidden shadow-inner">
+                      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+                        <label className="relative h-28 w-28 shrink-0 rounded-[1.5rem] bg-gray-50 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 group cursor-pointer hover:border-primary/50 transition-colors overflow-hidden shadow-inner">
                            {profilePhoto ? (
                              <>
                                <img src={profilePhoto} alt="Profile" className="absolute inset-0 w-full h-full object-cover" />
@@ -250,10 +250,10 @@ export default function SellerSettings() {
                            )}
                            <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={isUploadingPhoto} />
                         </label>
-                        <div className="space-y-2 pt-2">
-                          <h3 className="text-lg font-semibold text-gray-900">Store Logo</h3>
-                          <p className="text-sm text-gray-500 font-medium leading-relaxed max-w-md">
-                            This will be displayed on your store page and product listings. Recommended size is 400x400px.
+                        <div className="space-y-1 pt-2">
+                          <h3 className="text-base font-semibold text-gray-900">Store Logo</h3>
+                          <p className="text-xs text-gray-500 font-medium leading-relaxed max-w-sm">
+                            Displayed on your store. Recommended: 400x400px.
                           </p>
                         </div>
                       </div>
@@ -290,14 +290,14 @@ export default function SellerSettings() {
                     </CardContent>
                   </Card>
 
-                  <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white">
-                    <CardHeader className="px-8 pt-8 pb-4 border-b border-gray-50">
+                  <Card className="border border-gray-100 shadow-sm rounded-2xl overflow-hidden bg-white">
+                    <CardHeader className="p-5 sm:p-6 border-b border-gray-50">
                       <div className="flex items-center gap-2">
                         <MapPin className="h-5 w-5 text-gray-400" />
-                        <CardTitle className="text-xl font-semibold">Location Details</CardTitle>
+                        <CardTitle className="text-lg font-semibold text-gray-900">Location Details</CardTitle>
                       </div>
                     </CardHeader>
-                    <CardContent className="p-8 space-y-6">
+                    <CardContent className="p-5 sm:p-6 space-y-6">
                       <div className="grid sm:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <Label className="text-xs font-medium uppercase tracking-wider text-gray-500">City / Town <span className="text-red-500">*</span></Label>
@@ -318,19 +318,19 @@ export default function SellerSettings() {
               {/* TAB: PAYMENTS */}
               {activeTab === 'payments' && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white">
-                    <CardHeader className="px-8 pt-8 pb-4 border-b border-gray-50">
-                      <CardTitle className="text-xl font-semibold">Withdrawal Methods</CardTitle>
+                  <Card className="border border-gray-100 shadow-sm rounded-2xl overflow-hidden bg-white">
+                    <CardHeader className="p-5 sm:p-6 border-b border-gray-50">
+                      <CardTitle className="text-lg font-semibold text-gray-900">Withdrawal Methods</CardTitle>
                     </CardHeader>
-                    <CardContent className="p-8 space-y-8">
-                      <div className="p-6 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100/50 rounded-[2rem] flex flex-col md:flex-row md:items-center gap-6">
-                         <div className="h-16 w-16 bg-white rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
-                            <CreditCard className="h-8 w-8" />
+                    <CardContent className="p-5 sm:p-6 space-y-6">
+                      <div className="p-5 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100/50 rounded-2xl flex flex-col sm:flex-row sm:items-center gap-4">
+                         <div className="h-14 w-14 bg-white rounded-xl flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
+                            <CreditCard className="h-6 w-6" />
                          </div>
                          <div>
-                            <p className="text-lg font-semibold text-emerald-900">M-PESA Transfer</p>
-                            <p className="text-sm font-medium text-emerald-700/80 mt-1 leading-relaxed">
-                              Your funds will be sent directly to this Safaricom number when you request a withdrawal from your wallet.
+                            <p className="text-base font-semibold text-emerald-900">M-PESA Transfer</p>
+                            <p className="text-xs font-medium text-emerald-700/80 mt-1 leading-relaxed">
+                              Funds are sent here upon withdrawal.
                             </p>
                          </div>
                       </div>
@@ -348,10 +348,10 @@ export default function SellerSettings() {
               {/* TAB: VERIFICATION */}
               {activeTab === 'verification' && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white relative">
-                    <div className="absolute top-0 right-0 p-8">
+                  <Card className="border border-gray-100 shadow-sm rounded-2xl overflow-hidden bg-white relative">
+                    <div className="absolute top-0 right-0 p-5 sm:p-6">
                        <Badge className={cn(
-                         "border-none px-4 py-1.5 text-xs font-medium uppercase tracking-wider shadow-sm",
+                         "border-none px-3 py-1 text-[10px] font-medium uppercase tracking-wider shadow-sm",
                          sellerStatus === 'APPROVED' ? "bg-emerald-100 text-emerald-700" :
                          sellerStatus === 'REJECTED' ? "bg-rose-100 text-rose-700" :
                          "bg-amber-100 text-amber-700"
@@ -361,21 +361,21 @@ export default function SellerSettings() {
                           'Action Required'}
                        </Badge>
                     </div>
-                    <CardHeader className="px-8 pt-8 pb-4 border-b border-gray-50">
+                    <CardHeader className="p-5 sm:p-6 border-b border-gray-50">
                       <div className="flex items-center gap-2">
-                        <ShieldCheck className="h-6 w-6 text-primary" />
-                        <CardTitle className="text-xl font-semibold">Verification</CardTitle>
+                        <ShieldCheck className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-lg font-semibold text-gray-900">Verification</CardTitle>
                       </div>
                     </CardHeader>
-                    <CardContent className="p-8 space-y-8">
+                    <CardContent className="p-5 sm:p-6 space-y-6">
                       <p className="text-sm font-medium text-gray-500 leading-relaxed max-w-2xl">
-                        We need to verify your identity before you can withdraw funds. This is a secure, one-time process.
+                        Identity verification required for withdrawals. This is a secure, one-time process.
                       </p>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                          
                          {/* National ID Upload */}
-                         <label className="p-8 border-2 border-dashed border-gray-200 rounded-[2rem] hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer group flex flex-col items-center justify-center text-center h-48 relative overflow-hidden">
+                         <label className="p-6 border-2 border-dashed border-gray-200 rounded-2xl hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer group flex flex-col items-center justify-center text-center h-40 relative overflow-hidden">
                             {idDocument ? (
                                <div className="absolute inset-0 bg-emerald-50 flex flex-col items-center justify-center">
                                  <FileText className="h-10 w-10 text-emerald-500 mb-2" />
@@ -395,7 +395,7 @@ export default function SellerSettings() {
                          </label>
 
                          {/* Business Certificate Upload */}
-                         <label className="p-8 border-2 border-dashed border-gray-200 rounded-[2rem] hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer group flex flex-col items-center justify-center text-center h-48 relative overflow-hidden">
+                         <label className="p-6 border-2 border-dashed border-gray-200 rounded-2xl hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer group flex flex-col items-center justify-center text-center h-40 relative overflow-hidden">
                             {businessCertificate ? (
                                <div className="absolute inset-0 bg-emerald-50 flex flex-col items-center justify-center">
                                  <FileText className="h-10 w-10 text-emerald-500 mb-2" />

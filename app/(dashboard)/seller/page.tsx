@@ -12,9 +12,7 @@ import {
   Loader2,
   CheckCircle,
   AlertCircle,
-  ArrowRight,
-  TrendingUp,
-  Activity
+  ArrowRight
 } from 'lucide-react';
 import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
 import SellerLayout from '@/components/layout/SellerLayout';
@@ -114,122 +112,99 @@ export default function SellerDashboardOverview() {
   }
 
   const sellerStats = [
-    { title: 'Total Earnings', value: `KSh ${Number(stats.totalEarnings).toLocaleString()}`, icon: DollarSign, trend: 'Lifetime', gradient: 'from-emerald-500/10 via-emerald-400/5 to-transparent', iconColor: 'text-emerald-500', iconBg: 'bg-emerald-50' },
-    { title: 'Pending Funds', value: `KSh ${Number(stats.pendingEscrow).toLocaleString()}`, icon: Clock, trend: 'Awaiting Delivery', gradient: 'from-amber-500/10 via-amber-400/5 to-transparent', iconColor: 'text-amber-500', iconBg: 'bg-amber-50' },
-    { title: 'Active Products', value: stats.activeListings.toString(), icon: Package, trend: 'Active', gradient: 'from-blue-500/10 via-blue-400/5 to-transparent', iconColor: 'text-blue-500', iconBg: 'bg-blue-50' },
-    { title: 'Total Orders', value: stats.totalOrders.toString(), icon: ShoppingCart, trend: 'Lifetime', gradient: 'from-purple-500/10 via-purple-400/5 to-transparent', iconColor: 'text-purple-500', iconBg: 'bg-purple-50' }
+    { title: 'Earnings', value: `KSh ${Number(stats.totalEarnings).toLocaleString()}`, icon: DollarSign, iconColor: 'text-emerald-600', iconBg: 'bg-emerald-100' },
+    { title: 'Pending Funds', value: `KSh ${Number(stats.pendingEscrow).toLocaleString()}`, icon: Clock, iconColor: 'text-amber-600', iconBg: 'bg-amber-100' },
+    { title: 'Active Products', value: stats.activeListings.toString(), icon: Package, iconColor: 'text-blue-600', iconBg: 'bg-blue-100' },
+    { title: 'Total Orders', value: stats.totalOrders.toString(), icon: ShoppingCart, iconColor: 'text-purple-600', iconBg: 'bg-purple-100' }
   ];
 
   return (
     <SellerLayout>
-      <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-8">
+      <div className="w-full mx-auto space-y-6 pb-8 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl overflow-x-hidden">
         
         {/* Welcome Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 bg-gradient-to-r from-gray-900 to-gray-800 p-8 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-          <div className="relative z-10">
-            <Badge className="bg-primary/20 text-primary-foreground hover:bg-primary/20 mb-3 border-none backdrop-blur-md px-3 py-1 text-xs">
-              Dashboard Overview
-            </Badge>
-            <h1 className="text-3xl font-semibold text-white tracking-tight">
-              Welcome back, {profile?.first_name || 'Seller'}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-900 p-6 md:p-8 rounded-2xl shadow-md">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold text-white tracking-tight">
+              Welcome, {profile?.first_name || 'Seller'}
             </h1>
-            <p className="text-gray-400 font-medium mt-2 max-w-xl text-sm leading-relaxed">
-              Here is what's happening with your store.
+            <p className="text-gray-300 mt-1 text-sm">
+              Here is your store overview.
             </p>
           </div>
-          <div className="flex gap-3 relative z-10 w-full md:w-auto">
-             <Link href="/seller/inventory" className="w-full md:w-auto">
-               <Button className="w-full md:w-auto font-medium shadow-sm h-12 px-6 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all">
-                 <Package className="mr-2 h-5 w-5" />
-                 Manage Inventory
-               </Button>
-             </Link>
-          </div>
+          <Link href="/seller/inventory" className="w-full md:w-auto">
+            <Button className="w-full md:w-auto font-medium h-11 px-6 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all">
+              <Package className="mr-2 h-4 w-4" />
+              Manage Inventory
+            </Button>
+          </Link>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {sellerStats.map((stat) => (
-            <Card key={stat.title} className="border-none shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300 rounded-3xl relative bg-white">
-              <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-50`}></div>
-              <CardContent className="p-6 relative z-10">
-                <div className="flex justify-between items-start mb-6">
-                  <div className={`h-12 w-12 rounded-2xl ${stat.iconBg} ${stat.iconColor} flex items-center justify-center transition-transform duration-300`}>
-                    <stat.icon className="h-6 w-6" />
-                  </div>
-                  <Badge variant="outline" className="bg-white/50 backdrop-blur-sm border-gray-100 text-[10px] font-medium uppercase tracking-wider text-gray-500 shadow-sm">
-                    {stat.trend}
-                  </Badge>
+            <Card key={stat.title} className="border border-gray-100 shadow-sm rounded-2xl bg-white">
+              <CardContent className="p-5 flex items-center gap-4">
+                <div className={`h-12 w-12 rounded-xl flex-shrink-0 ${stat.iconBg} ${stat.iconColor} flex items-center justify-center`}>
+                  <stat.icon className="h-6 w-6" />
                 </div>
-                <div className="space-y-1">
+                <div>
                   <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">{stat.title}</h3>
-                  <p className="text-2xl font-semibold text-gray-900 tracking-tight">{stat.value}</p>
+                  <p className="text-xl md:text-2xl font-semibold text-gray-900">{stat.value}</p>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Recent Orders Table */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  <Activity className="h-5 w-5 text-gray-600" />
-                </div>
-                <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
-              </div>
+              <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
               <Link href="/seller/orders" className="text-primary font-medium text-sm hover:underline flex items-center gap-1 group">
-                View all orders <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                View all <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
             
-            <Card className="border-gray-200/60 shadow-sm overflow-hidden rounded-2xl">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead className="bg-gray-50/80 border-b border-gray-100 backdrop-blur-sm">
+            <Card className="border border-gray-100 shadow-sm rounded-2xl overflow-hidden">
+              <div className="overflow-x-auto w-full">
+                <table className="w-full text-left whitespace-nowrap">
+                  <thead className="bg-gray-50 border-b border-gray-100">
                     <tr>
-                      <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-gray-500">Order ID</th>
-                      <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-gray-500">Product</th>
-                      <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-gray-500">Status</th>
-                      <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-gray-500 text-right">Earned</th>
+                      <th className="px-4 py-3 text-xs font-medium text-gray-500">Order ID</th>
+                      <th className="px-4 py-3 text-xs font-medium text-gray-500">Product</th>
+                      <th className="px-4 py-3 text-xs font-medium text-gray-500">Status</th>
+                      <th className="px-4 py-3 text-xs font-medium text-gray-500 text-right">Earned</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50 bg-white">
                     {recentOrders.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="px-6 py-20 text-center">
-                          <div className="flex flex-col items-center justify-center space-y-3">
-                            <div className="h-16 w-16 bg-gray-50 rounded-full flex items-center justify-center">
-                              <ShoppingCart className="h-8 w-8 text-gray-300" />
-                            </div>
-                            <p className="text-gray-500 font-medium">No transactions yet.</p>
-                            <p className="text-xs text-gray-400 max-w-xs mx-auto">When customers place orders, they will appear here.</p>
-                          </div>
+                        <td colSpan={4} className="px-4 py-12 text-center text-gray-500 text-sm">
+                          No recent orders.
                         </td>
                       </tr>
                     ) : (
                       recentOrders.map((order) => (
-                        <tr key={order.id} className="hover:bg-gray-50/50 transition-colors group cursor-default">
-                          <td className="px-6 py-4">
-                            <Link href={`/seller/orders/${order.id}`} className="font-mono text-xs font-medium text-gray-500 hover:text-primary transition-colors block">
+                        <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
+                          <td className="px-4 py-3">
+                            <Link href={`/seller/orders/${order.id}`} className="font-mono text-xs font-medium text-gray-600 hover:text-primary block">
                               {order.order_number}
                             </Link>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 py-3">
                             <div className="flex flex-col">
-                              <span className="text-sm font-medium text-gray-900 truncate max-w-[180px]">{order.product?.title || 'Unknown Product'}</span>
-                              <span className="text-xs font-medium text-gray-400">{new Date(order.created_at).toLocaleDateString()}</span>
+                              <span className="text-sm font-medium text-gray-900 max-w-[150px] sm:max-w-[200px] truncate">{order.product?.title || 'Unknown Product'}</span>
+                              <span className="text-xs text-gray-500">{new Date(order.created_at).toLocaleDateString()}</span>
                             </div>
                           </td>
-                          <td className="px-6 py-4">
-                            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider ring-1 ring-inset ${getStatusStyle(order.status)}`}>
+                          <td className="px-4 py-3">
+                            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide ${getStatusStyle(order.status)}`}>
                               {getStatusLabel(order.status)}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-4 py-3 text-right">
                             <p className="text-sm font-semibold text-gray-900">KSh {Number(order.seller_receivable || 0).toLocaleString()}</p>
                           </td>
                         </tr>
@@ -241,46 +216,34 @@ export default function SellerDashboardOverview() {
             </Card>
           </div>
 
-          {/* Verification & Action Required */}
-          <div className="space-y-6">
-             <div className="flex items-center gap-3">
-                 <div className="p-2 bg-indigo-100 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-indigo-600" />
-                </div>
-                <h2 className="text-lg font-semibold text-gray-900">Account Status</h2>
-             </div>
+          {/* Account Status Section */}
+          <div className="space-y-4">
+             <h2 className="text-lg font-semibold text-gray-900">Account Status</h2>
              
              {/* Verified Card */}
-             <Card className="border-none shadow-sm bg-gradient-to-br from-indigo-600 to-indigo-700 text-white p-6 space-y-4 rounded-2xl relative overflow-hidden group">
-               <div className="absolute top-0 right-0 p-4 opacity-10 transition-transform duration-500 group-hover:scale-105">
-                 <CheckCircle className="h-24 w-24" />
+             <Card className="border border-indigo-100 bg-indigo-50 shadow-sm p-5 rounded-2xl">
+               <div className="flex items-center gap-3 mb-2">
+                 <CheckCircle className="h-5 w-5 text-indigo-600" />
+                 <h3 className="text-sm font-semibold text-indigo-900">Verified Seller</h3>
                </div>
-               <div className="relative z-10 space-y-3">
-                 <div>
-                   <h3 className="text-xl font-semibold mt-1 tracking-tight">Verified Seller</h3>
-                 </div>
-                 <div className="h-px w-full bg-indigo-500/50"></div>
-                 <p className="text-sm text-indigo-100/90 leading-relaxed font-medium">
-                   Your account is verified. You can now withdraw funds to M-PESA.
-                 </p>
-               </div>
+               <p className="text-sm text-indigo-800/80">
+                 Your account is verified. M-PESA withdrawals are enabled.
+               </p>
              </Card>
              
              {/* Pending Action Card */}
              {stats.pendingEscrow > 0 && (
-               <Card className="p-6 border border-amber-200 bg-amber-50 shadow-sm space-y-4 rounded-2xl">
-                 <div className="flex items-center gap-2 text-amber-800">
-                    <div className="p-1.5 bg-amber-100 rounded-full">
-                      <AlertCircle className="h-4 w-4" />
-                    </div>
-                    <h4 className="text-sm font-semibold uppercase tracking-wider">Action Required</h4>
+               <Card className="border border-amber-200 bg-amber-50 shadow-sm p-5 rounded-2xl">
+                 <div className="flex items-center gap-3 mb-2">
+                    <AlertCircle className="h-5 w-5 text-amber-600" />
+                    <h4 className="text-sm font-semibold text-amber-900">Pending Funds</h4>
                  </div>
-                 <p className="text-sm text-amber-900/80 leading-relaxed font-medium">
-                    You have <span className="font-semibold text-amber-900">KSh {Number(stats.pendingEscrow).toLocaleString()}</span> in pending funds. Complete your deliveries to unlock these funds.
+                 <p className="text-sm text-amber-800/80 mb-4">
+                    KSh {Number(stats.pendingEscrow).toLocaleString()} requires delivery confirmation.
                  </p>
-                 <Link href="/seller/orders" className="block pt-2">
-                   <Button className="w-full h-10 font-medium bg-amber-500 text-white hover:bg-amber-600 shadow-sm rounded-lg transition-all">
-                     View Pending Orders
+                 <Link href="/seller/orders" className="block">
+                   <Button className="w-full h-10 text-sm font-medium bg-amber-500 text-white hover:bg-amber-600 rounded-xl transition-all">
+                     View Orders
                    </Button>
                  </Link>
                </Card>

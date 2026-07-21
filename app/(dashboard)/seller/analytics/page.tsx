@@ -51,28 +51,22 @@ export default function SellerAnalyticsPage() {
 
   return (
     <SellerLayout>
-      <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-8">
+      <div className="w-full mx-auto space-y-4 sm:space-y-6 pb-8 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl overflow-x-hidden">
         
-        {/* Premium Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 bg-gradient-to-r from-gray-900 to-gray-800 p-8 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-          <div className="absolute -top-24 -right-24 h-96 w-96 bg-primary/20 blur-3xl rounded-full opacity-50 mix-blend-overlay"></div>
-          
-          <div className="relative z-10">
-            <Badge className="bg-primary/20 text-primary-foreground hover:bg-primary/20 mb-3 border-none backdrop-blur-md px-3 py-1 text-xs font-medium uppercase tracking-wider gap-2">
-              <BarChart3 className="h-3.5 w-3.5" /> Performance
-            </Badge>
-            <h1 className="text-3xl font-semibold text-white tracking-tight">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 tracking-tight">
               Analytics
             </h1>
-            <p className="text-gray-400 font-medium mt-2 max-w-xl text-sm leading-relaxed">
-              View your revenue and orders over the last 30 days.
+            <p className="text-gray-500 mt-1 text-sm">
+              Your revenue and orders over the last 30 days.
             </p>
           </div>
           
-          <div className="flex gap-3 relative z-10 w-full md:w-auto">
-             <div className="w-full md:w-auto flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border border-white/10 h-12 px-6 rounded-xl text-white font-medium text-sm shadow-inner">
-               <TrendingUp className="h-4 w-4 text-emerald-400" />
+          <div className="flex gap-3 w-full md:w-auto">
+             <div className="w-full md:w-auto flex items-center justify-center gap-2 bg-gray-50 border border-gray-200 h-11 px-5 rounded-xl text-gray-700 font-medium text-sm">
+               <TrendingUp className="h-4 w-4 text-emerald-500" />
                Last 30 Days
              </div>
           </div>
