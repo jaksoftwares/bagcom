@@ -13,6 +13,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
     const role = searchParams.get('role'); // 'buyer' or 'seller'
+    const page = searchParams.get('page');
+    const limit = searchParams.get('limit');
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
@@ -25,7 +27,7 @@ export async function GET(request: Request) {
         product:products(id, title, slug, price, condition, location:locations(city, formatted_address)),
         buyer:users!orders_buyer_id_fkey(id, first_name, last_name, phone_number),
         seller:users!orders_seller_id_fkey(id, first_name, last_name, phone_number, city)
-      `);
+      `, { count: 'exact' });
 
     if (role === 'buyer') {
       query = query.eq('buyer_id', userId);
@@ -35,11 +37,22 @@ export async function GET(request: Request) {
       query = query.or(`buyer_id.eq.${userId},seller_id.eq.${userId}`);
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    query = query.order('created_at', { ascending: false });
+
+    // Pagination
+    if (page && limit) {
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      const from = (pageNum - 1) * limitNum;
+      const to = from + limitNum - 1;
+      query = query.range(from, to);
+    }
+
+    const { data, error, count } = await query;
 
     if (error) throw error;
 
-    return NextResponse.json({ orders: data });
+    return NextResponse.json({ orders: data, count });
   } catch (error: any) {
     console.error('Orders GET Error:', error);
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });

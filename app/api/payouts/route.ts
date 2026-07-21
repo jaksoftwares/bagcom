@@ -10,6 +10,8 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const sellerId = searchParams.get('sellerId');
+    const page = searchParams.get('page');
+    const limit = searchParams.get('limit');
     
     if (!sellerId) {
       return NextResponse.json({ error: 'Missing sellerId' }, { status: 400 });
@@ -17,15 +19,26 @@ export async function GET(request: Request) {
 
     const supabase = createServerClient();
     
-    const { data, error } = await supabase
+    let query = supabase
       .from('payouts')
-      .select('*')
+      .select('*', { count: 'exact' })
       .eq('seller_id', sellerId)
       .order('created_at', { ascending: false });
 
+    // Pagination
+    if (page && limit) {
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      const from = (pageNum - 1) * limitNum;
+      const to = from + limitNum - 1;
+      query = query.range(from, to);
+    }
+
+    const { data, error, count } = await query;
+
     if (error) throw error;
 
-    return NextResponse.json({ payouts: data });
+    return NextResponse.json({ payouts: data, count });
   } catch (error: any) {
     console.error('Payouts GET Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
@@ -37,22 +50,35 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { sellerId, amount } = body;
 
-    if (!sellerId || !amount) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!sellerId || !amount || isNaN(amount) || amount <= 0) {
+      return NextResponse.json({ error: 'Invalid withdrawal request' }, { status: 400 });
     }
 
     const supabase = createServerClient();
 
-    // 1. Check seller balance
-    // This would typically involve summing up COMPLETED orders and subtracting previous payouts
-    // For now, we'll assume the client-side validation handles the balance check
+    // 1. Secure server-side balance validation
+    const { data: statsData, error: statsError } = await supabase.rpc(
+      'get_seller_dashboard_stats',
+      { p_seller_id: sellerId }
+    );
+
+    if (statsError || !statsData) {
+      console.error('Failed to verify balance:', statsError);
+      return NextResponse.json({ error: 'Failed to verify account balance securely.' }, { status: 500 });
+    }
+
+    const availableBalance = Number(statsData.availableBalance || 0);
+
+    if (amount > availableBalance) {
+      return NextResponse.json({ error: 'Insufficient funds. You cannot withdraw more than your available balance.' }, { status: 403 });
+    }
     
     // 2. Create payout record
     const { data: payout, error: payoutError } = await supabase
       .from('payouts')
       .insert({
         seller_id: sellerId,
-        amount,
+        amount: Number(amount),
         status: 'PENDING',
         method: 'MPESA'
       })

@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import SellerLayout from '@/components/layout/SellerLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,82 +16,150 @@ import {
   Store, 
   ShieldCheck, 
   CreditCard, 
-  Bell, 
-  Lock,
   Loader2,
   Upload,
-  CheckCircle2
+  CheckCircle2,
+  Camera,
+  MapPin,
+  Save,
+  AlertTriangle,
+  FileText
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
 import { uploadToCloudinary } from '@/lib/cloudinary/cloudinary';
+import { cn } from '@/lib/utils';
+
+// Zod Validation Schema
+const settingsSchema = z.object({
+  first_name: z.string().min(2, 'First name must be at least 2 characters'),
+  last_name: z.string().min(2, 'Last name must be at least 2 characters'),
+  shop_name: z.string().min(3, 'Shop name must be at least 3 characters'),
+  bio: z.string().max(300, 'Bio must be under 300 characters').optional().or(z.literal('')),
+  city: z.string().min(2, 'City is required'),
+  physical_address: z.string().min(5, 'Physical address is required'),
+  mpesa_number: z.string().regex(/^(?:\+254|0)[17]\d{8}$/, 'Must be a valid Kenyan M-PESA number (e.g. 0712345678)')
+});
+
+type SettingsFormValues = z.infer<typeof settingsSchema>;
 
 export default function SellerSettings() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isUploadingDoc, setIsUploadingDoc] = useState<'id' | 'biz' | null>(null);
+  
+  const [user, setUser] = useState<any>(null);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [idDocument, setIdDocument] = useState<string | null>(null);
+  const [businessCertificate, setBusinessCertificate] = useState<string | null>(null);
+  const [sellerStatus, setSellerStatus] = useState<string>('PENDING');
+  
+  const [activeTab, setActiveTab] = useState<'profile' | 'payments' | 'verification'>('profile');
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<SettingsFormValues>({
+    resolver: zodResolver(settingsSchema)
+  });
 
   useEffect(() => {
     async function loadProfile() {
-      const user = await getCurrentUser();
-      if (user) {
-        const data = await getUserProfile(user.id);
-        setProfile(data);
+      const currentUser = await getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+        const data = await getUserProfile(currentUser.id);
+        
+        // Initialize form
+        reset({
+          first_name: data?.first_name || '',
+          last_name: data?.last_name || '',
+          shop_name: data?.seller_profiles?.[0]?.shop_name || data?.shop_name || '',
+          bio: data?.seller_profiles?.[0]?.bio || data?.bio || '',
+          city: data?.city || '',
+          physical_address: data?.physical_address || '',
+          mpesa_number: data?.phone_number || ''
+        });
+        
+        if (data?.profile_photo_url) setProfilePhoto(data.profile_photo_url);
+        if (data?.id_document_url) setIdDocument(data.id_document_url);
+        if (data?.business_certificate_url) setBusinessCertificate(data.business_certificate_url);
+        if (data?.seller_status) setSellerStatus(data.seller_status);
       }
       setIsLoading(false);
     }
     loadProfile();
-  }, []);
+  }, [reset]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-    setIsUploading(true);
+    setIsUploadingPhoto(true);
     try {
       const file = e.target.files[0];
       const res = await uploadToCloudinary(file);
       if (res && res.secure_url) {
-        setProfile((prev: any) => ({ ...prev, profile_photo_url: res.secure_url }));
-        toast({ title: "Photo uploaded", description: "Remember to save your settings." });
+        setProfilePhoto(res.secure_url);
+        toast({ title: "Photo uploaded", description: "Remember to save your settings to apply this change." });
       }
     } catch (err) {
       toast({ title: "Upload Failed", variant: "destructive" });
     } finally {
-      setIsUploading(false);
+      setIsUploadingPhoto(false);
     }
   };
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleDocUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'id' | 'biz') => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setIsUploadingDoc(type);
+    try {
+      const file = e.target.files[0];
+      const res = await uploadToCloudinary(file);
+      if (res && res.secure_url) {
+        if (type === 'id') setIdDocument(res.secure_url);
+        if (type === 'biz') setBusinessCertificate(res.secure_url);
+        toast({ title: "Document uploaded", description: "Remember to save your settings to apply this change." });
+      }
+    } catch (err) {
+      toast({ title: "Upload Failed", variant: "destructive" });
+    } finally {
+      setIsUploadingDoc(null);
+    }
+  };
+
+  const onSubmit = async (data: SettingsFormValues) => {
+    if (!user) return;
     setIsSaving(true);
     try {
-      const user = await getCurrentUser();
-      if (!user) throw new Error("Not authenticated");
-      
       const res = await fetch('/api/seller/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user.id,
-          first_name: profile.first_name,
-          last_name: profile.last_name,
-          shop_name: profile.seller_profiles?.[0]?.shop_name || profile.shop_name,
-          bio: profile.seller_profiles?.[0]?.bio || profile.bio,
-          mpesa_number: profile.phone_number,
-          profile_photo_url: profile.profile_photo_url,
-          city: profile.city,
-          physical_address: profile.physical_address
+          first_name: data.first_name,
+          last_name: data.last_name,
+          shop_name: data.shop_name,
+          bio: data.bio,
+          mpesa_number: data.mpesa_number,
+          profile_photo_url: profilePhoto,
+          city: data.city,
+          physical_address: data.physical_address,
+          id_document_url: idDocument,
+          business_certificate_url: businessCertificate
         })
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
 
       toast({ 
         title: "Settings Saved", 
         description: "Your seller profile has been updated successfully." 
       });
+      
+      // Update local state if a doc was just submitted for verification
+      if (idDocument || businessCertificate) {
+        setSellerStatus('PENDING');
+      }
+      
     } catch (err: any) {
       toast({ title: "Update Failed", description: err.message, variant: "destructive" });
     } finally {
@@ -99,8 +170,9 @@ export default function SellerSettings() {
   if (isLoading) {
     return (
       <SellerLayout>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="text-sm font-medium text-gray-500 tracking-wider uppercase animate-pulse">Loading Settings</p>
         </div>
       </SellerLayout>
     );
@@ -108,169 +180,253 @@ export default function SellerSettings() {
 
   return (
     <SellerLayout>
-      <div className="max-w-4xl space-y-10">
-        <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Store Settings</h1>
-          <p className="text-gray-500 font-medium">Manage your seller profile, payment methods, and verification status.</p>
+      <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-8">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Settings</h1>
+            <p className="text-gray-500 font-medium mt-1">Manage your profile, payments, and verification.</p>
+          </div>
+          <Button 
+            onClick={handleSubmit(onSubmit)} 
+            disabled={isSaving}
+            className="h-12 px-8 font-medium text-sm rounded-xl bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-all"
+          >
+            {isSaving ? <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Saving...</> : <><Save className="h-5 w-5 mr-2" /> Save Changes</>}
+          </Button>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-8">
-          {/* Navigation Sidebar (Local) */}
-          <div className="space-y-1">
-             <Button variant="ghost" className="w-full justify-start font-bold text-primary bg-primary/5 rounded-xl">
-                <User className="h-4 w-4 mr-3" /> Profile
-             </Button>
-             <Button variant="ghost" className="w-full justify-start font-bold text-gray-500 hover:bg-gray-50 rounded-xl">
-                <CreditCard className="h-4 w-4 mr-3" /> Payments
-             </Button>
-             <Button variant="ghost" className="w-full justify-start font-bold text-gray-500 hover:bg-gray-50 rounded-xl">
-                <ShieldCheck className="h-4 w-4 mr-3" /> Verification
-             </Button>
+        <div className="grid lg:grid-cols-4 gap-8">
+          {/* Navigation Sidebar */}
+          <div className="lg:col-span-1 space-y-2 sticky top-6">
+             <button 
+                onClick={() => setActiveTab('profile')}
+                className={cn("w-full flex items-center gap-3 px-5 py-4 rounded-2xl font-medium transition-all text-sm", activeTab === 'profile' ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:bg-white hover:shadow-sm")}
+             >
+                <User className="h-5 w-5" /> Public Profile
+             </button>
+             <button 
+                onClick={() => setActiveTab('payments')}
+                className={cn("w-full flex items-center gap-3 px-5 py-4 rounded-2xl font-medium transition-all text-sm", activeTab === 'payments' ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:bg-white hover:shadow-sm")}
+             >
+                <CreditCard className="h-5 w-5" /> Payout Methods
+             </button>
+             <button 
+                onClick={() => setActiveTab('verification')}
+                className={cn("w-full flex items-center justify-between gap-3 px-5 py-4 rounded-2xl font-medium transition-all text-sm", activeTab === 'verification' ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:bg-white hover:shadow-sm")}
+             >
+                <span className="flex items-center gap-3"><ShieldCheck className="h-5 w-5" /> Verification</span>
+                {sellerStatus !== 'APPROVED' && <div className="h-2 w-2 rounded-full bg-amber-500"></div>}
+             </button>
           </div>
 
-          {/* Main Content */}
-          <div className="md:col-span-3 space-y-8">
-            <form onSubmit={handleSave} className="space-y-8">
-              <Card className="border-gray-200/60 shadow-sm overflow-hidden">
-                <CardHeader className="p-8 border-b border-gray-50">
-                  <CardTitle className="text-xl font-black">Public Profile</CardTitle>
-                </CardHeader>
-                <CardContent className="p-8 space-y-6">
-                  <div className="flex items-center gap-6 pb-6 border-b border-gray-50">
-                    <label className="relative h-20 w-20 rounded-2xl bg-gray-100 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 group cursor-pointer hover:border-primary/50 transition-colors overflow-hidden">
-                       {profile?.profile_photo_url ? (
-                         <img src={profile.profile_photo_url} alt="Profile" className="absolute inset-0 w-full h-full object-cover" />
-                       ) : (
-                         <>
-                           {isUploading ? <Loader2 className="h-5 w-5 mb-1 animate-spin" /> : <Upload className="h-5 w-5 mb-1" />}
-                           <span className="text-[10px] font-bold uppercase tracking-widest">{isUploading ? 'WAIT' : 'Update'}</span>
-                         </>
-                       )}
-                       <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={isUploading} />
-                    </label>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">Store Logo / Profile Photo</p>
-                      <p className="text-xs text-gray-500 mt-1">Recommended size: 400x400px. JPG or PNG.</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">First Name</Label>
-                      <Input value={profile?.first_name || ''} onChange={(e) => setProfile({...profile, first_name: e.target.value})} className="h-12 border-gray-200 font-medium" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">Last Name</Label>
-                      <Input value={profile?.last_name || ''} onChange={(e) => setProfile({...profile, last_name: e.target.value})} className="h-12 border-gray-200 font-medium" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">Shop Name</Label>
-                    <Input placeholder="e.g. Joseph's Tech Store" value={profile?.shop_name || profile?.seller_profiles?.[0]?.shop_name || ''} onChange={(e) => setProfile({...profile, shop_name: e.target.value})} className="h-12 border-gray-200 font-medium" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">Shop Bio</Label>
-                    <Textarea 
-                      placeholder="Tell buyers about your shop and what you specialize in..." 
-                      className="min-h-[120px] border-gray-200 font-medium p-4"
-                      value={profile?.bio || profile?.seller_profiles?.[0]?.bio || ''} 
-                      onChange={(e) => setProfile({...profile, bio: e.target.value})}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-gray-200/60 shadow-sm overflow-hidden">
-                <CardHeader className="p-8 border-b border-gray-50">
-                  <CardTitle className="text-xl font-black">Store Location</CardTitle>
-                </CardHeader>
-                <CardContent className="p-8 space-y-6">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">City / Town</Label>
-                      <Input placeholder="e.g. Nairobi" value={profile?.city || ''} onChange={(e) => setProfile({...profile, city: e.target.value})} className="h-12 border-gray-200 font-medium" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">Physical Address</Label>
-                      <Input placeholder="e.g. Moi Avenue, Biashara Street" value={profile?.physical_address || ''} onChange={(e) => setProfile({...profile, physical_address: e.target.value})} className="h-12 border-gray-200 font-medium" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-gray-200/60 shadow-sm overflow-hidden">
-                <CardHeader className="p-8 border-b border-gray-50">
-                  <CardTitle className="text-xl font-black">Payment & Payouts</CardTitle>
-                </CardHeader>
-                <CardContent className="p-8 space-y-6">
-                  <div className="p-6 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-center gap-4">
-                     <div className="h-12 w-12 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm">
-                        <CreditCard className="h-6 w-6" />
-                     </div>
-                     <div>
-                        <p className="text-sm font-bold text-indigo-900">M-PESA Payout Method</p>
-                        <p className="text-xs text-indigo-700 mt-0.5">Funds will be sent to this number automatically.</p>
-                     </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest text-gray-400">M-PESA Number</Label>
-                    <Input value={profile?.phone_number || ''} onChange={(e) => setProfile({...profile, phone_number: e.target.value})} className="h-12 border-gray-200 font-medium" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-gray-200/60 shadow-sm overflow-hidden border-l-4 border-l-amber-400">
-                <CardHeader className="p-8 border-b border-gray-50">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl font-black">Seller Verification (KYC)</CardTitle>
-                    <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">Action Required</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-8 space-y-6">
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    To enable automatic payouts and list high-value items, we need to verify your identity. This is a one-time process.
-                  </p>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <div className="p-6 border-2 border-dashed border-gray-200 rounded-2xl hover:border-primary/50 transition-all cursor-pointer group">
-                        <div className="flex flex-col items-center justify-center text-center">
-                           <div className="h-12 w-12 bg-gray-50 rounded-full flex items-center justify-center mb-3 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                              <Upload className="h-6 w-6 text-gray-400 group-hover:text-primary" />
-                           </div>
-                           <p className="text-sm font-bold text-gray-900">National ID Front</p>
-                           <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Upload Image</p>
+          {/* Main Content Area */}
+          <div className="lg:col-span-3">
+            <form id="settings-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              
+              {/* TAB: PROFILE */}
+              {activeTab === 'profile' && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white">
+                    <CardHeader className="px-8 pt-8 pb-4 border-b border-gray-50">
+                      <CardTitle className="text-xl font-semibold">Store Profile</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-8 space-y-8">
+                      {/* Avatar Editor */}
+                      <div className="flex flex-col sm:flex-row items-start gap-8">
+                        <label className="relative h-32 w-32 shrink-0 rounded-[2rem] bg-gray-50 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 group cursor-pointer hover:border-primary/50 transition-colors overflow-hidden shadow-inner">
+                           {profilePhoto ? (
+                             <>
+                               <img src={profilePhoto} alt="Profile" className="absolute inset-0 w-full h-full object-cover" />
+                               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                 <Camera className="h-8 w-8 text-white" />
+                               </div>
+                             </>
+                           ) : (
+                             <>
+                               {isUploadingPhoto ? <Loader2 className="h-8 w-8 mb-2 animate-spin text-primary" /> : <Upload className="h-8 w-8 mb-2 group-hover:text-primary transition-colors" />}
+                               <span className="text-[10px] font-medium uppercase tracking-wider">{isUploadingPhoto ? 'Uploading...' : 'Upload Logo'}</span>
+                             </>
+                           )}
+                           <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={isUploadingPhoto} />
+                        </label>
+                        <div className="space-y-2 pt-2">
+                          <h3 className="text-lg font-semibold text-gray-900">Store Logo</h3>
+                          <p className="text-sm text-gray-500 font-medium leading-relaxed max-w-md">
+                            This will be displayed on your store page and product listings. Recommended size is 400x400px.
+                          </p>
                         </div>
-                     </div>
-                     <div className="p-6 border-2 border-dashed border-gray-200 rounded-2xl hover:border-primary/50 transition-all cursor-pointer group">
-                        <div className="flex flex-col items-center justify-center text-center">
-                           <div className="h-12 w-12 bg-gray-50 rounded-full flex items-center justify-center mb-3 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                              <Upload className="h-6 w-6 text-gray-400 group-hover:text-primary" />
-                           </div>
-                           <p className="text-sm font-bold text-gray-900">National ID Back</p>
-                           <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Upload Image</p>
+                      </div>
+
+                      {/* Inputs */}
+                      <div className="grid sm:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label className="text-xs font-medium uppercase tracking-wider text-gray-500">First Name <span className="text-red-500">*</span></Label>
+                          <Input {...register('first_name')} className="h-12 border-gray-200 focus-visible:ring-primary/20 font-medium rounded-xl" />
+                          {errors.first_name && <p className="text-xs font-medium text-red-500 mt-1">{errors.first_name.message}</p>}
                         </div>
-                     </div>
-                  </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs font-medium uppercase tracking-wider text-gray-500">Last Name <span className="text-red-500">*</span></Label>
+                          <Input {...register('last_name')} className="h-12 border-gray-200 focus-visible:ring-primary/20 font-medium rounded-xl" />
+                          {errors.last_name && <p className="text-xs font-medium text-red-500 mt-1">{errors.last_name.message}</p>}
+                        </div>
+                      </div>
 
-                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                     <CheckCircle2 className="h-5 w-5 text-gray-300" />
-                     <p className="text-xs text-gray-500 font-medium">Your data is encrypted and stored securely according to Kenyan Data Privacy laws.</p>
-                  </div>
-                </CardContent>
-              </Card>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-medium uppercase tracking-wider text-gray-500">Shop Name <span className="text-red-500">*</span></Label>
+                        <Input {...register('shop_name')} placeholder="e.g. NextGen Electronics" className="h-12 border-gray-200 focus-visible:ring-primary/20 font-semibold text-lg rounded-xl" />
+                        {errors.shop_name && <p className="text-xs font-medium text-red-500 mt-1">{errors.shop_name.message}</p>}
+                      </div>
 
-              <div className="flex justify-end pt-6">
-                <Button 
-                  type="submit" 
-                  disabled={isSaving}
-                  className="px-10 h-14 text-base font-bold shadow-lg shadow-primary/20 rounded-xl"
-                >
-                  {isSaving ? <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Saving Changes...</> : "Save All Changes"}
-                </Button>
-              </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-medium uppercase tracking-wider text-gray-500">Shop Bio</Label>
+                        <Textarea 
+                          {...register('bio')}
+                          placeholder="Tell buyers about your shop and what you specialize in..." 
+                          className="min-h-[120px] border-gray-200 focus-visible:ring-primary/20 font-medium p-4 rounded-2xl resize-none"
+                        />
+                        {errors.bio && <p className="text-xs font-medium text-red-500 mt-1">{errors.bio.message}</p>}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white">
+                    <CardHeader className="px-8 pt-8 pb-4 border-b border-gray-50">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-gray-400" />
+                        <CardTitle className="text-xl font-semibold">Location Details</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-8 space-y-6">
+                      <div className="grid sm:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label className="text-xs font-medium uppercase tracking-wider text-gray-500">City / Town <span className="text-red-500">*</span></Label>
+                          <Input {...register('city')} placeholder="e.g. Nairobi" className="h-12 border-gray-200 focus-visible:ring-primary/20 font-medium rounded-xl" />
+                          {errors.city && <p className="text-xs font-medium text-red-500 mt-1">{errors.city.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs font-medium uppercase tracking-wider text-gray-500">Physical Address <span className="text-red-500">*</span></Label>
+                          <Input {...register('physical_address')} placeholder="e.g. Moi Avenue, Biashara Street" className="h-12 border-gray-200 focus-visible:ring-primary/20 font-medium rounded-xl" />
+                          {errors.physical_address && <p className="text-xs font-medium text-red-500 mt-1">{errors.physical_address.message}</p>}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {/* TAB: PAYMENTS */}
+              {activeTab === 'payments' && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white">
+                    <CardHeader className="px-8 pt-8 pb-4 border-b border-gray-50">
+                      <CardTitle className="text-xl font-semibold">Withdrawal Methods</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-8 space-y-8">
+                      <div className="p-6 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100/50 rounded-[2rem] flex flex-col md:flex-row md:items-center gap-6">
+                         <div className="h-16 w-16 bg-white rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
+                            <CreditCard className="h-8 w-8" />
+                         </div>
+                         <div>
+                            <p className="text-lg font-semibold text-emerald-900">M-PESA Transfer</p>
+                            <p className="text-sm font-medium text-emerald-700/80 mt-1 leading-relaxed">
+                              Your funds will be sent directly to this Safaricom number when you request a withdrawal from your wallet.
+                            </p>
+                         </div>
+                      </div>
+
+                      <div className="space-y-2 max-w-md">
+                        <Label className="text-xs font-medium uppercase tracking-wider text-gray-500">M-PESA Number <span className="text-red-500">*</span></Label>
+                        <Input {...register('mpesa_number')} placeholder="07XXXXXXXX" className="h-12 border-gray-200 focus-visible:ring-emerald-500/20 font-semibold text-lg rounded-xl" />
+                        {errors.mpesa_number && <p className="text-xs font-medium text-red-500 mt-1 flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> {errors.mpesa_number.message}</p>}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {/* TAB: VERIFICATION */}
+              {activeTab === 'verification' && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white relative">
+                    <div className="absolute top-0 right-0 p-8">
+                       <Badge className={cn(
+                         "border-none px-4 py-1.5 text-xs font-medium uppercase tracking-wider shadow-sm",
+                         sellerStatus === 'APPROVED' ? "bg-emerald-100 text-emerald-700" :
+                         sellerStatus === 'REJECTED' ? "bg-rose-100 text-rose-700" :
+                         "bg-amber-100 text-amber-700"
+                       )}>
+                         {sellerStatus === 'APPROVED' ? 'Verified' :
+                          sellerStatus === 'REJECTED' ? 'Rejected' :
+                          'Action Required'}
+                       </Badge>
+                    </div>
+                    <CardHeader className="px-8 pt-8 pb-4 border-b border-gray-50">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="h-6 w-6 text-primary" />
+                        <CardTitle className="text-xl font-semibold">Verification</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-8 space-y-8">
+                      <p className="text-sm font-medium text-gray-500 leading-relaxed max-w-2xl">
+                        We need to verify your identity before you can withdraw funds. This is a secure, one-time process.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                         
+                         {/* National ID Upload */}
+                         <label className="p-8 border-2 border-dashed border-gray-200 rounded-[2rem] hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer group flex flex-col items-center justify-center text-center h-48 relative overflow-hidden">
+                            {idDocument ? (
+                               <div className="absolute inset-0 bg-emerald-50 flex flex-col items-center justify-center">
+                                 <FileText className="h-10 w-10 text-emerald-500 mb-2" />
+                                 <p className="text-xs font-medium text-emerald-700">Document Uploaded</p>
+                                 <p className="text-[10px] text-emerald-600/70 uppercase tracking-widest mt-1 group-hover:text-emerald-700 transition-colors">Tap to replace</p>
+                               </div>
+                            ) : (
+                               <>
+                                 <div className="h-14 w-14 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                                   {isUploadingDoc === 'id' ? <Loader2 className="h-6 w-6 text-primary animate-spin" /> : <Upload className="h-6 w-6 text-gray-400 group-hover:text-primary" />}
+                                 </div>
+                                 <p className="text-base font-semibold text-gray-900">National ID / Passport</p>
+                                 <p className="text-xs text-primary font-medium mt-1">{isUploadingDoc === 'id' ? 'Uploading...' : 'Tap to upload'}</p>
+                               </>
+                            )}
+                            <input type="file" className="hidden" accept="image/*,.pdf" onChange={(e) => handleDocUpload(e, 'id')} disabled={isUploadingDoc !== null} />
+                         </label>
+
+                         {/* Business Certificate Upload */}
+                         <label className="p-8 border-2 border-dashed border-gray-200 rounded-[2rem] hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer group flex flex-col items-center justify-center text-center h-48 relative overflow-hidden">
+                            {businessCertificate ? (
+                               <div className="absolute inset-0 bg-emerald-50 flex flex-col items-center justify-center">
+                                 <FileText className="h-10 w-10 text-emerald-500 mb-2" />
+                                 <p className="text-xs font-medium text-emerald-700">Document Uploaded</p>
+                                 <p className="text-[10px] text-emerald-600/70 uppercase tracking-widest mt-1 group-hover:text-emerald-700 transition-colors">Tap to replace</p>
+                               </div>
+                            ) : (
+                               <>
+                                 <div className="h-14 w-14 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                                    {isUploadingDoc === 'biz' ? <Loader2 className="h-6 w-6 text-primary animate-spin" /> : <Upload className="h-6 w-6 text-gray-400 group-hover:text-primary" />}
+                                 </div>
+                                 <p className="text-base font-semibold text-gray-900">Business Certificate</p>
+                                 <p className="text-xs text-primary font-medium mt-1">{isUploadingDoc === 'biz' ? 'Uploading...' : 'Tap to upload (Optional)'}</p>
+                               </>
+                            )}
+                            <input type="file" className="hidden" accept="image/*,.pdf" onChange={(e) => handleDocUpload(e, 'biz')} disabled={isUploadingDoc !== null} />
+                         </label>
+
+                      </div>
+
+                      <div className="flex items-start gap-3 p-5 bg-gray-50 rounded-2xl">
+                         <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
+                         <p className="text-xs font-medium text-gray-500 leading-relaxed">
+                           Your documents are end-to-end encrypted and stored securely according to the Kenyan Data Protection Act. They will never be shared with third parties.
+                         </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
             </form>
           </div>
         </div>

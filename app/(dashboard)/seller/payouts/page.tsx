@@ -1,19 +1,34 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Wallet, ArrowUpRight, ArrowDownRight, CheckCircle2, Loader2, Clock, AlertCircle } from 'lucide-react';
+import { 
+  Wallet, 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  CheckCircle2, 
+  Loader2, 
+  Clock, 
+  AlertCircle,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
+  Info
+} from 'lucide-react';
 import SellerLayout from '@/components/layout/SellerLayout';
 import { getCurrentUser } from '@/services/auth/authService';
+import { cn } from '@/lib/utils';
 
 export default function SellerPayoutsPage() {
   const { toast } = useToast();
+  
   const [payouts, setPayouts] = useState<any[]>([]);
-  const [orders, setOrders] = useState<any[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingPayouts, setIsFetchingPayouts] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [user, setUser] = useState<any>(null);
 
@@ -23,55 +38,59 @@ export default function SellerPayoutsPage() {
     pendingEscrow: 0
   });
 
-  const fetchData = async (userId: string) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const fetchStats = useCallback(async (userId: string) => {
     try {
-      const [payoutsRes, ordersRes] = await Promise.all([
-        fetch(`/api/payouts?sellerId=${userId}`),
-        fetch(`/api/orders?userId=${userId}&role=seller`)
-      ]);
-      
-      const pData = await payoutsRes.json();
-      const oData = await ordersRes.json();
-      
-      const livePayouts = pData.payouts || [];
-      const liveOrders = oData.orders || [];
-
-      setPayouts(livePayouts);
-      setOrders(liveOrders);
-
-      // Calculate totals
-      const completedOrders = liveOrders.filter((o: any) => o.status === 'COMPLETED' || o.status === 'DELIVERED');
-      const totalEarned = completedOrders.reduce((sum: number, o: any) => sum + Number(o.seller_receivable || 0), 0);
-      
-      const escrowOrders = liveOrders.filter((o: any) => ['PAYMENT_SUCCESS', 'HELD_IN_ESCROW'].includes(o.status));
-      const pendingEscrow = escrowOrders.reduce((sum: number, o: any) => sum + Number(o.seller_receivable || 0), 0);
-
-      // Available balance is Total Earned minus All Historical Payouts
-      const totalPaidOut = livePayouts.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
-      const availableBalance = totalEarned - totalPaidOut;
-
-      setStats({
-        totalEarned,
-        pendingEscrow,
-        availableBalance: Math.max(0, availableBalance) // prevent negative UI
-      });
-
+      const res = await fetch(`/api/seller/dashboard?userId=${userId}`);
+      const data = await res.json();
+      if (res.ok && data.stats) {
+        setStats({
+          availableBalance: Number(data.stats.availableBalance || 0),
+          totalEarned: Number(data.stats.totalEarnings || 0),
+          pendingEscrow: Number(data.stats.pendingEscrow || 0)
+        });
+      }
     } catch (error) {
-      toast({ title: "Failed to load payouts data", variant: "destructive" });
+      console.error('Failed to load stats:', error);
+    }
+  }, []);
+
+  const fetchPayouts = useCallback(async (userId: string, page: number) => {
+    setIsFetchingPayouts(true);
+    try {
+      const res = await fetch(`/api/payouts?sellerId=${userId}&page=${page}&limit=${itemsPerPage}`);
+      const data = await res.json();
+      if (res.ok) {
+        setPayouts(data.payouts || []);
+        setTotalCount(data.count || 0);
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      toast({ title: "Failed to load payout history", variant: "destructive" });
     } finally {
+      setIsFetchingPayouts(false);
       setIsLoading(false);
     }
-  };
+  }, [itemsPerPage, toast]);
 
   useEffect(() => {
+    let active = true;
     async function init() {
       const currentUser = await getCurrentUser();
-      if (!currentUser) return;
-      setUser(currentUser);
-      await fetchData(currentUser.id);
+      if (!currentUser || !active) return;
+      if (!user) setUser(currentUser);
+      
+      await Promise.all([
+        fetchStats(currentUser.id),
+        fetchPayouts(currentUser.id, currentPage)
+      ]);
     }
     init();
-  }, []);
+    return () => { active = false; };
+  }, [currentPage, fetchStats, fetchPayouts, user]);
 
   const handleWithdraw = async () => {
     if (stats.availableBalance <= 0) return;
@@ -86,7 +105,12 @@ export default function SellerPayoutsPage() {
       
       if (res.ok) {
         toast({ title: "Withdrawal Initiated", description: "Your funds will be sent to your M-PESA shortly." });
-        await fetchData(user.id);
+        // Refresh everything
+        await Promise.all([
+          fetchStats(user.id),
+          fetchPayouts(user.id, 1) // Reset to first page
+        ]);
+        setCurrentPage(1);
       } else {
         throw new Error(data.error);
       }
@@ -97,11 +121,24 @@ export default function SellerPayoutsPage() {
     }
   };
 
+  const getStatusBadge = (status: string) => {
+    switch(status) {
+      case 'SUCCESS': return <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-none font-medium">Successful</Badge>;
+      case 'PENDING': return <Badge className="bg-amber-50 text-amber-700 hover:bg-amber-100 border-none font-medium">Pending</Badge>;
+      case 'PROCESSING': return <Badge className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-none font-medium">Processing</Badge>;
+      case 'FAILED': return <Badge className="bg-red-50 text-red-700 hover:bg-red-100 border-none font-medium">Failed</Badge>;
+      default: return <Badge className="bg-gray-50 text-gray-700 border-none font-medium">{status}</Badge>;
+    }
+  };
+
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
+
   if (isLoading) {
     return (
       <SellerLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="text-sm font-medium text-gray-500 tracking-wider uppercase animate-pulse">Loading Wallet</p>
         </div>
       </SellerLayout>
     );
@@ -109,109 +146,168 @@ export default function SellerPayoutsPage() {
 
   return (
     <SellerLayout>
-      <div className="space-y-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-8">
+        
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Payments & Withdrawals</h1>
-            <p className="text-gray-500 font-medium">Manage your earnings and withdrawals.</p>
+            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Wallet</h1>
+            <p className="text-gray-500 font-medium mt-1">Manage your earnings and withdraw to M-PESA.</p>
           </div>
         </div>
 
-        {/* Balance Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-primary text-white border-none shadow-md overflow-hidden relative">
-            <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4">
-              <Wallet className="h-32 w-32" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Main Wallet Card */}
+          <Card className="lg:col-span-2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white border-none shadow-xl overflow-hidden relative rounded-[2rem]">
+            {/* Background elements */}
+            <div className="absolute top-0 right-0 p-8 opacity-5">
+              <Wallet className="h-48 w-48 -rotate-12 transform scale-150" />
             </div>
-            <CardContent className="p-6 relative z-10 space-y-4">
-              <p className="text-primary-foreground/80 font-bold uppercase tracking-widest text-xs">Available Balance</p>
-              <h2 className="text-4xl font-black tracking-tight">KSh {stats.availableBalance.toLocaleString()}</h2>
-              <Button 
-                onClick={handleWithdraw} 
-                disabled={stats.availableBalance <= 0 || isWithdrawing} 
-                className="w-full bg-white text-primary hover:bg-gray-100 font-bold"
-              >
-                {isWithdrawing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                Withdraw to M-PESA
-              </Button>
+            <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl"></div>
+            
+            <CardContent className="p-8 md:p-10 relative z-10 flex flex-col h-full justify-between gap-8">
+              <div className="flex justify-between items-start">
+                <div className="space-y-2">
+                  <p className="text-slate-400 font-medium uppercase tracking-widest text-xs flex items-center gap-2">
+                    <Building2 className="h-4 w-4" /> Available Balance
+                  </p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold text-slate-300">KSh</span>
+                    <h2 className="text-5xl md:text-6xl font-semibold tracking-tight text-white">
+                      {stats.availableBalance.toLocaleString()}
+                    </h2>
+                  </div>
+                </div>
+                <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 backdrop-blur-sm px-3 py-1 text-xs">
+                  Ready to withdraw
+                </Badge>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 items-center">
+                <Button 
+                  onClick={handleWithdraw} 
+                  disabled={stats.availableBalance <= 0 || isWithdrawing} 
+                  className={cn(
+                    "w-full sm:w-auto h-14 px-8 text-lg font-semibold rounded-xl shadow-lg transition-all",
+                    stats.availableBalance > 0 
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 shadow-primary/30" 
+                      : "bg-slate-700 text-slate-400"
+                  )}
+                >
+                  {isWithdrawing ? (
+                    <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Processing...</>
+                  ) : (
+                    <>Withdraw to M-PESA <ArrowUpRight className="h-5 w-5 ml-2" /></>
+                  )}
+                </Button>
+                
+                <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
+                  <Info className="h-4 w-4" /> Processed instantly via B2C.
+                </p>
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200/60 shadow-sm">
-            <CardContent className="p-6 space-y-4">
-              <div className="flex justify-between items-center text-gray-400">
-                <p className="font-bold uppercase tracking-widest text-xs">Pending Funds</p>
-                <Clock className="h-4 w-4" />
-              </div>
-              <h2 className="text-3xl font-black text-amber-600 tracking-tight">KSh {stats.pendingEscrow.toLocaleString()}</h2>
-              <p className="text-sm font-medium text-gray-500 pt-2 border-t border-gray-100">
-                Awaiting buyer delivery confirmation.
-              </p>
-            </CardContent>
-          </Card>
+          {/* Secondary Stats */}
+          <div className="space-y-6 flex flex-col justify-between">
+            <Card className="border-none shadow-sm rounded-[2rem] bg-white relative overflow-hidden group hover:shadow-md transition-shadow">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-50"></div>
+              <CardContent className="p-8 space-y-4 relative z-10">
+                <div className="flex justify-between items-center text-amber-600/80">
+                  <p className="font-medium uppercase tracking-widest text-xs">Pending Funds</p>
+                  <Clock className="h-5 w-5" />
+                </div>
+                <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
+                  <span className="text-lg font-medium text-gray-400 mr-1">KSh</span>
+                  {stats.pendingEscrow.toLocaleString()}
+                </h2>
+                <div className="pt-4 border-t border-gray-50 flex items-start gap-2 text-xs font-medium text-gray-500 leading-relaxed">
+                  <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+                  Funds held safely. They will be released to you once delivery is confirmed.
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card className="border-gray-200/60 shadow-sm">
-            <CardContent className="p-6 space-y-4">
-              <div className="flex justify-between items-center text-gray-400">
-                <p className="font-bold uppercase tracking-widest text-xs">Total Earnings</p>
-                <ArrowUpRight className="h-4 w-4 text-green-500" />
-              </div>
-              <h2 className="text-3xl font-black text-gray-900 tracking-tight">KSh {stats.totalEarned.toLocaleString()}</h2>
-              <p className="text-sm font-medium text-gray-500 pt-2 border-t border-gray-100">
-                Lifetime net earnings.
-              </p>
-            </CardContent>
-          </Card>
+            <Card className="border-none shadow-sm rounded-[2rem] bg-white relative overflow-hidden group hover:shadow-md transition-shadow">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-50"></div>
+              <CardContent className="p-8 space-y-4 relative z-10">
+                <div className="flex justify-between items-center text-emerald-600/80">
+                  <p className="font-medium uppercase tracking-widest text-xs">Total Earnings</p>
+                  <CheckCircle2 className="h-5 w-5" />
+                </div>
+                <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
+                  <span className="text-lg font-medium text-gray-400 mr-1">KSh</span>
+                  {stats.totalEarned.toLocaleString()}
+                </h2>
+                <div className="pt-4 border-t border-gray-50 text-xs font-medium text-gray-500 leading-relaxed">
+                  Total amount earned from all completed orders.
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Payout History Table */}
-        <Card className="border-gray-200/60 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-gray-100 bg-white">
-            <h2 className="text-lg font-bold text-gray-900">Payout History</h2>
+        <Card className="border-gray-100 shadow-sm overflow-hidden rounded-[2rem] bg-white">
+          <div className="p-6 md:p-8 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
+            <h2 className="text-lg font-semibold text-gray-900">Withdrawal History</h2>
+            <Badge variant="outline" className="bg-white border-gray-200 text-gray-500">
+              {totalCount} total
+            </Badge>
           </div>
-          <div className="overflow-x-auto">
+          
+          <div className={cn("overflow-x-auto transition-opacity duration-300", isFetchingPayouts ? "opacity-50 pointer-events-none" : "opacity-100")}>
             <table className="w-full text-left">
-              <thead className="bg-gray-50 border-b border-gray-100">
+              <thead className="bg-white border-b border-gray-50">
                 <tr>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Date</th>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Amount</th>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Method</th>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 text-right">Status</th>
+                  <th className="px-8 py-5 text-xs font-medium uppercase tracking-wider text-gray-500">Date Initiated</th>
+                  <th className="px-8 py-5 text-xs font-medium uppercase tracking-wider text-gray-500">Destination</th>
+                  <th className="px-8 py-5 text-xs font-medium uppercase tracking-wider text-gray-500 text-right">Amount</th>
+                  <th className="px-8 py-5 text-xs font-medium uppercase tracking-wider text-gray-500 text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50 bg-white">
                 {payouts.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center justify-center">
-                        <AlertCircle className="h-8 w-8 text-gray-300 mb-2" />
-                        <p className="text-gray-500 font-medium">No payouts recorded yet.</p>
+                    <td colSpan={4} className="px-8 py-20 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-3">
+                        <div className="h-16 w-16 bg-gray-50 rounded-full flex items-center justify-center">
+                          <ArrowDownRight className="h-8 w-8 text-gray-300" />
+                        </div>
+                        <p className="text-gray-900 font-semibold text-lg">No withdrawals yet.</p>
+                        <p className="text-sm text-gray-500 font-medium">Your payout history will appear here once you initiate a withdrawal.</p>
                       </div>
                     </td>
                   </tr>
                 ) : (
                   payouts.map((payout) => (
-                    <tr key={payout.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-500">
-                        {new Date(payout.created_at || new Date()).toLocaleDateString()}
+                    <tr key={payout.id} className="hover:bg-gray-50/50 transition-colors group">
+                      <td className="px-8 py-5">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-gray-900">
+                            {new Date(payout.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                          </span>
+                          <span className="text-xs font-medium text-gray-400">
+                            {new Date(payout.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-black text-gray-900 flex items-center gap-1">
-                          <ArrowDownRight className="h-4 w-4 text-green-500" /> KSh {Number(payout.amount).toLocaleString()}
+                      <td className="px-8 py-5">
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
+                            <span className="text-green-600 font-semibold text-[10px]">M-PESA</span>
+                          </div>
+                          <span className="text-sm font-semibold text-gray-700">M-PESA Transfer</span>
+                        </div>
+                      </td>
+                      <td className="px-8 py-5 text-right">
+                        <span className="text-base font-semibold text-gray-900">
+                          KSh {Number(payout.amount).toLocaleString()}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-bold text-gray-700">M-PESA B2C</span>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <Badge className={`${
-                          payout.status === 'SUCCESS' ? 'bg-green-100 text-green-700' :
-                          payout.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
-                          payout.status === 'PROCESSING' ? 'bg-blue-100 text-blue-700' :
-                          'bg-red-100 text-red-700'
-                        } border-none font-bold`}>
-                          {payout.status}
-                        </Badge>
+                      <td className="px-8 py-5 text-right">
+                        {getStatusBadge(payout.status)}
                       </td>
                     </tr>
                   ))
@@ -219,6 +315,36 @@ export default function SellerPayoutsPage() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between bg-white px-8 py-4 border-t border-gray-50">
+              <p className="text-sm text-gray-500 font-medium hidden sm:block">
+                Showing <span className="font-semibold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-semibold text-gray-900">{Math.min(currentPage * itemsPerPage, totalCount)}</span>
+              </p>
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                <Button
+                  variant="outline"
+                  className="font-semibold rounded-xl h-10 px-4 border-gray-200 hover:bg-gray-50"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+                </Button>
+                <span className="text-sm font-semibold text-gray-900 px-3 sm:hidden">
+                  {currentPage} / {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  className="font-medium rounded-xl h-10 px-4 border-gray-200 hover:bg-gray-50"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
         </Card>
       </div>
     </SellerLayout>

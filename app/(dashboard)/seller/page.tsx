@@ -9,10 +9,12 @@ import {
   Package, 
   DollarSign, 
   Clock,
-  TrendingUp,
   Loader2,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  ArrowRight,
+  TrendingUp,
+  Activity
 } from 'lucide-react';
 import { getCurrentUser, getUserProfile } from '@/services/auth/authService';
 import SellerLayout from '@/components/layout/SellerLayout';
@@ -25,12 +27,13 @@ export default function SellerDashboardOverview() {
   const [profile, setProfile] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [orders, setOrders] = useState<any[]>([]);
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [stats, setStats] = useState({
     totalEarnings: 0,
     activeListings: 0,
     totalOrders: 0,
-    pendingEscrow: 0
+    pendingEscrow: 0,
+    availableBalance: 0
   });
 
   useEffect(() => {
@@ -46,32 +49,25 @@ export default function SellerDashboardOverview() {
         const userProfile = await getUserProfile(currentUser.id);
         setProfile(userProfile);
 
-        // Fetch Orders
-        const ordersRes = await fetch(`/api/orders?userId=${currentUser.id}&role=seller`);
-        const ordersData = await ordersRes.json();
-        const liveOrders = ordersData.orders || [];
+        // Fetch Stats & Recent Orders via our unified endpoint
+        const response = await fetch(`/api/seller/dashboard?userId=${currentUser.id}`);
+        const data = await response.json();
 
-        // Fetch Products to count active listings
-        const productsRes = await fetch(`/api/products?sellerId=${currentUser.id}&sellerView=true`);
-        const productsData = await productsRes.json();
-        const liveProducts = productsData.products || [];
-
-        setOrders(liveOrders);
-
-        // Calculate Stats
-        const completedOrders = liveOrders.filter((o: any) => o.status === 'COMPLETED');
-        const totalEarnings = completedOrders.reduce((sum: number, o: any) => sum + Number(o.seller_receivable || 0), 0);
-        
-        const escrowOrders = liveOrders.filter((o: any) => ['PAYMENT_SUCCESS', 'HELD_IN_ESCROW', 'DELIVERED'].includes(o.status));
-        const pendingEscrow = escrowOrders.reduce((sum: number, o: any) => sum + Number(o.seller_receivable || 0), 0);
-
-        setStats({
-          totalEarnings,
-          activeListings: liveProducts.filter((p: any) => p.is_available).length,
-          totalOrders: liveOrders.length,
-          pendingEscrow
-        });
-
+        if (response.ok) {
+          setStats(data.stats);
+          setRecentOrders(data.recentOrders);
+        } else {
+          // If RPC is missing (e.g., migration not run), show friendly warning
+          if (data.error?.includes('function get_seller_dashboard_stats does not exist')) {
+            toast({
+              title: "Setup Required",
+              description: "Please run the database migration to enable stats.",
+              variant: "destructive"
+            });
+          } else {
+             throw new Error(data.error);
+          }
+        }
       } catch (error) {
         console.error('Dashboard Load Error:', error);
         toast({ title: "Failed to load dashboard", variant: "destructive" });
@@ -82,47 +78,70 @@ export default function SellerDashboardOverview() {
     loadDashboardData();
   }, []);
 
-  const getStatusColor = (status: string) => {
+  const getStatusStyle = (status: string) => {
     switch (status) {
-      case 'COMPLETED': return 'bg-green-500 text-white';
+      case 'COMPLETED': return 'bg-emerald-50 text-emerald-600 ring-emerald-500/20';
       case 'PAYMENT_SUCCESS': 
-      case 'HELD_IN_ESCROW': return 'bg-blue-500 text-white';
-      case 'PENDING_PAYMENT': return 'bg-yellow-500 text-white';
-      case 'DISPUTED': return 'bg-red-500 text-white';
-      case 'DELIVERED': return 'bg-emerald-400 text-white';
-      default: return 'bg-gray-100 text-gray-500';
+      case 'HELD_IN_ESCROW': return 'bg-blue-50 text-blue-600 ring-blue-500/20';
+      case 'PENDING_PAYMENT': return 'bg-amber-50 text-amber-600 ring-amber-500/20';
+      case 'DISPUTED': return 'bg-red-50 text-red-600 ring-red-500/20';
+      case 'DELIVERED': return 'bg-teal-50 text-teal-600 ring-teal-500/20';
+      default: return 'bg-gray-50 text-gray-600 ring-gray-500/20';
     }
+  };
+
+  const getStatusLabel = (status: string) => {
+    const labels: Record<string, string> = {
+      COMPLETED: 'Completed',
+      PAYMENT_SUCCESS: 'Processing',
+      HELD_IN_ESCROW: 'Processing',
+      PENDING_PAYMENT: 'Pending',
+      DISPUTED: 'Disputed',
+      DELIVERED: 'Delivered'
+    };
+    return labels[status] || status;
   };
 
   if (isLoading) {
     return (
       <SellerLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="text-sm font-medium text-gray-500 tracking-wider uppercase animate-pulse">Loading Dashboard</p>
         </div>
       </SellerLayout>
     );
   }
 
   const sellerStats = [
-    { title: 'Total Earnings', value: `KSh ${stats.totalEarnings.toLocaleString()}`, icon: DollarSign, trend: 'Lifetime', color: 'text-green-600', bg: 'bg-green-50' },
-    { title: 'Pending Funds', value: `KSh ${stats.pendingEscrow.toLocaleString()}`, icon: Clock, trend: 'Action Required', color: 'text-amber-600', bg: 'bg-amber-50' },
-    { title: 'Live Products', value: stats.activeListings.toString(), icon: Package, trend: 'Active', color: 'text-blue-600', bg: 'bg-blue-50' },
-    { title: 'Total Orders', value: stats.totalOrders.toString(), icon: ShoppingCart, trend: 'Lifetime', color: 'text-purple-600', bg: 'bg-purple-50' }
+    { title: 'Total Earnings', value: `KSh ${Number(stats.totalEarnings).toLocaleString()}`, icon: DollarSign, trend: 'Lifetime', gradient: 'from-emerald-500/10 via-emerald-400/5 to-transparent', iconColor: 'text-emerald-500', iconBg: 'bg-emerald-50' },
+    { title: 'Pending Funds', value: `KSh ${Number(stats.pendingEscrow).toLocaleString()}`, icon: Clock, trend: 'Awaiting Delivery', gradient: 'from-amber-500/10 via-amber-400/5 to-transparent', iconColor: 'text-amber-500', iconBg: 'bg-amber-50' },
+    { title: 'Active Products', value: stats.activeListings.toString(), icon: Package, trend: 'Active', gradient: 'from-blue-500/10 via-blue-400/5 to-transparent', iconColor: 'text-blue-500', iconBg: 'bg-blue-50' },
+    { title: 'Total Orders', value: stats.totalOrders.toString(), icon: ShoppingCart, trend: 'Lifetime', gradient: 'from-purple-500/10 via-purple-400/5 to-transparent', iconColor: 'text-purple-500', iconBg: 'bg-purple-50' }
   ];
 
   return (
     <SellerLayout>
-      <div className="space-y-10">
+      <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-8">
+        
         {/* Welcome Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Performance Overview</h1>
-            <p className="text-gray-500 font-medium">Monitor your store's performance and active orders.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 bg-gradient-to-r from-gray-900 to-gray-800 p-8 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+          <div className="relative z-10">
+            <Badge className="bg-primary/20 text-primary-foreground hover:bg-primary/20 mb-3 border-none backdrop-blur-md px-3 py-1 text-xs">
+              Dashboard Overview
+            </Badge>
+            <h1 className="text-3xl font-semibold text-white tracking-tight">
+              Welcome back, {profile?.first_name || 'Seller'}
+            </h1>
+            <p className="text-gray-400 font-medium mt-2 max-w-xl text-sm leading-relaxed">
+              Here is what's happening with your store.
+            </p>
           </div>
-          <div className="flex gap-3">
-             <Link href="/seller/inventory">
-               <Button className="font-bold shadow-md">
+          <div className="flex gap-3 relative z-10 w-full md:w-auto">
+             <Link href="/seller/inventory" className="w-full md:w-auto">
+               <Button className="w-full md:w-auto font-medium shadow-sm h-12 px-6 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all">
+                 <Package className="mr-2 h-5 w-5" />
                  Manage Inventory
                </Button>
              </Link>
@@ -130,21 +149,23 @@ export default function SellerDashboardOverview() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {sellerStats.map((stat) => (
-            <Card key={stat.title} className="border-none shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
-              <CardContent className="p-0">
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
-                      <stat.icon className="h-6 w-6" />
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{stat.trend}</span>
+            <Card key={stat.title} className="border-none shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300 rounded-3xl relative bg-white">
+              <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-50`}></div>
+              <CardContent className="p-6 relative z-10">
+                <div className="flex justify-between items-start mb-6">
+                  <div className={`h-12 w-12 rounded-2xl ${stat.iconBg} ${stat.iconColor} flex items-center justify-center transition-transform duration-300`}>
+                    <stat.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-tight">{stat.title}</h3>
-                  <p className="text-2xl font-black text-gray-900 mt-1">{stat.value}</p>
+                  <Badge variant="outline" className="bg-white/50 backdrop-blur-sm border-gray-100 text-[10px] font-medium uppercase tracking-wider text-gray-500 shadow-sm">
+                    {stat.trend}
+                  </Badge>
                 </div>
-                <div className={`h-1 w-full ${stat.bg.replace('50', '200')}`} />
+                <div className="space-y-1">
+                  <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">{stat.title}</h3>
+                  <p className="text-2xl font-semibold text-gray-900 tracking-tight">{stat.value}</p>
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -154,50 +175,62 @@ export default function SellerDashboardOverview() {
           {/* Recent Orders Table */}
           <div className="lg:col-span-2 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900">Recent Transactions</h2>
-              <Link href="/seller/orders" className="text-primary font-bold text-sm">
-                View all orders &rarr;
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Activity className="h-5 w-5 text-gray-600" />
+                </div>
+                <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
+              </div>
+              <Link href="/seller/orders" className="text-primary font-medium text-sm hover:underline flex items-center gap-1 group">
+                View all orders <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
-            <Card className="border-gray-200/60 shadow-sm overflow-hidden">
+            
+            <Card className="border-gray-200/60 shadow-sm overflow-hidden rounded-2xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-gray-50/80 border-b border-gray-100 backdrop-blur-sm">
                     <tr>
-                      <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Order Ref</th>
-                      <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Product</th>
-                      <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Status</th>
-                      <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 text-right">Earned</th>
+                      <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-gray-500">Order ID</th>
+                      <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-gray-500">Product</th>
+                      <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-gray-500">Status</th>
+                      <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-gray-500 text-right">Earned</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
-                    {orders.length === 0 ? (
-                      <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-500 font-medium italic">No transactions yet.</td></tr>
+                  <tbody className="divide-y divide-gray-50 bg-white">
+                    {recentOrders.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="px-6 py-20 text-center">
+                          <div className="flex flex-col items-center justify-center space-y-3">
+                            <div className="h-16 w-16 bg-gray-50 rounded-full flex items-center justify-center">
+                              <ShoppingCart className="h-8 w-8 text-gray-300" />
+                            </div>
+                            <p className="text-gray-500 font-medium">No transactions yet.</p>
+                            <p className="text-xs text-gray-400 max-w-xs mx-auto">When customers place orders, they will appear here.</p>
+                          </div>
+                        </td>
+                      </tr>
                     ) : (
-                      orders.slice(0, 5).map((order) => (
-                        <tr key={order.id} className="hover:bg-gray-50/50 transition-colors group">
-                          <td className="px-6 py-4 font-mono text-xs font-bold text-gray-400">
-                            <Link href={`/seller/orders/${order.id}`} className="hover:text-primary transition-colors">
+                      recentOrders.map((order) => (
+                        <tr key={order.id} className="hover:bg-gray-50/50 transition-colors group cursor-default">
+                          <td className="px-6 py-4">
+                            <Link href={`/seller/orders/${order.id}`} className="font-mono text-xs font-medium text-gray-500 hover:text-primary transition-colors block">
                               {order.order_number}
                             </Link>
                           </td>
                           <td className="px-6 py-4">
-                            <p className="text-sm font-bold text-gray-900 truncate max-w-[150px]">{order.product?.title || 'Unknown Product'}</p>
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium text-gray-900 truncate max-w-[180px]">{order.product?.title || 'Unknown Product'}</span>
+                              <span className="text-xs font-medium text-gray-400">{new Date(order.created_at).toLocaleDateString()}</span>
+                            </div>
                           </td>
                           <td className="px-6 py-4">
-                            <Badge className={`${getStatusColor(order.status)} text-[10px] h-5 px-2 border-none`}>
-                              {{
-                                COMPLETED: 'Completed',
-                                PAYMENT_SUCCESS: 'Processing',
-                                HELD_IN_ESCROW: 'Processing',
-                                PENDING_PAYMENT: 'Pending',
-                                DISPUTED: 'Disputed',
-                                DELIVERED: 'Delivered'
-                              }[order.status as string] || order.status}
-                            </Badge>
+                            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider ring-1 ring-inset ${getStatusStyle(order.status)}`}>
+                              {getStatusLabel(order.status)}
+                            </span>
                           </td>
                           <td className="px-6 py-4 text-right">
-                            <p className="text-sm font-black text-primary">KSh {Number(order.seller_receivable || 0).toLocaleString()}</p>
+                            <p className="text-sm font-semibold text-gray-900">KSh {Number(order.seller_receivable || 0).toLocaleString()}</p>
                           </td>
                         </tr>
                       ))
@@ -208,36 +241,46 @@ export default function SellerDashboardOverview() {
             </Card>
           </div>
 
-          {/* Verification Status */}
+          {/* Verification & Action Required */}
           <div className="space-y-6">
-             <h2 className="text-lg font-bold text-gray-900">Store Status</h2>
-             <Card className="border-none shadow-sm bg-indigo-600 text-white p-6 space-y-4">
-               <div className="flex justify-between items-start">
-                 <div>
-                   <p className="text-indigo-200 text-xs font-bold uppercase tracking-widest">Store Tier</p>
-                   <h3 className="text-2xl font-black mt-1">Verified Seller</h3>
-                 </div>
-                 <div className="bg-white/20 p-2 rounded-lg">
-                   <CheckCircle className="h-5 w-5 text-white" />
-                 </div>
+             <div className="flex items-center gap-3">
+                 <div className="p-2 bg-indigo-100 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-indigo-600" />
+                </div>
+                <h2 className="text-lg font-semibold text-gray-900">Account Status</h2>
+             </div>
+             
+             {/* Verified Card */}
+             <Card className="border-none shadow-sm bg-gradient-to-br from-indigo-600 to-indigo-700 text-white p-6 space-y-4 rounded-2xl relative overflow-hidden group">
+               <div className="absolute top-0 right-0 p-4 opacity-10 transition-transform duration-500 group-hover:scale-105">
+                 <CheckCircle className="h-24 w-24" />
                </div>
-                <p className="text-xs text-indigo-100/80 leading-relaxed pt-2">
-                 Your account is verified and you are eligible to receive M-PESA payouts immediately after funds are released.
-               </p>
+               <div className="relative z-10 space-y-3">
+                 <div>
+                   <h3 className="text-xl font-semibold mt-1 tracking-tight">Verified Seller</h3>
+                 </div>
+                 <div className="h-px w-full bg-indigo-500/50"></div>
+                 <p className="text-sm text-indigo-100/90 leading-relaxed font-medium">
+                   Your account is verified. You can now withdraw funds to M-PESA.
+                 </p>
+               </div>
              </Card>
              
+             {/* Pending Action Card */}
              {stats.pendingEscrow > 0 && (
-               <Card className="p-6 border-amber-200 bg-amber-50 shadow-sm space-y-3">
-                 <div className="flex items-center gap-3 text-amber-800">
-                    <AlertCircle className="h-5 w-5" />
-                    <h4 className="text-sm font-bold">Action Required</h4>
+               <Card className="p-6 border border-amber-200 bg-amber-50 shadow-sm space-y-4 rounded-2xl">
+                 <div className="flex items-center gap-2 text-amber-800">
+                    <div className="p-1.5 bg-amber-100 rounded-full">
+                      <AlertCircle className="h-4 w-4" />
+                    </div>
+                    <h4 className="text-sm font-semibold uppercase tracking-wider">Action Required</h4>
                  </div>
-                 <p className="text-xs text-amber-700 leading-relaxed font-medium">
-                    You have <span className="font-bold">KSh {stats.pendingEscrow.toLocaleString()}</span> pending. Please deliver the pending orders and enter the buyer's Verification Code to release the funds.
+                 <p className="text-sm text-amber-900/80 leading-relaxed font-medium">
+                    You have <span className="font-semibold text-amber-900">KSh {Number(stats.pendingEscrow).toLocaleString()}</span> in pending funds. Complete your deliveries to unlock these funds.
                  </p>
                  <Link href="/seller/orders" className="block pt-2">
-                   <Button size="sm" variant="outline" className="w-full font-bold border-amber-300 text-amber-800 hover:bg-amber-100">
-                     Go to Pending Orders
+                   <Button className="w-full h-10 font-medium bg-amber-500 text-white hover:bg-amber-600 shadow-sm rounded-lg transition-all">
+                     View Pending Orders
                    </Button>
                  </Link>
                </Card>

@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   try {
     const supabase = createServerClient();
     const body = await request.json();
-    const { userId, first_name, last_name, shop_name, bio, mpesa_number, profile_photo_url, city, physical_address } = body;
+    const { userId, first_name, last_name, shop_name, bio, mpesa_number, profile_photo_url, city, physical_address, id_document_url, business_certificate_url } = body;
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
@@ -20,6 +20,20 @@ export async function POST(request: Request) {
     };
     if (city) userUpdates.city = city;
     if (physical_address) userUpdates.physical_address = physical_address;
+    
+    // If new KYC docs are uploaded, update them and set status to PENDING for admin review
+    let kycUpdated = false;
+    if (id_document_url) {
+      userUpdates.id_document_url = id_document_url;
+      kycUpdated = true;
+    }
+    if (business_certificate_url) {
+      userUpdates.business_certificate_url = business_certificate_url;
+      kycUpdated = true;
+    }
+    if (kycUpdated) {
+      userUpdates.seller_status = 'PENDING';
+    }
 
     const { error: userError } = await supabase
       .from('users')

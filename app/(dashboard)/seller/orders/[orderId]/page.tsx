@@ -74,14 +74,14 @@ export default function SellerOrderDetails() {
   return (
     <SellerLayout>
       <div className="max-w-5xl">
-        <Link href="/seller" className="flex items-center text-sm font-bold text-gray-500 hover:text-primary mb-6 transition-colors">
+        <Link href="/seller" className="flex items-center text-sm font-medium text-gray-500 hover:text-primary mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4 mr-2" /> Back to Dashboard
         </Link>
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-black text-gray-900">Order #{order.order_number}</h1>
+              <h1 className="text-2xl font-semibold text-gray-900">Order #{order.order_number}</h1>
               <Badge className={`${getStatusColor(order.status)} text-white`}>{order.status.replace('_', ' ')}</Badge>
             </div>
             <p className="text-gray-500 font-medium mt-1">Placed on {new Date(order.created_at).toLocaleDateString()} at {new Date(order.created_at).toLocaleTimeString()}</p>
@@ -96,7 +96,7 @@ export default function SellerOrderDetails() {
           <div className="lg:col-span-2 space-y-6">
             <Card className="border-gray-200/60 shadow-sm">
               <CardHeader className="border-b border-gray-50">
-                <CardTitle className="text-lg font-bold">Product Details</CardTitle>
+                <CardTitle className="text-lg font-semibold">Product Details</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="flex gap-6">
@@ -108,17 +108,17 @@ export default function SellerOrderDetails() {
                     />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-gray-900">{order.product?.title}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">{order.product?.title}</h3>
                     <p className="text-sm text-gray-500 mt-1">Quantity: {order.quantity}</p>
                     <div className="flex items-center gap-4 mt-4">
                       <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Unit Price</p>
-                        <p className="font-bold text-gray-900">KSh {order.product?.price.toLocaleString()}</p>
+                        <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">Unit Price</p>
+                        <p className="font-semibold text-gray-900">KSh {order.product?.price.toLocaleString()}</p>
                       </div>
                       <div className="h-8 w-px bg-gray-100" />
                       <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Earned</p>
-                        <p className="font-black text-primary">KSh {order.seller_receivable.toLocaleString()}</p>
+                        <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">Total Earned</p>
+                        <p className="font-semibold text-primary">KSh {order.seller_receivable.toLocaleString()}</p>
                       </div>
                     </div>
                   </div>
@@ -128,7 +128,7 @@ export default function SellerOrderDetails() {
 
             <Card className="border-gray-200/60 shadow-sm">
               <CardHeader className="border-b border-gray-50">
-                <CardTitle className="text-lg font-bold">Delivery Instructions</CardTitle>
+                <CardTitle className="text-lg font-semibold">Delivery Instructions</CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="flex items-start gap-4">
@@ -136,8 +136,8 @@ export default function SellerOrderDetails() {
                     <MapPin className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Pickup/Delivery Point</p>
-                    <p className="text-base font-bold text-gray-900">Student Center, Gate A, Strathmore University</p>
+                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Pickup/Delivery Point</p>
+                    <p className="text-base font-semibold text-gray-900">Student Center, Gate A, Strathmore University</p>
                     <p className="text-sm text-gray-500 mt-1 italic">Note: "Please meet at the fountain outside the student center."</p>
                   </div>
                 </div>
@@ -147,8 +147,8 @@ export default function SellerOrderDetails() {
                     <Clock className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Preferred Time</p>
-                    <p className="text-base font-bold text-gray-900">After 4:00 PM (Weekdays)</p>
+                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Preferred Time</p>
+                    <p className="text-base font-semibold text-gray-900">After 4:00 PM (Weekdays)</p>
                   </div>
                 </div>
               </CardContent>
@@ -159,7 +159,7 @@ export default function SellerOrderDetails() {
           <div className="space-y-6">
             <Card className="border-gray-200/60 shadow-sm">
               <CardHeader className="border-b border-gray-50">
-                <CardTitle className="text-lg font-bold">Buyer Information</CardTitle>
+                <CardTitle className="text-lg font-semibold">Buyer Information</CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="flex items-center gap-4">
@@ -171,17 +171,17 @@ export default function SellerOrderDetails() {
                     )}
                   </div>
                   <div>
-                    <p className="font-bold text-gray-900">{order.buyer?.first_name} {order.buyer?.last_name}</p>
+                    <p className="font-semibold text-gray-900">{order.buyer?.first_name} {order.buyer?.last_name}</p>
                     <p className="text-xs text-gray-500">Buyer since Jan 2024</p>
                   </div>
                 </div>
                 
                 <div className="space-y-4">
-                  <Button variant="outline" className="w-full justify-start font-bold h-11">
+                  <Button variant="outline" className="w-full justify-start font-medium h-11">
                     <Phone className="h-4 w-4 mr-3 text-gray-400" />
                     {order.buyer?.phone_number || 'No phone provided'}
                   </Button>
-                  <Button variant="outline" className="w-full justify-start font-bold h-11">
+                  <Button variant="outline" className="w-full justify-start font-medium h-11">
                     <MessageCircle className="h-4 w-4 mr-3 text-gray-400" />
                     Open Chat
                   </Button>
@@ -192,10 +192,10 @@ export default function SellerOrderDetails() {
             <Card className="bg-gray-900 text-white p-6 space-y-4">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-primary" />
-                <h4 className="text-sm font-bold uppercase tracking-widest">Escrow Protected</h4>
+                <h4 className="text-sm font-medium uppercase tracking-wider">Escrow Protected</h4>
               </div>
               <p className="text-xs text-gray-400 leading-relaxed">
-                The buyer has already paid **KSh {order.total_amount.toLocaleString()}**. These funds are safely held in Bagcom's escrow account and will be released to you as soon as you enter the verification code provided by the buyer.
+                The buyer has paid **KSh {order.total_amount.toLocaleString()}**. These funds are safely held by Bagcom and will be released to you once you enter the buyer's verification code upon delivery.
               </p>
             </Card>
           </div>

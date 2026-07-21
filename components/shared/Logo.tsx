@@ -17,7 +17,7 @@ export default function Logo({ variant = 'primary', className = '' }: LogoProps)
 
   return (
     <Link href="/" className={`flex items-center hover:opacity-90 transition-opacity ${className}`}>
-      <div className="relative h-9 w-auto min-w-[140px]">
+      <div className={`relative h-9 w-auto ${variant === 'icon' ? 'min-w-0 w-9' : 'min-w-[140px]'}`}>
         <Image
           src={logoSrc}
           alt="Bagcom Logo"
