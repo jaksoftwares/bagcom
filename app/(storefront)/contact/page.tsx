@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, ChevronRight, Clock, Loader2, Mail, MapPin, MessageCircle, Send } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
-export default function ContactPage() {
+function ContactPageContent() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const preFilledTopic = searchParams.get('topic');
@@ -212,5 +212,13 @@ export default function ContactPage() {
         </div>
       </div>
     </StorefrontLayout>
+  );
+}
+
+export default function ContactPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
+      <ContactPageContent />
+    </Suspense>
   );
 }

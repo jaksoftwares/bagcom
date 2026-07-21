@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -34,7 +34,7 @@ import { useSearchParams } from 'next/navigation';
 import UserDetailDrawer from '@/components/admin/UserDetailDrawer';
 import ProductDetailDrawer from '@/components/admin/ProductDetailDrawer';
 
-export default function ProductModeration() {
+function ProductModerationContent() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const filterSellerId = searchParams.get('sellerId');
@@ -342,5 +342,13 @@ export default function ProductModeration() {
         }}
       />
     </AdminLayout>
+  );
+}
+
+export default function ProductModeration() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
+      <ProductModerationContent />
+    </Suspense>
   );
 }
