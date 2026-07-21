@@ -23,7 +23,9 @@ import {
   Image as ImageIcon,
   ChevronLeft,
   ChevronRight,
-  Filter
+  Filter,
+  ExternalLink,
+  EyeOff
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import SellerLayout from '@/components/layout/SellerLayout';
@@ -139,6 +141,27 @@ export default function SellerInventoryPage() {
       }
     } catch (error) {
       toast({ title: "Failed to delete product", variant: "destructive" });
+    }
+  };
+
+  const handleTogglePublish = async (product: any) => {
+    try {
+      const res = await fetch(`/api/products/${product.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_available: !product.is_available }),
+      });
+      if (res.ok) {
+        toast({ title: `Product ${product.is_available ? 'unpublished' : 'published'} successfully` });
+        if (user) {
+          fetchStats(user.id);
+          fetchProducts(user.id, currentPage, debouncedSearch, statusFilter);
+        }
+      } else {
+        throw new Error('Failed to update status');
+      }
+    } catch (error) {
+      toast({ title: "Failed to update product status", variant: "destructive" });
     }
   };
 
@@ -330,10 +353,18 @@ export default function SellerInventoryPage() {
                             </td>
                             <td className="px-6 py-4 text-right">
                               <div className="flex items-center justify-end gap-2">
-                                <Button onClick={() => openEditDrawer(product)} variant="outline" size="sm" className="h-9 rounded-lg text-gray-600 hover:text-primary bg-white border-gray-200">
+                                <Button asChild variant="outline" size="icon" className="h-9 w-9 rounded-lg text-blue-600 hover:bg-blue-50 hover:border-blue-200 border-gray-200 bg-white shrink-0" title="View in store">
+                                  <a href={`/product/${product.slug || product.id}`} target="_blank" rel="noopener noreferrer">
+                                    <ExternalLink className="h-4 w-4" />
+                                  </a>
+                                </Button>
+                                <Button onClick={() => handleTogglePublish(product)} variant="outline" size="icon" className="h-9 w-9 rounded-lg text-amber-600 hover:bg-amber-50 hover:border-amber-200 border-gray-200 bg-white shrink-0" title={product.is_available ? "Unpublish" : "Publish"}>
+                                  {product.is_available ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </Button>
+                                <Button onClick={() => openEditDrawer(product)} variant="outline" size="sm" className="h-9 rounded-lg text-gray-600 hover:text-primary bg-white border-gray-200" title="Edit">
                                   <Edit className="h-4 w-4 sm:mr-1.5" /> <span className="hidden sm:inline">Edit</span>
                                 </Button>
-                                <Button onClick={() => handleDelete(product.id)} variant="outline" size="icon" className="h-9 w-9 rounded-lg text-red-600 hover:bg-red-50 hover:border-red-200 border-gray-200 bg-white shrink-0">
+                                <Button onClick={() => handleDelete(product.id)} variant="outline" size="icon" className="h-9 w-9 rounded-lg text-red-600 hover:bg-red-50 hover:border-red-200 border-gray-200 bg-white shrink-0" title="Delete">
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
@@ -390,7 +421,15 @@ export default function SellerInventoryPage() {
                             <Button onClick={() => openEditDrawer(product)} variant="outline" className="flex-1 h-9 rounded-lg text-gray-600 hover:text-primary hover:bg-primary/5 border-gray-200">
                               <Edit className="h-4 w-4 mr-1.5" /> Edit
                             </Button>
-                            <Button onClick={() => handleDelete(product.id)} variant="outline" size="icon" className="h-9 w-9 shrink-0 rounded-lg text-red-600 hover:bg-red-50 hover:border-red-200 border-gray-200">
+                            <Button asChild variant="outline" size="icon" className="h-9 w-9 shrink-0 rounded-lg text-blue-600 hover:bg-blue-50 hover:border-blue-200 border-gray-200" title="View in store">
+                              <a href={`/product/${product.slug || product.id}`} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                            </Button>
+                            <Button onClick={() => handleTogglePublish(product)} variant="outline" size="icon" className="h-9 w-9 shrink-0 rounded-lg text-amber-600 hover:bg-amber-50 hover:border-amber-200 border-gray-200" title={product.is_available ? "Unpublish" : "Publish"}>
+                              {product.is_available ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </Button>
+                            <Button onClick={() => handleDelete(product.id)} variant="outline" size="icon" className="h-9 w-9 shrink-0 rounded-lg text-red-600 hover:bg-red-50 hover:border-red-200 border-gray-200" title="Delete">
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>

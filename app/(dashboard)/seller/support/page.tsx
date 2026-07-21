@@ -136,17 +136,17 @@ export default function SellerSupport() {
 
   return (
     <SellerLayout>
-      <div className="max-w-[1600px] w-full mx-auto space-y-8 pb-8">
+      <div className="w-full mx-auto space-y-6 sm:space-y-8 pb-8 px-4 sm:px-6 lg:px-8 py-6 max-w-5xl">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Help & Support</h1>
-            <p className="text-gray-500 font-medium mt-1">Manage your support tickets and contact the admin team.</p>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">Help & Support</h1>
+            <p className="text-gray-500 font-medium mt-1 text-sm">Manage your support tickets and contact the admin team.</p>
           </div>
           <Button 
             onClick={() => setActiveTab('NEW')} 
-            className="h-12 px-6 font-medium text-sm rounded-xl bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-all gap-2"
+            className="w-full sm:w-auto h-11 px-6 font-semibold text-sm rounded-xl shadow-sm gap-2"
           >
             <Plus className="h-4 w-4" /> Open New Ticket
           </Button>

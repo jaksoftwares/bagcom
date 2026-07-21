@@ -279,10 +279,10 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
           <div className="flex items-center gap-2 sm:gap-4 shrink-0">
              
              {/* Notification Bell */}
-             <button className="relative p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-full transition-colors outline-none focus:ring-2 focus:ring-slate-900/10">
+             <Link href="/seller/notifications" className="relative p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-full transition-colors outline-none focus:ring-2 focus:ring-slate-900/10">
                 <Bell className="h-5 w-5" strokeWidth={2} />
                 <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 border-2 border-white"></span>
-             </button>
+             </Link>
 
              {/* Profile Dropdown Menu */}
              <DropdownMenu>

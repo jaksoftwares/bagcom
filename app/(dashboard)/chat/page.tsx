@@ -1,18 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { ChatSidebar } from '@/components/chat/ChatSidebar';
 import { ChatWindow } from '@/components/chat/ChatWindow';
 import Header from '@/components/navigation/Header';
 import { getCurrentUser } from '@/services/auth/authService';
 import { Loader2, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useSearchParams } from 'next/navigation';
 
-export default function ChatPage() {
+function ChatContent() {
   const { toast } = useToast();
+  const searchParams = useSearchParams();
+  const initialConvId = searchParams.get('id');
+  
   const [user, setUser] = useState<any>(null);
   const [conversations, setConversations] = useState<any[]>([]);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(initialConvId);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -82,5 +86,17 @@ export default function ChatPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <ChatContent />
+    </Suspense>
   );
 }

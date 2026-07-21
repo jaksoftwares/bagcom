@@ -125,25 +125,25 @@ export default function BuyerDashboard() {
   }
 
   return (
-    <div className="space-y-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Buyer Dashboard</h1>
-          <p className="text-gray-600 mt-2">Welcome back, {profile?.first_name || 'Buyer'}! Track your orders and manage your account.</p>
+    <div className="w-full mx-auto space-y-4 sm:space-y-6 pb-8 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+        <div className="mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Overview</h1>
+          <p className="text-gray-500 font-medium mt-1 text-sm">Welcome back, {profile?.first_name || 'there'}. Here's a summary of your activity.</p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <Card key={stat.title}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    </div>
-                    <Icon className={`h-8 w-8 ${stat.color}`} />
+              <Card key={stat.title} className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-2xl transition-all duration-300 hover:shadow-md">
+                <CardContent className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{stat.title}</p>
+                    <p className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight mt-1">{stat.value}</p>
+                  </div>
+                  <div className={`h-12 w-12 rounded-xl flex-shrink-0 bg-gray-50 flex items-center justify-center ${stat.color}`}>
+                    <Icon className="h-6 w-6" />
                   </div>
                 </CardContent>
               </Card>
@@ -152,58 +152,58 @@ export default function BuyerDashboard() {
         </div>
 
         <Tabs defaultValue="orders" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 h-auto">
-            <TabsTrigger value="orders" className="py-3">My Orders</TabsTrigger>
-            <TabsTrigger value="wishlist" className="py-3">Wishlist</TabsTrigger>
-            <TabsTrigger value="profile" className="py-3">Account Settings</TabsTrigger>
+          <TabsList className="flex w-full sm:w-auto overflow-x-auto bg-gray-50/50 p-1.5 rounded-xl shadow-sm border border-gray-100 max-w-fit scrollbar-hide">
+            <TabsTrigger value="orders" className="rounded-lg py-2 px-6 font-medium text-sm data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">My Orders</TabsTrigger>
+            <TabsTrigger value="wishlist" className="rounded-lg py-2 px-6 font-medium text-sm data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">Wishlist</TabsTrigger>
+            <TabsTrigger value="profile" className="rounded-lg py-2 px-6 font-medium text-sm data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">Account</TabsTrigger>
           </TabsList>
 
           <TabsContent value="orders">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Recent Orders</CardTitle>
+            <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white overflow-hidden">
+              <CardHeader className="p-5 sm:p-6 border-b border-gray-50 flex flex-row items-center justify-between">
+                <CardTitle className="text-lg font-semibold text-gray-900">Recent Orders</CardTitle>
                 <Link href="/buyer/orders">
-                  <Button variant="outline" size="sm">View All</Button>
+                  <Button variant="outline" size="sm" className="rounded-lg font-medium text-gray-600">View All</Button>
                 </Link>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 {orders.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                    <p className="text-gray-500">You haven't placed any orders yet.</p>
+                  <div className="text-center py-16">
+                    <Package className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+                    <p className="text-sm font-medium text-gray-500">No orders yet.</p>
                     <Link href="/products">
-                      <Button className="mt-4">Start Shopping</Button>
+                      <Button className="mt-4 rounded-xl shadow-sm">Start Shopping</Button>
                     </Link>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="divide-y divide-gray-50">
                     {orders.slice(0, 5).map((order) => {
                       const StatusIcon = getStatusIcon(order.status);
                       return (
-                        <div key={order.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div key={order.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 sm:p-6 hover:bg-gray-50/50 transition-colors gap-4">
                           <div className="flex items-center space-x-4">
-                            <div className="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <div className="h-14 w-14 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center shrink-0">
                               <Package className="h-6 w-6 text-gray-400" />
                             </div>
                             <div>
-                              <h3 className="font-semibold text-gray-900">{order.product?.title}</h3>
-                              <p className="text-sm text-gray-500">Order #{order.order_number}</p>
-                              <p className="text-xs text-gray-400">{new Date(order.created_at).toLocaleDateString()}</p>
+                              <h3 className="font-semibold text-gray-900 truncate max-w-[200px] sm:max-w-[300px]">{order.product?.title}</h3>
+                              <p className="text-xs font-medium text-gray-500 mt-0.5">Order #{order.order_number}</p>
+                              <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mt-1">{new Date(order.created_at).toLocaleDateString()}</p>
                             </div>
                           </div>
                           
-                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mt-4 sm:mt-0">
+                          <div className="flex flex-row items-center justify-between sm:justify-end w-full sm:w-auto gap-4 sm:gap-6 mt-2 sm:mt-0 pt-4 sm:pt-0 border-t border-gray-100 sm:border-0">
                             <div className="text-left sm:text-right">
-                              <p className="font-semibold text-gray-900">KSh {order.total_amount.toLocaleString()}</p>
-                              <Badge className={`${getStatusColor(order.status)} text-white mt-1`}>
+                              <p className="font-bold text-gray-900">KSh {order.total_amount.toLocaleString()}</p>
+                              <Badge className={`${getStatusColor(order.status)} text-white mt-1.5 shadow-sm border-none text-[10px] uppercase tracking-wider px-2 py-0.5 font-bold`}>
                                 <StatusIcon className="h-3 w-3 mr-1" />
                                 {order.status.replace('_', ' ')}
                               </Badge>
                             </div>
                             <Link href={`/buyer/orders/${order.id}`}>
-                              <Button variant="ghost" size="sm">
-                                <Eye className="h-4 w-4 mr-2" />
-                                Details
+                              <Button variant="outline" size="sm" className="rounded-lg bg-white border-gray-200">
+                                <Eye className="h-4 w-4 sm:mr-2" />
+                                <span className="hidden sm:inline">Details</span>
                               </Button>
                             </Link>
                           </div>
@@ -217,27 +217,27 @@ export default function BuyerDashboard() {
           </TabsContent>
 
           <TabsContent value="wishlist">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>My Wishlist</CardTitle>
+            <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white overflow-hidden">
+              <CardHeader className="p-5 sm:p-6 border-b border-gray-50 flex flex-row items-center justify-between">
+                <CardTitle className="text-lg font-semibold text-gray-900">My Wishlist</CardTitle>
                 <Link href="/wishlist">
-                  <Button variant="outline" size="sm">Manage Wishlist</Button>
+                  <Button variant="outline" size="sm" className="rounded-lg font-medium text-gray-600">Manage</Button>
                 </Link>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-5 sm:p-6">
                 {favorites.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Heart className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                    <p className="text-gray-500">Your wishlist is empty.</p>
+                  <div className="text-center py-16">
+                    <Heart className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+                    <p className="text-sm font-medium text-gray-500">Your wishlist is empty.</p>
                     <Link href="/products">
-                      <Button className="mt-4">Browse Items</Button>
+                      <Button className="mt-4 rounded-xl shadow-sm">Browse Items</Button>
                     </Link>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {favorites.slice(0, 4).map((fav) => (
-                      <div key={fav.id} className="flex items-center space-x-4 p-4 border rounded-lg">
-                        <div className="h-16 w-16 bg-gray-100 rounded-lg overflow-hidden">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {favorites.slice(0, 6).map((fav) => (
+                      <div key={fav.id} className="flex items-center space-x-4 p-4 border border-gray-100 rounded-2xl bg-gray-50/50 hover:bg-white transition-colors hover:shadow-sm">
+                        <div className="h-16 w-16 bg-white border border-gray-100 rounded-xl overflow-hidden shrink-0">
                           {fav.product?.images?.[0]?.image_url ? (
                             <img src={fav.product.images[0].image_url} alt={fav.product.title} className="w-full h-full object-cover" />
                           ) : (
@@ -247,14 +247,11 @@ export default function BuyerDashboard() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-900 truncate">{fav.product?.title}</h3>
-                          <p className="text-sm font-bold text-primary">KSh {fav.product?.price.toLocaleString()}</p>
-                          <Link href={`/product/${fav.product?.slug}`}>
-                            <Button variant="link" size="sm" className="p-0 h-auto text-xs">View Item</Button>
-                          </Link>
+                          <h3 className="font-semibold text-sm text-gray-900 truncate">{fav.product?.title}</h3>
+                          <p className="text-sm font-bold text-gray-900 mt-0.5">KSh {fav.product?.price.toLocaleString()}</p>
                         </div>
-                        <Button size="sm" asChild>
-                          <Link href={`/checkout?productId=${fav.product?.id}`}>Buy Now</Link>
+                        <Button size="sm" asChild className="rounded-lg shadow-sm">
+                          <Link href={`/checkout?productId=${fav.product?.id}`}>Buy</Link>
                         </Button>
                       </div>
                     ))}
@@ -266,60 +263,60 @@ export default function BuyerDashboard() {
 
           <TabsContent value="profile">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Personal Information</CardTitle>
+              <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white overflow-hidden">
+                <CardHeader className="p-5 sm:p-6 border-b border-gray-50">
+                  <CardTitle className="text-lg font-semibold text-gray-900">Personal Information</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <p className="text-xs font-medium text-gray-500 uppercase">First Name</p>
+                <CardContent className="p-5 sm:p-6 space-y-6">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-1.5">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">First Name</p>
                       <p className="text-gray-900 font-semibold">{profile?.first_name || 'N/A'}</p>
                     </div>
-                    <div className="space-y-1">
-                      <p className="text-xs font-medium text-gray-500 uppercase">Last Name</p>
+                    <div className="space-y-1.5">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Last Name</p>
                       <p className="text-gray-900 font-semibold">{profile?.last_name || 'N/A'}</p>
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium text-gray-500 uppercase">Email Address</p>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Email Address</p>
                     <p className="text-gray-900 font-semibold">{user?.email}</p>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium text-gray-500 uppercase">Phone Number</p>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Phone Number</p>
                     <p className="text-gray-900 font-semibold">{profile?.phone_number || 'Not provided'}</p>
                   </div>
-                  <Button variant="outline" className="w-full">Edit Profile</Button>
+                  <Button variant="outline" className="w-full rounded-xl border-gray-200 text-gray-600 hover:text-primary">Edit Profile</Button>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Security & Preferences</CardTitle>
+              <Card className="border border-gray-100 shadow-sm rounded-2xl bg-white overflow-hidden">
+                <CardHeader className="p-5 sm:p-6 border-b border-gray-50">
+                  <CardTitle className="text-lg font-semibold text-gray-900">Security & Preferences</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="p-5 sm:p-6 space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-gray-900">Password</p>
-                      <p className="text-sm text-gray-500">Last changed 3 months ago</p>
+                      <p className="font-semibold text-gray-900 text-sm">Password</p>
+                      <p className="text-xs font-medium text-gray-500 mt-0.5">Last changed 3 months ago</p>
                     </div>
-                    <Button variant="outline" size="sm">Update</Button>
+                    <Button variant="outline" size="sm" className="rounded-lg border-gray-200">Update</Button>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-gray-900">Email Notifications</p>
-                      <p className="text-sm text-gray-500">Receive order updates via email</p>
+                      <p className="font-semibold text-gray-900 text-sm">Email Notifications</p>
+                      <p className="text-xs font-medium text-gray-500 mt-0.5">Receive order updates</p>
                     </div>
-                    <Badge>Enabled</Badge>
+                    <Badge className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-none px-2 shadow-sm">Enabled</Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-gray-900">Buyer Status</p>
-                      <p className="text-sm text-gray-500">Standard Buyer Account</p>
+                      <p className="font-semibold text-gray-900 text-sm">Buyer Status</p>
+                      <p className="text-xs font-medium text-gray-500 mt-0.5">Standard Account</p>
                     </div>
-                    <Badge variant="secondary">Verified</Badge>
+                    <Badge variant="secondary" className="bg-blue-50 text-blue-600 hover:bg-blue-100 border-none px-2 shadow-sm">Verified</Badge>
                   </div>
-                  <Button variant="destructive" className="w-full">Delete Account</Button>
+                  <Button variant="destructive" className="w-full rounded-xl mt-4">Delete Account</Button>
                 </CardContent>
               </Card>
             </div>

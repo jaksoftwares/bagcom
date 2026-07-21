@@ -31,6 +31,7 @@ export default function SellerOrderDetails() {
   const { toast } = useToast();
   const [order, setOrder] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isChatLoading, setIsChatLoading] = useState(false);
 
   useEffect(() => {
     async function fetchOrder() {
@@ -51,6 +52,33 @@ export default function SellerOrderDetails() {
     }
     fetchOrder();
   }, [orderId]);
+
+  const handleChatStart = async () => {
+    if (!order) return;
+    setIsChatLoading(true);
+    try {
+      const res = await fetch('/api/chat/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          buyer_id: order.buyer_id,
+          seller_id: order.seller_id,
+          product_id: order.product_id,
+          order_id: order.id
+        })
+      });
+      const data = await res.json();
+      if (data.conversation) {
+        router.push(`/chat?id=${data.conversation.id}`);
+      } else {
+        throw new Error('Failed to create chat');
+      }
+    } catch (e) {
+      toast({ title: "Error", description: "Failed to start chat.", variant: "destructive" });
+    } finally {
+      setIsChatLoading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -183,8 +211,13 @@ export default function SellerOrderDetails() {
                     <Phone className="h-4 w-4 mr-3 text-gray-400" />
                     {order.buyer?.phone_number || 'No phone provided'}
                   </Button>
-                  <Button variant="outline" className="w-full justify-start font-medium h-11">
-                    <MessageCircle className="h-4 w-4 mr-3 text-gray-400" />
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start font-medium h-11"
+                    onClick={handleChatStart}
+                    disabled={isChatLoading}
+                  >
+                    {isChatLoading ? <Loader2 className="h-4 w-4 mr-3 animate-spin" /> : <MessageCircle className="h-4 w-4 mr-3 text-gray-400" />}
                     Open Chat
                   </Button>
                 </div>

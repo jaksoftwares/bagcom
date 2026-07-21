@@ -11,8 +11,7 @@ import {
   ShieldCheck, 
   Clock, 
   CheckCircle2, 
-  Loader2,
-  MoreHorizontal
+  Loader2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
