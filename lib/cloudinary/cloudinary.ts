@@ -12,6 +12,10 @@ export interface CloudinaryUploadResult {
 }
 
 export const uploadToCloudinary = async (file: File): Promise<CloudinaryUploadResult> => {
+  if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
+    throw new Error('Cloudinary is not configured. Please add NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET to your hosting environment variables.');
+  }
+
   const formData = new FormData()
   formData.append('file', file)
   formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
