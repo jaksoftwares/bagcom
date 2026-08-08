@@ -23,13 +23,13 @@ import { getProducts } from '@/services/products/productService';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { usePaymentStatus } from '@/lib/hooks/usePaymentStatus';
-import { useCart } from '@/context/CartContext';
-
+import { useCartStore } from '@/store/useCartStore';
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { toast } = useToast();
-  const { cart, totalPrice, clearCart } = useCart();
+  const { cart, clearCart, getCartTotal } = useCartStore();
+  const totalPrice = getCartTotal();
   const productId = searchParams.get('productId');
 
   const [user, setUser] = useState<any>(null);

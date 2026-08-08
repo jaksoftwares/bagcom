@@ -29,7 +29,7 @@ import MobileStickyBar from '@/components/product-detail/MobileStickyBar';
 import ProductCard from '@/components/products/ProductCard';
 
 // Services & Context
-import { useCart } from '@/context/CartContext';
+import { useCartStore } from '@/store/useCartStore';
 import { getProductBySlug, getProducts, Product } from '@/services/products/productService';
 import { getCurrentUser } from '@/services/auth/authService';
 
@@ -37,7 +37,7 @@ export default function ProductDetail() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const addToCart = useCartStore(state => state.addToCart);
   const slug = params.slug as string;
   
   const [product, setProduct] = useState<Product | null>(null);

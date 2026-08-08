@@ -10,7 +10,7 @@ import {
   Eye,
   Truck
 } from 'lucide-react';
-import { useCart } from '@/context/CartContext';
+import { useCartStore } from '@/store/useCartStore';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
@@ -25,7 +25,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, layout = 'grid' }: ProductCardProps) {
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const addToCart = useCartStore(state => state.addToCart);
   const isGrid = layout === 'grid';
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);

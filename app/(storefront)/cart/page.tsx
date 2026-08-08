@@ -14,13 +14,12 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useCart } from '@/context/CartContext';
-
+import { useCartStore } from '@/store/useCartStore';
 
 
 export default function CartPage() {
-  const { cart, updateQuantity, removeFromCart, totalPrice } = useCart();
-
+  const { cart, updateQuantity, removeFromCart, getCartTotal } = useCartStore();
+  const totalPrice = getCartTotal();
   const subtotal = totalPrice;
   const serviceFee = subtotal * 0.02; // 2% Escrow/Service fee
   const total = subtotal + serviceFee;

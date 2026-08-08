@@ -1,4 +1,6 @@
-import { ShoppingCart, User, Search, Menu, X, Bell, Heart, MessageCircle, LogOut, Settings, LayoutDashboard, ShieldCheck } from 'lucide-react';
+'use client';
+
+import { ShoppingCart, User, Search, Menu, X, Heart, MessageCircle, LogOut, Settings, LayoutDashboard, ShieldCheck, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +17,13 @@ import Logo from '../shared/Logo';
 import { signOut, getCurrentUser, getUserProfile } from '@/services/auth/authService';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useCart } from '@/context/CartContext';
+
+// New Stores and Components for Phase 1
+import { useCartStore } from '@/store/useCartStore';
+import { useUIStore } from '@/store/useUIStore';
+import CartDrawer from './CartDrawer';
+import PredictiveSearch from './PredictiveSearch';
+import MegaMenu from './MegaMenu';
 
 interface HeaderProps {
   isLoggedIn?: boolean;
@@ -24,12 +32,16 @@ interface HeaderProps {
 }
 
 export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [unreadCount, setUnreadCount] = useState(0);
-  const { totalItems } = useCart();
+  
+  // Zustand Stores
+  const getCartItemsCount = useCartStore((state) => state.getCartItemsCount);
+  const totalItems = getCartItemsCount();
+  
+  const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu, openCartDrawer } = useUIStore();
+  
   const router = useRouter();
   const pathname = usePathname();
 
@@ -57,7 +69,6 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
               { event: 'INSERT', schema: 'public', table: 'messages' },
               async (payload) => {
                 if (payload.new.sender_id !== currentUser.id) {
-                   // Check if the conversation belongs to the user
                    const { data: conv } = await supabase
                     .from('conversations')
                     .select('id')
@@ -93,44 +104,33 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
     router.push('/');
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-    }
-  };
-
   return (
     <>
+      {/* 1. Announcement Bar (Top Utility Bar) */}
+      <div className="bg-primary text-white text-[11px] font-bold uppercase tracking-[0.2em] py-2 px-4 text-center hidden md:flex items-center justify-center gap-2">
+        <Zap className="h-3 w-3 fill-white" />
+        <span>Free Escrow protection on all local orders above KSh 50,000!</span>
+      </div>
+
       <header className="bg-background/80 backdrop-blur-md border-b sticky top-0 z-50 transition-all">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex justify-between items-center h-16 sm:h-20">
             {/* Logo */}
-            <div className="flex items-center">
+            <div className="flex items-center shrink-0">
               <Logo className="xs:mr-4 sm:mr-8" />
             </div>
 
-            {/* Search Bar - Desktop */}
-            <form onSubmit={handleSearch} className="hidden lg:flex flex-1 max-w-lg mx-8">
-              <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 h-4 w-4" />
-                <Input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search marketplace..."
-                  className="pl-10 pr-4 h-11 w-full rounded-sm border-border/40 bg-muted/20 focus:bg-white focus:ring-1 focus:ring-primary/20 transition-all shadow-none font-medium"
-                />
-              </div>
-            </form>
+            {/* 2. Predictive Search - Desktop */}
+            <PredictiveSearch />
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-6">
               <Link href="/products" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 Browse
               </Link>
-              <Link href="/categories" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Categories
-              </Link>
+              
+              {/* 3. Mega Menu Integration */}
+              <MegaMenu />
               
               <div className="h-6 w-px bg-border mx-2" />
 
@@ -147,19 +147,33 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                     </Link>
                   </Button>
 
-
                   <Button variant="ghost" size="icon" className="relative rounded-full hover:bg-primary/5 hover:text-primary h-10 w-10">
                     <Heart className="h-5 w-5" />
                   </Button>
 
+                  {/* 4. Slide-out Cart Trigger (Desktop) */}
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="relative rounded-full hover:bg-primary/5 hover:text-primary h-10 w-10"
+                    onClick={openCartDrawer}
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                    {totalItems > 0 && (
+                      <Badge className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center p-0 text-[10px] bg-primary text-white border-white border-2">
+                        {totalItems}
+                      </Badge>
+                    )}
+                  </Button>
+
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="pl-1 pr-2 py-1 rounded-full flex items-center space-x-2 hover:bg-primary/5 border border-transparent">
+                      <Button variant="ghost" className="pl-1 pr-2 py-1 rounded-full flex items-center space-x-2 hover:bg-primary/5 border border-transparent ml-2">
                         <div className="w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center border border-primary/20">
                           <User className="h-4 w-4" />
                         </div>
                         <span className="hidden xl:block text-sm font-semibold text-foreground/90">
-                          {profile?.first_name || 'My Account'}
+                          {profile?.first_name || 'Account'}
                         </span>
                       </Button>
                     </DropdownMenuTrigger>
@@ -217,36 +231,52 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                   >
                     <Link href="/register">Sell items</Link>
                   </Button>
-                </div>
-              )}
-            </nav>
-
-            <div className="flex items-center space-x-2 lg:hidden">
-              {user && (
-                <Link href="/cart">
-                  <Button variant="ghost" size="icon" className="relative rounded-sm">
-                    <ShoppingCart className="h-5 w-5 text-foreground/80" />
+                  
+                  {/* Cart icon for non-logged in users as well */}
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="relative rounded-full hover:bg-primary/5 hover:text-primary h-10 w-10 ml-2"
+                    onClick={openCartDrawer}
+                  >
+                    <ShoppingCart className="h-5 w-5" />
                     {totalItems > 0 && (
                       <Badge className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center p-0 text-[10px] bg-primary text-white border-white border-2">
                         {totalItems}
                       </Badge>
                     )}
                   </Button>
-                </Link>
+                </div>
               )}
+            </nav>
+
+            <div className="flex items-center space-x-2 lg:hidden">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative rounded-sm"
+                onClick={openCartDrawer}
+              >
+                <ShoppingCart className="h-5 w-5 text-foreground/80" />
+                {totalItems > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center p-0 text-[10px] bg-primary text-white border-white border-2">
+                    {totalItems}
+                  </Badge>
+                )}
+              </Button>
               
               <Button
                 variant="ghost"
                 size="icon"
                 className="rounded-sm text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                onClick={toggleMobileMenu}
               >
-                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
             </div>
           </div>
 
-          {/* Mobile Search */}
+          {/* Mobile Search - Also use PredictiveSearch? No, keep it simple or implement a mobile version. Let's keep it simple for now to avoid layout issues. */}
           <div className="lg:hidden pb-4">
             <div className="relative group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -259,21 +289,21 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
         </div>
 
         {/* Mobile Navigation Overlay */}
-        {isMenuOpen && (
+        {isMobileMenuOpen && (
           <div className="lg:hidden bg-background border-t shadow-2xl animate-in slide-in-from-top duration-300">
             <div className="px-4 py-6 space-y-4 max-h-[calc(100vh-120px)] overflow-y-auto">
               <div className="grid grid-cols-1 gap-2">
                 <Link 
                   href="/products" 
                   className="flex items-center py-3 px-4 text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-xl transition-all font-medium"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={closeMobileMenu}
                 >
                   Browse Products
                 </Link>
                 <Link 
                   href="/categories" 
                   className="flex items-center py-3 px-4 text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-xl transition-all font-medium"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={closeMobileMenu}
                 >
                   Categories
                 </Link>
@@ -286,7 +316,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                   <Link 
                     href={profile?.role === 'SELLER' ? '/seller' : '/buyer'} 
                     className="flex items-center py-3 px-4 text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-xl transition-all font-medium"
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={closeMobileMenu}
                   >
                     Dashboard
                   </Link>
@@ -295,27 +325,19 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                       <Link 
                         href="/admin" 
                         className="flex items-center py-3 px-4 text-rose-500 bg-rose-500/5 rounded-xl transition-all font-bold"
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={closeMobileMenu}
                       >
                         <ShieldCheck className="h-4 w-4 mr-2" />
                         Admin Panel
                       </Link>
                     </div>
                   )}
-                  <Link 
-                    href="/cart" 
-                    className="flex items-center justify-between py-3 px-4 text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-xl transition-all font-medium"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <span>My Cart</span>
-                    {totalItems > 0 && <Badge className="bg-primary text-white">{totalItems}</Badge>}
-                  </Link>
                   <Button
                     variant="outline"
                     className="w-full rounded-sm py-6 mt-4 border-destructive/20 text-destructive hover:bg-destructive/5 uppercase font-bold text-[11px] tracking-widest"
                     onClick={() => {
                       handleLogout();
-                      setIsMenuOpen(false);
+                      closeMobileMenu();
                     }}
                   >
                     Logout
@@ -327,14 +349,14 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
                     asChild
                     variant="outline"
                     className="w-full rounded-sm py-6 font-bold border-primary/20 text-primary uppercase tracking-widest text-[11px]"
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={closeMobileMenu}
                   >
                     <Link href="/login">Login</Link>
                   </Button>
                   <Button
                     asChild
                     className="w-full rounded-sm py-6 font-bold bg-primary text-white uppercase tracking-widest text-[11px]"
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={closeMobileMenu}
                   >
                     <Link href="/register">Sign Up</Link>
                   </Button>
@@ -344,6 +366,9 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
           </div>
         )}
       </header>
+      
+      {/* Include the Cart Drawer component here at the layout level */}
+      <CartDrawer />
     </>
   );
 }
