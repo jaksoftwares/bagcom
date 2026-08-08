@@ -8,10 +8,12 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProductBySlug(params.slug);
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || '';
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Bagcom';
 
   if (!product) {
     return {
-      title: 'Product Not Found | Bagcom',
+      title: `Product Not Found | ${appName}`,
       description: 'The product you are looking for does not exist.',
     };
   }
@@ -19,13 +21,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const primaryImage = product.images?.[0]?.image_url || product.image || '/placeholder-product.jpg';
   
   return {
-    title: `${product.title} | Bagcom`,
-    description: product.description || `Buy ${product.title} securely on Bagcom.`,
+    title: `${product.title} | ${appName}`,
+    description: product.description || `Buy ${product.title} securely on ${appName}.`,
     openGraph: {
-      title: `${product.title} | Bagcom`,
-      description: product.description || `Buy ${product.title} securely on Bagcom.`,
-      url: `https://bagcom.vercel.app/product/${params.slug}`,
-      siteName: 'Bagcom',
+      title: `${product.title} | ${appName}`,
+      description: product.description || `Buy ${product.title} securely on ${appName}.`,
+      url: `${appUrl}/product/${params.slug}`,
+      siteName: appName,
       images: [
         {
           url: primaryImage,
@@ -39,8 +41,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${product.title} | Bagcom`,
-      description: product.description || `Buy ${product.title} securely on Bagcom.`,
+      title: `${product.title} | ${appName}`,
+      description: product.description || `Buy ${product.title} securely on ${appName}.`,
       images: [primaryImage],
     },
   };
@@ -55,6 +57,9 @@ export default async function ProductPage({ params }: Props) {
 
   const primaryImage = product.images?.[0]?.image_url || product.image || '';
 
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || '';
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Bagcom';
+
   // Generate JSON-LD Structured Data
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -64,14 +69,14 @@ export default async function ProductPage({ params }: Props) {
     description: product.description || `Buy ${product.title} securely.`,
     offers: {
       '@type': 'Offer',
-      url: `https://bagcom.vercel.app/product/${params.slug}`,
+      url: `${appUrl}/product/${params.slug}`,
       priceCurrency: 'KES',
       price: product.price,
       itemCondition: 'https://schema.org/UsedCondition',
       availability: product.is_available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       seller: {
         '@type': 'Organization',
-        name: 'Bagcom Verified Seller'
+        name: `${appName} Verified Seller`
       }
     }
   };

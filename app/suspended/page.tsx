@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import Logo from '@/components/shared/Logo';
 
+const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'support@bagcom.com';
+
 export default function SuspendedPage() {
   const router = useRouter();
 
@@ -49,7 +51,7 @@ export default function SuspendedPage() {
         <div className="space-y-4 pt-4">
           <Button 
             className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold h-14 rounded-2xl transition-all shadow-lg shadow-slate-200 group"
-            onClick={() => window.location.href = 'mailto:support@bagcom.com'}
+            onClick={() => window.location.href = `mailto:${SUPPORT_EMAIL}`}
           >
             Appeal This Decision <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Button>
@@ -65,7 +67,7 @@ export default function SuspendedPage() {
 
       <div className="mt-12 flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest">
          <Mail className="h-3.5 w-3.5" />
-         Need help? contact support@bagcom.com
+         Need help? contact {SUPPORT_EMAIL}
       </div>
     </div>
   );

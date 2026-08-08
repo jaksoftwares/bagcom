@@ -157,7 +157,7 @@ export async function POST(request: Request) {
             <p><strong>Reason:</strong> ${reason}</p>
             <p><strong>Description:</strong> ${description}</p>
             <hr />
-            <a href="https://bagcom.dovepeakdigital.com/admin/disputes">Resolve in Admin Dashboard</a>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL || ''}/admin/disputes">Resolve in Admin Dashboard</a>
           `
         });
       }

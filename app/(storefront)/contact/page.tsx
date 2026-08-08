@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
+const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'support@bagcom.com';
+
 function ContactPageContent() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
@@ -89,7 +91,7 @@ function ContactPageContent() {
                     </div>
                     <div className="space-y-1">
                        <h4 className="font-bold text-gray-900">Email Support</h4>
-                       <p className="text-sm text-gray-500 font-medium">support@bagcom.co.ke</p>
+                       <p className="text-sm text-gray-500 font-medium">{SUPPORT_EMAIL}</p>
                        <p className="text-[10px] text-primary font-bold uppercase tracking-widest pt-1">Response within 2 hours</p>
                     </div>
                  </div>
