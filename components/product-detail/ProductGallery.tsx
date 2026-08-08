@@ -46,7 +46,8 @@ export default function ProductGallery({ images, title, condition, discount }: P
           alt={title}
           fill
           className={`object-cover transition-opacity duration-300 ${showMagnifier ? 'opacity-0' : 'opacity-100'}`}
-          priority
+          priority={true}
+          sizes="(max-width: 768px) 100vw, 50vw"
         />
         
         {/* Zoomed Background overlay for magnifier */}

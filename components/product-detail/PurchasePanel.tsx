@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 
 interface PurchasePanelProps {
   product: any;
-  onAddToCart: () => void;
+  onAddToCart: (e: React.MouseEvent) => void;
   onBuyNow: () => void;
   isAvailable: boolean;
 }
@@ -57,7 +57,7 @@ export default function PurchasePanel({ product, onAddToCart, onBuyNow, isAvaila
         <Button 
           disabled={!isAvailable}
           variant="outline"
-          onClick={onAddToCart}
+          onClick={(e) => onAddToCart(e)}
           className="w-full h-12 rounded-md border-border/60 hover:bg-muted/5 text-foreground font-bold uppercase tracking-widest text-[10px] transition-all"
         >
           <ShoppingCart className="h-4 w-4 mr-2" /> Add to cart

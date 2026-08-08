@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { useCartAnimation } from '@/hooks/useCartAnimation';
 
 interface QuickViewModalProps {
   product: any;
@@ -19,7 +20,8 @@ interface QuickViewModalProps {
 
 export default function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps) {
   const { toast } = useToast();
-  const addToCart = useCartStore(state => state.addToCart);
+  const { addToCart } = useCartStore();
+  const { triggerCartAnimation } = useCartAnimation();
   
   if (!product) return null;
 
@@ -30,7 +32,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : 0;
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e?: React.MouseEvent) => {
     addToCart({
       id: product.id,
       name: product.title,
@@ -39,6 +41,9 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
       seller: product.seller?.first_name || 'Verified Seller',
       category: categoryName
     });
+    
+    if (e) triggerCartAnimation(e, primaryImage);
+
     toast({ 
       title: "Added to cart", 
       description: `${product.title} has been added to your cart.`
@@ -123,11 +128,8 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                </div>
 
                <div className="mt-10 space-y-4">
-                  <Button 
-                     onClick={handleAddToCart}
-                     className="w-full h-14 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all text-base gap-2"
-                  >
-                     <ShoppingCart className="h-5 w-5" /> Add to Cart
+                  <Button onClick={(e) => handleAddToCart(e)} className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg text-sm shadow-md transition-all">
+                     <ShoppingCart className="h-4 w-4 mr-2" /> Add to cart
                   </Button>
                   <Link href={`/product/${product.slug}`} className="block w-full">
                      <Button 

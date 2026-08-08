@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { getCurrentUser } from '@/services/auth/authService';
 import { Badge } from '@/components/ui/badge';
 import QuickViewModal from '@/components/products/QuickViewModal';
+import { useCartAnimation } from '@/hooks/useCartAnimation';
 
 interface ProductCardProps {
   product: any;
@@ -24,7 +25,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, layout = 'grid' }: ProductCardProps) {
   const { toast } = useToast();
-  const addToCart = useCartStore(state => state.addToCart);
+  const { addToCart } = useCartStore();
+  const { triggerCartAnimation } = useCartAnimation();
   const isGrid = layout === 'grid';
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
@@ -90,6 +92,10 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
       seller: product.seller?.first_name || 'Verified Seller',
       category: categoryName
     });
+    
+    // Trigger flying animation
+    triggerCartAnimation(e, primaryImage);
+
     toast({ 
       title: "Added to cart", 
       description: `${product.title} has been added.`

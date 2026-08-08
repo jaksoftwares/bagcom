@@ -147,6 +147,8 @@ export default function Hero() {
                                 alt={slide.title}
                                 fill
                                 className="object-cover"
+                                priority={index === 0} // Only prioritize the first slide
+                                sizes="(max-width: 768px) 100vw, 50vw"
                               />
                               {/* Gradient fade to blend image with background */}
                               <div className="absolute inset-0 bg-gradient-to-r from-background to-transparent" />
