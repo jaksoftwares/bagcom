@@ -17,6 +17,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import ProductCard from '@/components/products/ProductCard';
 
 export default function CategoryPage() {
   const params = useParams();
@@ -107,44 +108,9 @@ export default function CategoryPage() {
              <p className="text-slate-500">We couldn't find any items in this category right now.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
             {products.map((product) => (
-              <Link key={product.id} href={`/product/${product.id}`} className="group">
-                <Card className="border-none shadow-soft hover:shadow-xl transition-all duration-500 rounded-[2rem] overflow-hidden bg-white">
-                  <div className="aspect-[4/5] relative overflow-hidden bg-slate-50">
-                    {product.images?.[0] ? (
-                      <img 
-                        src={product.images[0].image_url} 
-                        alt={product.title}
-                        className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center text-slate-200">
-                        <Package className="h-12 w-12" />
-                      </div>
-                    )}
-                    <Badge className="absolute top-4 right-4 bg-white/90 backdrop-blur text-slate-900 border-none font-bold text-[10px]">
-                      {product.condition}
-                    </Badge>
-                  </div>
-                  <CardContent className="p-6 space-y-4">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-black text-primary uppercase tracking-widest">{categoryName}</p>
-                      <h3 className="font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-1">{product.title}</h3>
-                    </div>
-                    <div className="flex justify-between items-end">
-                       <p className="text-xl font-black text-slate-900">KSh {product.price.toLocaleString()}</p>
-                       <div className="flex items-center gap-1 text-amber-500">
-                          <Star className="h-3 w-3 fill-current" />
-                          <span className="text-[10px] font-bold text-slate-400">4.9</span>
-                       </div>
-                    </div>
-                    <Button className="w-full rounded-2xl font-bold text-xs gap-2 bg-slate-900 hover:bg-primary transition-all">
-                       <ShoppingBag className="h-4 w-4" /> View Details
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Link>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         )}

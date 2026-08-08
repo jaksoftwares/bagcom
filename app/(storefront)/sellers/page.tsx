@@ -126,7 +126,7 @@ export default function SellersPage() {
         </main>
 
         {/* Footer */}
-        <Footer />
+        
       </div>
     </StorefrontLayout>
   );

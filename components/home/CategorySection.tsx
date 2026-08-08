@@ -49,16 +49,16 @@ export default function CategorySection() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {isLoading ? (
-            [...Array(4)].map((_, i) => (
-              <div key={i} className="aspect-[4/3] bg-muted/20 animate-pulse rounded-md" />
+            [...Array(5)].map((_, i) => (
+              <div key={i} className="aspect-square bg-muted/20 animate-pulse rounded-md" />
             ))
           ) : (
             categories.slice(0, 8).map((category) => (
               <Link key={category.id} href={`/products?category=${category.id}`}>
                 <Card className="group border border-border/40 shadow-none hover:shadow-subtle transition-all duration-300 cursor-pointer overflow-hidden rounded-md bg-white">
-                  <div className="relative aspect-[4/3] bg-muted/20">
+                  <div className="relative aspect-square bg-muted/20">
                     <img 
                       src={categoryImages[category.slug] || categoryImages['electronics']} 
                       alt={category.name}

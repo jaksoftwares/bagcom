@@ -85,21 +85,21 @@ export default function CategoriesPage() {
 
         {/* Categories Grid - Functional, Restrained Cards */}
         {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {[...Array(10)].map((_, i) => (
-              <div key={i} className="aspect-[3/4] bg-gray-200 animate-pulse rounded-md" />
+              <div key={i} className="aspect-square bg-gray-200 animate-pulse rounded-md" />
             ))}
           </div>
         ) : (
-          <div className={`grid gap-5 ${
+          <div className={`grid gap-4 ${
             viewMode === 'grid' 
-              ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5' 
+              ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5' 
               : 'grid-cols-1'
           }`}>
             {categories.map((category) => (
               <Link key={category.id} href={`/products?category=${category.id}`}>
                 <Card className={`group bg-white border border-gray-200 hover:border-gray-300 transition-all shadow-none hover:shadow-sm rounded-lg overflow-hidden h-full ${viewMode === 'list' ? 'flex items-center gap-6 p-4' : ''}`}>
-                  <div className={`${viewMode === 'list' ? 'h-24 w-32 shrink-0' : 'aspect-[4/3]'} overflow-hidden bg-gray-100`}>
+                  <div className={`${viewMode === 'list' ? 'h-24 w-32 shrink-0' : 'aspect-square'} overflow-hidden bg-gray-100`}>
                     <img 
                       src={categoryImages[category.slug] || categoryImages['electronics']} 
                       alt={category.name}
@@ -156,7 +156,7 @@ export default function CategoriesPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

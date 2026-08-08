@@ -56,8 +56,8 @@ export default function NewProductsSection() {
 
         {isLoading ? (
           <div className="flex gap-4 overflow-hidden">
-            {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="min-w-0 shrink-0 grow-0 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 animate-pulse bg-white rounded-2xl h-[360px] border border-border/40" />
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <div key={i} className="min-w-0 shrink-0 grow-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 2xl:basis-1/6 animate-pulse bg-white rounded-2xl h-[300px] border border-border/40" />
             ))}
           </div>
         ) : products.length > 0 ? (
@@ -70,7 +70,7 @@ export default function NewProductsSection() {
           >
             <CarouselContent className="-ml-4">
               {products.map((product) => (
-                <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+                <CarouselItem key={product.id} className="pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 2xl:basis-1/6">
                   <ProductCard 
                     product={{
                       ...product,
