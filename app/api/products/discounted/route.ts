@@ -16,9 +16,28 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
     
-    // As a fallback for development/testing if no products have original_price set,
-    // we can return the regular products. But since we want to be accurate, we'll return what we got.
-    return NextResponse.json({ products: data || [] });
+    if (!data || data.length === 0) {
+      return NextResponse.json({ products: [] });
+    }
+
+    // Fetch relations (images and categories) for these products
+    const productIds = data.map((p: any) => p.id);
+    const { data: relations } = await supabase
+      .from('products')
+      .select('id, images:product_images(image_url), category:categories(name)')
+      .in('id', productIds);
+
+    // Merge relations back into the products
+    const enrichedProducts = data.map((product: any) => {
+      const relation = relations?.find((r: any) => r.id === product.id);
+      return {
+        ...product,
+        images: relation?.images || [],
+        category: relation?.category || { name: 'General' }
+      };
+    });
+    
+    return NextResponse.json({ products: enrichedProducts });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

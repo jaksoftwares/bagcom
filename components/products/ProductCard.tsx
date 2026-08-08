@@ -140,17 +140,6 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
 
           <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
             <button 
-              onClick={(e) => {
-                 e.preventDefault();
-                 e.stopPropagation();
-                 setIsQuickViewOpen(true);
-              }}
-              className="p-2 rounded-full shadow-sm transition-all bg-white/90 backdrop-blur text-muted-foreground hover:text-primary hover:bg-white opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0"
-              title="Quick View"
-            >
-              <Eye className="h-4 w-4" />
-            </button>
-            <button 
               onClick={handleWishlist}
               className={`p-2 rounded-full shadow-sm transition-all ${
                 isWishlisted 
@@ -162,13 +151,23 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
             </button>
           </div>
 
-          {/* Quick Add To Cart Overlay */}
-          <div className="absolute bottom-0 inset-x-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
+          {/* Action Buttons (Slide up on hover) */}
+          <div className="absolute inset-x-3 bottom-3 z-20 flex flex-col gap-2 translate-y-[130%] group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out">
+             <button
+                onClick={(e) => {
+                   e.preventDefault();
+                   e.stopPropagation();
+                   setIsQuickViewOpen(true);
+                }}
+                className="w-full bg-white/95 backdrop-blur-sm text-foreground hover:bg-primary hover:text-white font-bold text-[11px] uppercase tracking-widest py-2.5 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2"
+             >
+                <Eye className="h-4 w-4" /> Quick View
+             </button>
              <button 
                 onClick={handleAddToCart}
-                className="w-full bg-white/95 backdrop-blur-sm hover:bg-primary hover:text-white text-foreground font-bold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-2 transition-colors text-sm"
+                className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-[11px] uppercase tracking-widest py-2.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-colors"
              >
-                <ShoppingCart className="h-4 w-4" /> Quick Add
+                <ShoppingCart className="h-4 w-4" /> Add to Cart
              </button>
           </div>
         </div>

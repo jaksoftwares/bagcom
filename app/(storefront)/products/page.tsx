@@ -50,7 +50,7 @@ export default function BrowseProductsPage() {
   const pageParam = searchParams.get('page');
   
   const currentPage = pageParam ? parseInt(pageParam) : 1;
-  const limit = 12;
+  const limit = 24;
 
   // Load trending and new arrivals once
   useEffect(() => {
