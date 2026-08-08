@@ -21,6 +21,11 @@ export async function GET(request: Request) {
     const sellerId = searchParams.get('sellerId');
     const sellerView = searchParams.get('sellerView') === 'true';
     
+    const sort = searchParams.get('sort');
+    const condition = searchParams.get('condition');
+    const freeShipping = searchParams.get('freeShipping') === 'true';
+    const escrowProtected = searchParams.get('escrowProtected') === 'true';
+
     const supabase = createServerClient();
     
     let query = supabase
@@ -40,31 +45,40 @@ export async function GET(request: Request) {
       if (statusParam === 'DRAFT') query = query.eq('is_available', false);
     }
 
-    if (sellerId) {
-      query = query.eq('seller_id', sellerId);
+    if (sellerId) query = query.eq('seller_id', sellerId);
+    if (category) query = query.eq('category_id', category);
+    if (location) query = query.eq('location_id', location);
+    if (search) query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+    if (minPrice) query = query.gte('price', parseFloat(minPrice));
+    if (maxPrice) query = query.lte('price', parseFloat(maxPrice));
+    
+    if (condition) {
+       const conditions = condition.split(',');
+       query = query.in('condition', conditions);
     }
-
-    if (category) {
-      query = query.eq('category_id', category);
+    
+    if (freeShipping) query = query.eq('free_shipping', true);
+    
+    // Custom sort logic
+    if (sort) {
+       switch(sort) {
+          case 'price_asc':
+             query = query.order('price', { ascending: true });
+             break;
+          case 'price_desc':
+             query = query.order('price', { ascending: false });
+             break;
+          case 'popular':
+             query = query.order('view_count', { ascending: false, nullsFirst: false });
+             break;
+          case 'newest':
+          default:
+             query = query.order('created_at', { ascending: false });
+             break;
+       }
+    } else {
+       query = query.order('created_at', { ascending: false });
     }
-
-    if (location) {
-      query = query.eq('location_id', location);
-    }
-
-    if (search) {
-      query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
-    }
-
-    if (minPrice) {
-      query = query.gte('price', parseFloat(minPrice));
-    }
-
-    if (maxPrice) {
-      query = query.lte('price', parseFloat(maxPrice));
-    }
-
-    query = query.order('created_at', { ascending: false });
 
     // Pagination
     if (page && limit) {

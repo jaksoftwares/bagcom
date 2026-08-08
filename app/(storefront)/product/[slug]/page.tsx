@@ -8,14 +8,12 @@ import {
   ChevronRight,
   ShieldCheck,
   ShoppingBag,
-  Zap,
-  Info
+  Zap
 } from 'lucide-react';
 import Link from 'next/link';
 
 // Layout & Navigation
 import StorefrontLayout from '@/components/layout/StorefrontLayout';
-import Header from '@/components/navigation/Header';
 import Footer from '@/components/navigation/Footer';
 
 // Product Detail Components
@@ -23,10 +21,15 @@ import ProductGallery from '@/components/product-detail/ProductGallery';
 import ProductHeader from '@/components/product-detail/ProductHeader';
 import SellerCard from '@/components/product-detail/SellerCard';
 import EscrowModule from '@/components/product-detail/EscrowModule';
-import ProductTabs from '@/components/product-detail/ProductTabs';
 import PurchasePanel from '@/components/product-detail/PurchasePanel';
 import MobileStickyBar from '@/components/product-detail/MobileStickyBar';
 import ProductCard from '@/components/products/ProductCard';
+
+// Phase 3 Components
+import ProductVariants from '@/components/product-detail/ProductVariants';
+import UrgencyAndShipping from '@/components/product-detail/UrgencyAndShipping';
+import ProductReviews from '@/components/product-detail/ProductReviews';
+import FrequentlyBoughtTogether from '@/components/product-detail/FrequentlyBoughtTogether';
 
 // Services & Context
 import { useCartStore } from '@/store/useCartStore';
@@ -43,11 +46,13 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [sellerProducts, setSellerProducts] = useState<Product[]>([]);
-  const [trendingProducts, setTrendingProducts] = useState<Product[]>([]);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  
+  // Variant selection state
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
 
   useEffect(() => {
     async function loadData() {
@@ -62,16 +67,25 @@ export default function ProductDetail() {
         if (data) {
           setProduct(data);
           
-          // Parallel fetch for all recommendation sections
-          const [related, sellerItems, trending] = await Promise.all([
+          // Initial variant selection (select first option of each variant by default)
+          const initialVariants: Record<string, string> = {};
+          if (data.variants && Array.isArray(data.variants)) {
+             data.variants.forEach((v: any) => {
+               if (v.name && v.options && v.options.length > 0) {
+                 initialVariants[v.name] = v.options[0];
+               }
+             });
+          }
+          setSelectedVariants(initialVariants);
+
+          // Parallel fetch for recommendation sections
+          const [related, sellerItems] = await Promise.all([
             getProducts({ category_id: data.category_id || undefined, limit: 5 }),
-            getProducts({ sellerId: data.seller_id, limit: 5 }),
-            getProducts({ limit: 12 }) 
+            getProducts({ sellerId: data.seller_id, limit: 5 })
           ]);
 
           setRelatedProducts(related.filter(p => p.id !== data.id).slice(0, 4));
           setSellerProducts(sellerItems.filter(p => p.id !== data.id).slice(0, 4));
-          setTrendingProducts(trending.filter(p => p.id !== data.id));
 
           // Track View
           if (user && data.id) {
@@ -98,14 +112,20 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (!product) return;
+    
+    // Construct variant string
+    const variantParts = Object.entries(selectedVariants).map(([k, v]) => `${k}: ${v}`);
+    const variantName = variantParts.length > 0 ? ` - ${variantParts.join(', ')}` : '';
+
     addToCart({
-      id: product.id,
-      name: product.title,
+      id: product.id, // For a real app, variant id would be appended
+      name: product.title + variantName,
       price: product.price,
-      image: product.images?.[0]?.image_url || '',
-      seller: product.seller?.first_name ? `${product.seller.first_name} ${product.seller.last_name || ''}`.trim() : 'Verified Seller',
+      image: product.images?.[0]?.image_url || product.image || '/placeholder-product.jpg',
+      seller: product.seller?.first_name || 'Verified Seller',
       category: product.category?.name
     });
+    
     toast({ 
       title: "Added to cart", 
       description: "Item successfully added to your shopping cart."
@@ -156,15 +176,19 @@ export default function ProductDetail() {
     router.push(`/chat?seller_id=${product.seller_id}&product_id=${product.id}`);
   };
 
+  const handleVariantSelect = (name: string, option: string) => {
+     setSelectedVariants(prev => ({ ...prev, [name]: option }));
+  };
+
   if (isLoading) {
     return (
       <StorefrontLayout>
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-background">
           <div className="container mx-auto px-4 py-12 space-y-8">
-            <div className="h-8 w-64 bg-slate-100 animate-pulse rounded-lg" />
+            <div className="h-8 w-64 bg-muted animate-pulse rounded-lg" />
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-               <div className="lg:col-span-7 h-[600px] bg-slate-100 animate-pulse rounded-[2.5rem]" />
-               <div className="lg:col-span-5 h-[600px] bg-slate-100 animate-pulse rounded-[2.5rem]" />
+               <div className="lg:col-span-7 h-[600px] bg-muted animate-pulse rounded-3xl" />
+               <div className="lg:col-span-5 h-[600px] bg-muted animate-pulse rounded-3xl" />
             </div>
           </div>
         </div>
@@ -176,11 +200,11 @@ export default function ProductDetail() {
     return (
       <StorefrontLayout>
         <div className="max-w-7xl mx-auto px-4 py-32 text-center">
-          <AlertCircle className="h-16 w-16 text-slate-300 mx-auto mb-6" />
-          <h1 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">Item Not Found</h1>
-          <p className="text-slate-500 mb-10 max-w-md mx-auto font-medium">This product may have been sold, removed, or the link might be broken.</p>
+          <AlertCircle className="h-16 w-16 text-muted-foreground mx-auto mb-6" />
+          <h1 className="text-3xl font-black text-foreground mb-4 tracking-tight">Item Not Found</h1>
+          <p className="text-muted-foreground mb-10 max-w-md mx-auto font-medium">This product may have been sold, removed, or the link might be broken.</p>
           <Link href="/products">
-            <button className="h-14 px-10 bg-primary text-white font-black rounded-2xl uppercase tracking-widest shadow-xl">Browse All Items</button>
+            <button className="h-14 px-10 bg-primary text-white font-black rounded-xl uppercase tracking-widest shadow-xl">Browse All Items</button>
           </Link>
         </div>
       </StorefrontLayout>
@@ -194,23 +218,23 @@ export default function ProductDetail() {
 
   return (
     <StorefrontLayout>
-      <div className="bg-white min-h-screen pb-24 lg:pb-0">
+      <div className="bg-background min-h-screen pb-24 lg:pb-0">
         <main className="container mx-auto px-4 sm:px-6 py-6 lg:py-12">
           
           {/* Enhanced Breadcrumbs */}
-          <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-10 overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide">
+          <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-8 overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide">
             <Link href="/" className="hover:text-primary transition-colors">Marketplace</Link>
             <ChevronRight className="h-3 w-3 opacity-30" />
             <Link href="/products" className="hover:text-primary transition-colors">Products</Link>
             <ChevronRight className="h-3 w-3 opacity-30" />
-            <span className="text-slate-900">{product.category?.name}</span>
+            <span className="text-foreground">{product.category?.name}</span>
             <ChevronRight className="h-3 w-3 opacity-30" />
-            <span className="text-slate-300 truncate max-w-[200px]">{product.title}</span>
+            <span className="text-muted-foreground/60 truncate max-w-[200px]">{product.title}</span>
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
             
-            {/* LEFT COLUMN: Gallery & Info */}
+            {/* LEFT COLUMN: Gallery & Description */}
             <div className="lg:col-span-7 space-y-12">
                <ProductGallery 
                  images={product.images || []} 
@@ -219,63 +243,106 @@ export default function ProductDetail() {
                  discount={discountPercent}
                />
                
-               <div className="hidden lg:block">
-                  <ProductTabs 
-                    description={product.description || ''}
-                    specifications={product.specifications}
-                    brand={product.brand || undefined}
-                    model={product.model || undefined}
-                  />
+               <FrequentlyBoughtTogether currentProduct={product} />
+
+               {/* Description and Specs Flowing Instead of Tabs */}
+               <div className="pt-8 border-t border-border/40 space-y-8">
+                  <div className="space-y-4">
+                     <h3 className="text-xl font-bold text-foreground">About this item</h3>
+                     <div className="prose prose-sm md:prose-base max-w-none text-muted-foreground">
+                        {product.description ? (
+                           <p className="whitespace-pre-wrap leading-relaxed">{product.description}</p>
+                        ) : (
+                           <p className="italic">No description provided.</p>
+                        )}
+                     </div>
+                  </div>
+
+                  {product.specifications && Object.keys(product.specifications).length > 0 && (
+                     <div className="space-y-4">
+                        <h3 className="text-xl font-bold text-foreground">Specifications</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                           {(product.brand || product.model) && (
+                              <>
+                                {product.brand && (
+                                   <div className="flex justify-between py-2 border-b border-border/30">
+                                      <span className="text-muted-foreground">Brand</span>
+                                      <span className="font-semibold text-foreground">{product.brand}</span>
+                                   </div>
+                                )}
+                                {product.model && (
+                                   <div className="flex justify-between py-2 border-b border-border/30">
+                                      <span className="text-muted-foreground">Model</span>
+                                      <span className="font-semibold text-foreground">{product.model}</span>
+                                   </div>
+                                )}
+                              </>
+                           )}
+                           {Object.entries(product.specifications as Record<string, string>).map(([key, value]) => (
+                             <div key={key} className="flex justify-between py-2 border-b border-border/30">
+                               <span className="text-muted-foreground capitalize">{key.replace(/_/g, ' ')}</span>
+                               <span className="font-semibold text-foreground">{value}</span>
+                             </div>
+                           ))}
+                        </div>
+                     </div>
+                  )}
                </div>
             </div>
 
-            {/* RIGHT COLUMN: Header & Actions (Sticky on Desktop) */}
-            <div className="lg:col-span-5 space-y-8">
-               <ProductHeader 
-                 product={product} 
-                 viewCount={product.view_count}
-                 favoriteCount={product.favorite_count}
-               />
-               
-               <div className="hidden lg:block">
-                 <PurchasePanel 
-                   product={product}
-                   onAddToCart={handleAddToCart}
-                   onBuyNow={handleBuyNow}
-                   isAvailable={isAvailable}
-                 />
-               </div>
-
-               <SellerCard 
-                 seller={product.seller} 
-                 onContact={handleStartChat}
-               />
-
-               <EscrowModule />
-
-               <div className="lg:hidden">
-                  <ProductTabs 
-                    description={product.description || ''}
-                    specifications={product.specifications}
-                    brand={product.brand || undefined}
-                    model={product.model || undefined}
+            {/* RIGHT COLUMN: Action Panel */}
+            <div className="lg:col-span-5 relative">
+               <div className="sticky top-24 space-y-8">
+                  <ProductHeader 
+                    product={product} 
+                    viewCount={product.view_count}
+                    favoriteCount={product.favorite_count}
                   />
+                  
+                  {/* Dynamic Variants */}
+                  <ProductVariants 
+                    variants={product.variants as any} 
+                    onVariantSelect={handleVariantSelect}
+                  />
+
+                  {/* Urgency and Shipping */}
+                  <UrgencyAndShipping product={product} />
+                  
+                  <div className="hidden lg:block">
+                    <PurchasePanel 
+                      product={product}
+                      onAddToCart={handleAddToCart}
+                      onBuyNow={handleBuyNow}
+                      isAvailable={isAvailable}
+                    />
+                  </div>
+
+                  <SellerCard 
+                    seller={product.seller} 
+                    onContact={handleStartChat}
+                  />
+
+                  <EscrowModule />
                </div>
             </div>
           </div>
 
+          {/* REVIEWS SECTION */}
+          <div className="mt-20">
+             <ProductReviews productId={product.id} />
+          </div>
+
           {/* MORE FROM THIS SELLER */}
           {sellerProducts.length > 0 && (
-            <section className="mt-16 space-y-10">
+            <section className="mt-20 space-y-10 border-t border-border/40 pt-16">
                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                   <div className="space-y-3">
                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 rounded-full text-primary font-bold text-[10px] uppercase tracking-widest border border-primary/10">
                         <ShoppingBag className="h-3 w-3" /> Exclusive
                      </div>
                      <h2 className="text-3xl font-bold text-foreground tracking-tight">More from {product.seller?.first_name || 'this seller'}</h2>
-                     <p className="text-muted-foreground font-medium max-w-xl text-sm leading-relaxed">Check out other quality items listed by this verified merchant.</p>
                   </div>
-                  <Link href={`/seller/${product.seller_id}`} className="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest flex items-center gap-2">
+                  <Link href={`/seller/${product.seller_id}`} className="text-sm font-bold text-primary hover:underline flex items-center gap-2">
                      Visit store <ChevronRight className="h-4 w-4" />
                   </Link>
                </div>
@@ -290,16 +357,15 @@ export default function ProductDetail() {
 
           {/* RELATED PRODUCTS SECTION */}
           {relatedProducts.length > 0 && (
-            <section className="mt-16 pt-16 border-t border-border/20 space-y-10">
+            <section className="mt-20 pt-16 border-t border-border/40 space-y-10">
                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                   <div className="space-y-3">
                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 rounded-full text-emerald-600 font-bold text-[10px] uppercase tracking-widest border border-emerald-100">
                         <Zap className="h-3 w-3" /> Similar
                      </div>
                      <h2 className="text-3xl font-bold text-foreground tracking-tight">You may also like</h2>
-                     <p className="text-muted-foreground font-medium max-w-xl text-sm leading-relaxed">Based on your interest in this item, we thought these might also catch your eye.</p>
                   </div>
-                  <Link href={`/categories/${product.category?.slug}`} className="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest flex items-center gap-2">
+                  <Link href={`/categories/${product.category?.slug}`} className="text-sm font-bold text-primary hover:underline flex items-center gap-2">
                      See more items <ChevronRight className="h-4 w-4" />
                   </Link>
                </div>
@@ -311,47 +377,6 @@ export default function ProductDetail() {
                </div>
             </section>
           )}
-
-          {/* TRENDING / DISCOVERY SECTION (AliExpress Experience) */}
-          {trendingProducts.length > 0 && (
-            <section className="mt-16 pt-16 border-t border-border/20 space-y-10">
-               <div className="text-center space-y-3 max-w-2xl mx-auto">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 rounded-full text-amber-600 font-bold text-[10px] uppercase tracking-widest border border-amber-100">
-                     <Zap className="h-3 w-3 fill-current" /> Trending
-                  </div>
-                  <h2 className="text-3xl font-bold text-foreground tracking-tight">Discover more treasures</h2>
-                  <p className="text-muted-foreground font-medium text-sm leading-relaxed">Explore the most popular items across the entire marketplace right now.</p>
-               </div>
-               
-               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 md:gap-8">
-                 {trendingProducts.map(p => (
-                   <ProductCard key={p.id} product={p} />
-                 ))}
-               </div>
-               
-               <div className="text-center pt-8">
-                  <Link href="/products">
-                    <button className="h-12 px-10 border border-border/60 text-foreground font-bold rounded-md uppercase tracking-widest text-[10px] hover:bg-muted/5 transition-all">
-                       View all products
-                    </button>
-                  </Link>
-               </div>
-            </section>
-          )}
-
-          {/* SAFETY TIPS CTA */}
-          <div className="mt-16 p-10 bg-muted/5 rounded-md border border-border/40 flex flex-col md:flex-row items-center gap-10">
-             <div className="h-20 w-20 bg-white rounded-md flex items-center justify-center border border-border/20 shrink-0 shadow-sm">
-                <ShieldCheck className="h-8 w-8 text-primary" />
-             </div>
-             <div className="flex-1 text-center md:text-left space-y-2">
-                <h4 className="text-xl font-bold text-foreground tracking-tight">Shopping safely on Bagcom</h4>
-                <p className="text-muted-foreground font-medium leading-relaxed text-sm">We take your security seriously. Always use our built-in chat and payment systems. Never send money outside the platform and meet in public places for local pickups.</p>
-             </div>
-             <Link href="/safety">
-                <button className="h-11 px-8 border border-border/60 text-foreground font-bold rounded-md uppercase tracking-widest text-[10px] hover:bg-white transition-all">Learn more</button>
-             </Link>
-          </div>
         </main>
       </div>
 

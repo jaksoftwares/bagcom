@@ -2,7 +2,11 @@ import { Database } from '@/types/database';
 
 export type Product = Database['public']['Tables']['products']['Row'] & {
   images?: Database['public']['Tables']['product_images']['Row'][];
+  product_images?: any[];
+  image?: string;
+  variants?: any;
   category?: Database['public']['Tables']['categories']['Row'];
+  original_price?: number | null;
   seller?: {
     id: string;
     first_name: string | null;
@@ -23,6 +27,11 @@ export async function getProducts(options?: {
   minPrice?: string;
   maxPrice?: string;
   limit?: number;
+  page?: number;
+  sort?: string;
+  condition?: string;
+  freeShipping?: boolean;
+  escrowProtected?: boolean;
   sellerId?: string;
 }) {
   const params = new URLSearchParams();
@@ -33,6 +42,11 @@ export async function getProducts(options?: {
   if (options?.minPrice) params.append('minPrice', options.minPrice);
   if (options?.maxPrice) params.append('maxPrice', options.maxPrice);
   if (options?.limit) params.append('limit', options.limit.toString());
+  if (options?.page) params.append('page', options.page.toString());
+  if (options?.sort) params.append('sort', options.sort);
+  if (options?.condition) params.append('condition', options.condition);
+  if (options?.freeShipping) params.append('freeShipping', 'true');
+  if (options?.escrowProtected) params.append('escrowProtected', 'true');
   if (options?.sellerId) params.append('sellerId', options.sellerId);
 
   try {
@@ -41,15 +55,57 @@ export async function getProducts(options?: {
     });
     const data = await response.json();
 
-    if (data.error) {
-      console.error('API Error fetching products:', data.error);
-      return [];
-    }
-
     return data.products as Product[];
   } catch (error) {
     console.error('Fetch error:', error);
     return [];
+  }
+}
+
+export async function getProductsPaginated(options?: {
+  category?: string;
+  category_id?: string;
+  search?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  limit?: number;
+  page?: number;
+  sort?: string;
+  condition?: string;
+  freeShipping?: boolean;
+  escrowProtected?: boolean;
+  sellerId?: string;
+}) {
+  const params = new URLSearchParams();
+  const categoryId = options?.category_id || options?.category;
+  if (categoryId) params.append('category', categoryId);
+  
+  if (options?.search) params.append('search', options.search);
+  if (options?.minPrice) params.append('minPrice', options.minPrice);
+  if (options?.maxPrice) params.append('maxPrice', options.maxPrice);
+  if (options?.limit) params.append('limit', options.limit.toString());
+  if (options?.page) params.append('page', options.page.toString());
+  if (options?.sort) params.append('sort', options.sort);
+  if (options?.condition) params.append('condition', options.condition);
+  if (options?.freeShipping) params.append('freeShipping', 'true');
+  if (options?.escrowProtected) params.append('escrowProtected', 'true');
+  if (options?.sellerId) params.append('sellerId', options.sellerId);
+
+  try {
+    const response = await fetch(`${getBaseUrl()}/api/products?${params.toString()}`, {
+      cache: 'no-store'
+    });
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('API Error fetching products:', data.error);
+      return { products: [], count: 0 };
+    }
+
+    return { products: data.products as Product[], count: data.count as number };
+  } catch (error) {
+    console.error('Fetch error:', error);
+    return { products: [], count: 0 };
   }
 }
 

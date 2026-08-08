@@ -1,17 +1,34 @@
 'use client';
 
-import { X, ShoppingBag, Trash2, Plus, Minus, ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { X, ShoppingBag, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Headphones } from 'lucide-react';
 import { useUIStore } from '@/store/useUIStore';
 import { useCartStore } from '@/store/useCartStore';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getProducts } from '@/services/products/productService';
+import { useToast } from '@/hooks/use-toast';
 
 export default function CartDrawer() {
   const isCartDrawerOpen = useUIStore((state) => state.isCartDrawerOpen);
   const closeCartDrawer = useUIStore((state) => state.closeCartDrawer);
   
-  const { cart, removeFromCart, updateQuantity, getCartTotal } = useCartStore();
+  const { cart, removeFromCart, updateQuantity, getCartTotal, addToCart } = useCartStore();
+  const { toast } = useToast();
+  const [upsells, setUpsells] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (isCartDrawerOpen) {
+      // Fetch some trending cheap products as upsells
+      getProducts({ limit: 4, maxPrice: '5000', sort: 'popular' }).then(data => {
+        // filter out items already in cart
+        const cartIds = cart.map(c => c.id);
+        const filtered = data.filter(p => !cartIds.includes(p.id)).slice(0, 3);
+        setUpsells(filtered);
+      });
+    }
+  }, [isCartDrawerOpen, cart]);
 
   if (!isCartDrawerOpen) return null;
 
@@ -119,6 +136,49 @@ export default function CartDrawer() {
               </div>
             ))
           )}
+
+          {/* Upsells Section */}
+          {cart.length > 0 && upsells.length > 0 && (
+            <div className="pt-6 mt-6 border-t border-border/40">
+               <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">You might also like</h4>
+               <div className="space-y-3">
+                  {upsells.map(product => {
+                     const primaryImage = product.images?.[0]?.image_url || product.product_images?.[0]?.image_url || product.image || '/placeholder-product.jpg';
+                     return (
+                       <div key={product.id} className="flex gap-3 bg-muted/10 p-2 rounded-lg border border-border/40 items-center justify-between">
+                          <div className="flex gap-3 items-center">
+                             <div className="relative h-12 w-12 rounded-md bg-white overflow-hidden shrink-0">
+                                <Image src={primaryImage} alt={product.title} fill className="object-cover" />
+                             </div>
+                             <div>
+                                <h5 className="text-[11px] font-bold text-foreground line-clamp-1 leading-tight max-w-[120px]">{product.title}</h5>
+                                <p className="text-xs font-black text-primary mt-0.5">KSh {product.price.toLocaleString()}</p>
+                             </div>
+                          </div>
+                          <Button 
+                             size="sm" 
+                             variant="outline" 
+                             className="h-7 text-[10px] font-bold uppercase tracking-widest bg-white"
+                             onClick={() => {
+                                addToCart({
+                                   id: product.id,
+                                   name: product.title,
+                                   price: product.price,
+                                   image: primaryImage,
+                                   seller: product.seller?.first_name || 'Verified Seller',
+                                   category: product.category?.name || 'General'
+                                });
+                                toast({ title: "Added to cart", description: `${product.title} has been added.` });
+                             }}
+                          >
+                             Add <Plus className="h-3 w-3 ml-1" />
+                          </Button>
+                       </div>
+                     );
+                  })}
+               </div>
+            </div>
+          )}
         </div>
 
         {/* Footer Actions */}
@@ -150,6 +210,15 @@ export default function CartDrawer() {
                   Checkout <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
+            </div>
+            
+            <div className="flex items-center justify-center gap-4 pt-3 border-t border-border/40 mt-3">
+               <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" /> Secure Checkout
+               </div>
+               <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  <Headphones className="h-3.5 w-3.5 text-amber-500" /> 24/7 Support
+               </div>
             </div>
           </div>
         )}

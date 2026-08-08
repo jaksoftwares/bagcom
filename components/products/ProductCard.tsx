@@ -6,9 +6,8 @@ import {
   MapPin, 
   Star, 
   ShoppingCart, 
-  ShieldCheck, 
-  Eye,
-  Truck
+  ShieldCheck,
+  Eye
 } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
 import Link from 'next/link';
@@ -16,7 +15,7 @@ import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import { getCurrentUser } from '@/services/auth/authService';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import QuickViewModal from '@/components/products/QuickViewModal';
 
 interface ProductCardProps {
   product: any;
@@ -29,10 +28,15 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
   const isGrid = layout === 'grid';
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
-  const displayImage = product.images?.[0]?.image_url || product.product_images?.[0]?.image_url || product.image || '/placeholder-product.jpg';
+  // Safely get primary and secondary images
+  const imagesList = product.images || product.product_images || [];
+  const primaryImage = imagesList[0]?.image_url || product.image || '/placeholder-product.jpg';
+  const secondaryImage = imagesList.length > 1 ? imagesList[1]?.image_url : primaryImage;
+
   const categoryName = product.category?.name || product.categories?.name || product.category || 'General';
-  const sellerName = product.seller?.first_name ? `${product.seller.first_name} ${product.seller.last_name || ''}`.trim() : 'Verified Seller';
   
   const discountPercent = product.original_price 
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
@@ -82,8 +86,8 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
       id: product.id,
       name: product.title,
       price: product.price,
-      image: displayImage,
-      seller: sellerName,
+      image: primaryImage,
+      seller: product.seller?.first_name || 'Verified Seller',
       category: categoryName
     });
     toast({ 
@@ -94,98 +98,120 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
 
   return (
     <div 
-      className={`group relative bg-white border border-border/40 overflow-hidden transition-all duration-300 hover:shadow-subtle ${
-        !isGrid ? 'flex h-48 md:h-56' : 'flex flex-col rounded-md'
+      className={`group relative bg-white flex flex-col transition-all duration-300 hover:-translate-y-1 ${
+        !isGrid ? 'flex-row h-48 md:h-56' : 'h-full'
       }`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <Link href={`/product/${product.slug}`} className="flex-1 flex flex-col no-underline text-inherit">
-        {/* Image Area */}
-        <div className={`relative overflow-hidden bg-muted/20 ${
-          isGrid ? 'aspect-[4/5]' : 'w-48 md:w-56 shrink-0'
+      <Link href={`/product/${product.slug}`} className={`flex-1 flex flex-col no-underline text-inherit ${!isGrid ? 'flex-row w-full' : ''}`}>
+        
+        {/* Image Area - 4:5 Aspect Ratio for Premium feel */}
+        <div className={`relative overflow-hidden bg-muted/10 rounded-2xl ${
+          isGrid ? 'aspect-[4/5] w-full' : 'w-48 md:w-56 shrink-0 h-full'
         }`}>
           <Image 
-            src={displayImage} 
+            src={isHovered ? secondaryImage : primaryImage} 
             alt={product.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className={`object-cover transition-opacity duration-500`}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           
-          {/* Overlay Actions */}
-          <div className="absolute top-2 right-2 flex flex-col gap-1.5 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
-            <button 
-              onClick={handleWishlist}
-              className={`p-2 rounded-md shadow-sm transition-all ${
-                isWishlisted ? 'bg-rose-500 text-white' : 'bg-white text-foreground hover:text-primary'
-              }`}
-            >
-              <Heart className={`h-3.5 w-3.5 ${isWishlisted ? 'fill-current' : ''}`} />
-            </button>
-          </div>
-
-          {/* Condition & Discount Badges */}
-          <div className="absolute top-2 left-2 flex flex-wrap gap-1.5">
+          {/* Top Overlays */}
+          <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
             {discountPercent > 0 && (
-              <Badge className="bg-rose-500 text-white border-none font-bold text-[10px] px-1.5 py-0.5 rounded-sm">
+              <Badge className="bg-rose-500 text-white border-none font-bold text-[10px] px-2 py-0.5 rounded shadow-sm">
                 -{discountPercent}%
               </Badge>
             )}
             {product.condition && (
-              <Badge variant="secondary" className="bg-white/90 text-foreground border-none font-semibold text-[9px] px-1.5 py-0.5 rounded-sm uppercase tracking-wider">
+              <Badge variant="secondary" className="bg-white/95 text-foreground border-none font-bold text-[9px] px-2 py-0.5 rounded shadow-sm uppercase tracking-widest backdrop-blur">
                 {product.condition}
               </Badge>
             )}
           </div>
+
+          <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
+            <button 
+              onClick={(e) => {
+                 e.preventDefault();
+                 e.stopPropagation();
+                 setIsQuickViewOpen(true);
+              }}
+              className="p-2 rounded-full shadow-sm transition-all bg-white/90 backdrop-blur text-muted-foreground hover:text-primary hover:bg-white opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0"
+              title="Quick View"
+            >
+              <Eye className="h-4 w-4" />
+            </button>
+            <button 
+              onClick={handleWishlist}
+              className={`p-2 rounded-full shadow-sm transition-all ${
+                isWishlisted 
+                  ? 'bg-rose-500 text-white' 
+                  : 'bg-white/90 backdrop-blur text-muted-foreground hover:text-rose-500 hover:bg-white opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0'
+              }`}
+            >
+              <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-current' : ''}`} />
+            </button>
+          </div>
+
+          {/* Quick Add To Cart Overlay */}
+          <div className="absolute bottom-0 inset-x-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
+             <button 
+                onClick={handleAddToCart}
+                className="w-full bg-white/95 backdrop-blur-sm hover:bg-primary hover:text-white text-foreground font-bold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-2 transition-colors text-sm"
+             >
+                <ShoppingCart className="h-4 w-4" /> Quick Add
+             </button>
+          </div>
         </div>
 
         {/* Content Area */}
-        <div className="p-4 flex flex-col flex-1">
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{categoryName}</span>
-              <div className="flex items-center gap-1">
-                <Star className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />
-                <span className="text-[10px] font-bold text-foreground">4.8</span>
-              </div>
-            </div>
-
-            <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-snug h-10 group-hover:text-primary transition-colors">
-              {product.title}
-            </h3>
-
-            <div className="flex items-baseline gap-2 pt-1">
-              <span className="text-base font-bold text-foreground">
-                KSh {product.price.toLocaleString()}
-              </span>
-              {product.original_price && (
-                <span className="text-xs text-muted-foreground line-through">
-                  {product.original_price.toLocaleString()}
-                </span>
-              )}
+        <div className={`pt-4 pb-2 flex flex-col flex-1 ${!isGrid ? 'pl-6 pr-4' : ''}`}>
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{categoryName}</span>
+            <div className="flex items-center gap-1">
+              <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+              <span className="text-[11px] font-bold text-foreground">4.8</span>
             </div>
           </div>
 
-          {/* Compact Footer */}
-          <div className="pt-3 mt-3 border-t border-border/30 flex items-center justify-between">
-            <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
-              <MapPin className="h-3 w-3" />
-              <span className="truncate max-w-[80px]">{product.location?.campus || product.location || 'Nairobi'}</span>
+          <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors h-10">
+            {product.title}
+          </h3>
+
+          <div className="flex items-baseline gap-2 mt-2">
+            <span className="text-lg font-bold text-foreground">
+              KSh {product.price.toLocaleString()}
+            </span>
+            {product.original_price && (
+              <span className="text-xs font-medium text-muted-foreground line-through">
+                {product.original_price.toLocaleString()}
+              </span>
+            )}
+          </div>
+
+          <div className="mt-auto pt-3 flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+              <MapPin className="h-3.5 w-3.5" />
+              <span className="truncate max-w-[100px]">{product.location?.campus || product.location || 'Nairobi'}</span>
             </div>
-            <div className="flex items-center gap-1">
-               <ShieldCheck className="h-3 w-3 text-emerald-500" />
-               <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-tighter">Escrow</span>
-            </div>
+            {product.isEscrowProtected !== false && (
+              <div className="flex items-center gap-1">
+                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                 <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-tighter hidden sm:inline-block">Escrow</span>
+              </div>
+            )}
           </div>
         </div>
       </Link>
-      
-      {/* Quick Add Button */}
-      <button 
-        onClick={handleAddToCart}
-        className="absolute bottom-16 right-3 h-9 w-9 bg-primary text-white rounded-md shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 z-10"
-      >
-        <ShoppingCart className="h-4 w-4" />
-      </button>
+
+      <QuickViewModal 
+         product={product}
+         isOpen={isQuickViewOpen}
+         onClose={() => setIsQuickViewOpen(false)}
+      />
     </div>
   );
 }

@@ -24,6 +24,8 @@ import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { usePaymentStatus } from '@/lib/hooks/usePaymentStatus';
 import { useCartStore } from '@/store/useCartStore';
+import CheckoutProgress from '@/components/checkout/CheckoutProgress';
+
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -210,9 +212,10 @@ function CheckoutContent() {
   }
 
   return (
-    <div className="bg-[#F9FAFB] min-h-screen py-12">
+    <div className="bg-[#F9FAFB] min-h-screen py-8">
       <div className="container mx-auto px-4 max-w-5xl">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 mb-8">Secure Checkout</h1>
+        
+        <CheckoutProgress currentStep={awaitingPayment ? 'payment' : 'details'} />
 
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* === LEFT COLUMN: Form === */}
