@@ -159,9 +159,9 @@ export default function BrowseProductsPage() {
                   </div>
                 ) : products.length > 0 ? (
                   <>
-                    <div className={`grid gap-6 md:gap-8 ${
+                    <div className={`grid gap-4 sm:gap-6 ${
                       viewMode === 'grid' 
-                        ? 'grid-cols-2 md:grid-cols-3' 
+                        ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5' 
                         : 'grid-cols-1'
                     }`}>
                       {products.map((product) => (
