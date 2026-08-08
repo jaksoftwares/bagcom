@@ -44,6 +44,10 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : 0;
 
+  // Use real rating if available, otherwise hide
+  const ratingAvg = product.rating_average ?? product.average_rating ?? null;
+  const ratingCount = product.rating_count ?? product.total_reviews ?? null;
+
   const handleWishlist = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -176,10 +180,13 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
         <div className={`pt-3 pb-1 flex flex-col flex-1 ${!isGrid ? 'pl-5 pr-3' : ''}`}>
           <div className="flex items-center justify-between mb-1">
             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{categoryName}</span>
-            <div className="flex items-center gap-1">
-              <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-              <span className="text-[10px] font-bold text-foreground">4.8</span>
-            </div>
+            {ratingAvg !== null && (
+              <div className="flex items-center gap-1">
+                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                <span className="text-[10px] font-bold text-foreground">{Number(ratingAvg).toFixed(1)}</span>
+                {ratingCount ? <span className="text-[9px] text-muted-foreground">({ratingCount})</span> : null}
+              </div>
+            )}
           </div>
 
           <h3 className="text-xs font-semibold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors h-8 mt-0.5">

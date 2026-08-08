@@ -166,9 +166,10 @@ export async function getCategoryBySlug(slug: string) {
   }
 }
 
-export async function getSellerById(userId: string) {
+export async function getSellerById(sellerId: string) {
   try {
-    const response = await fetch(`${getBaseUrl()}/api/users/profile?userId=${userId}`, {
+    // Use the new dedicated seller endpoint that returns real stats via RPC
+    const response = await fetch(`${getBaseUrl()}/api/sellers/${sellerId}`, {
       cache: 'no-store'
     });
     const data = await response.json();
@@ -178,7 +179,7 @@ export async function getSellerById(userId: string) {
       return null;
     }
 
-    return data.user;
+    return data.seller;
   } catch (error) {
     console.error('Fetch error:', error);
     return null;

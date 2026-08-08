@@ -337,7 +337,7 @@ export default function ProductPageClient() {
 
           {/* REVIEWS SECTION */}
           <div className="mt-20">
-             <ProductReviews productId={product.id} />
+             <ProductReviews productId={product.id} currentUserId={currentUser?.id ?? null} />
           </div>
 
           {/* MORE FROM THIS SELLER */}
