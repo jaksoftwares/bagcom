@@ -174,29 +174,25 @@ export async function getUserProfile(userId: string) {
     
   if (error) throw error;
 
-  // For legacy users who signed up before the trigger was added,
-  // they might not have a public.users row. We should return a default fallback 
-  // or attempt to insert them.
+  // If the profile is missing (e.g. if the signup trigger missed it), 
+  // securely sync it from the server which has admin privileges to read auth.users.
   if (!data) {
-    const fallbackProfile = {
-      id: userId,
-      role: 'BUYER',
-      is_active: true,
-      seller_status: 'APPROVED'
-    };
+    try {
+      const syncRes = await fetch('/api/auth/sync-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+      
+      if (syncRes.ok) {
+        const syncData = await syncRes.json();
+        if (syncData.user) return syncData.user;
+      }
+    } catch (e) {
+      console.error('Failed to sync missing profile', e);
+    }
     
-    // Best-effort insert to fix their missing profile
-    const { data: newData, error: insertError } = await supabase
-      .from('users')
-      .upsert({
-        id: userId,
-        email: 'legacy_user@placeholder.com', // Will be ignored by DB if email is required, but we can try to fetch auth.users email if needed. Actually just returning fallback is safer.
-        role: 'BUYER'
-      }, { onConflict: 'id' })
-      .select()
-      .maybeSingle();
-
-    return newData || fallbackProfile;
+    return null;
   }
 
   return data;
