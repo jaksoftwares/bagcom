@@ -30,7 +30,11 @@ import {
   DropdownMenuItem, 
   DropdownMenuLabel, 
   DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal
 } from "@/components/ui/dropdown-menu";
 import { useToast } from '@/hooks/use-toast';
 import UserDetailDrawer from '@/components/admin/UserDetailDrawer';
@@ -235,6 +239,36 @@ export default function UserManagement() {
                                     <Mail className="h-4 w-4" /> Email
                                   </DropdownMenuItem>
                                  
+                                 <DropdownMenuSeparator className="bg-slate-100 my-1" />
+                                 
+                                 <DropdownMenuSub>
+                                   <DropdownMenuSubTrigger className="gap-3 px-3 py-2 rounded-md focus:bg-slate-100 focus:text-slate-900 transition-all cursor-pointer">
+                                     <ShieldAlert className="h-4 w-4" /> Change Role
+                                   </DropdownMenuSubTrigger>
+                                   <DropdownMenuPortal>
+                                     <DropdownMenuSubContent className="bg-white border border-slate-200 text-slate-700 rounded-lg p-1.5 shadow-lg w-40">
+                                       <DropdownMenuItem 
+                                         className="cursor-pointer focus:bg-slate-100 focus:text-slate-900 transition-all"
+                                         onClick={() => handleAccountAction(user.id, { role: 'ADMIN' }, 'changed to Admin')}
+                                       >
+                                         Admin
+                                       </DropdownMenuItem>
+                                       <DropdownMenuItem 
+                                         className="cursor-pointer focus:bg-slate-100 focus:text-slate-900 transition-all"
+                                         onClick={() => handleAccountAction(user.id, { role: 'SELLER' }, 'changed to Seller')}
+                                       >
+                                         Seller
+                                       </DropdownMenuItem>
+                                       <DropdownMenuItem 
+                                         className="cursor-pointer focus:bg-slate-100 focus:text-slate-900 transition-all"
+                                         onClick={() => handleAccountAction(user.id, { role: 'BUYER' }, 'changed to Buyer')}
+                                       >
+                                         Buyer
+                                       </DropdownMenuItem>
+                                     </DropdownMenuSubContent>
+                                   </DropdownMenuPortal>
+                                 </DropdownMenuSub>
+
                                  <DropdownMenuSeparator className="bg-slate-100 my-1" />
                                  
                                  {user.is_active ? (
