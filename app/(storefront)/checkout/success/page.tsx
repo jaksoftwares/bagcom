@@ -3,7 +3,8 @@
 import { CheckCircle2, ShoppingBag, ArrowRight, Package, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useSearchParams, Suspense } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
