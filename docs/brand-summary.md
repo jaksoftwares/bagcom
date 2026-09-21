@@ -29,6 +29,10 @@ Brand Name
 
 Bagcom
 
+Brand Owner
+
+Dovepeak Technologies
+
 Brand Positioning
 
 Bagcom is positioned as:

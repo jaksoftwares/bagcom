@@ -1,6 +1,6 @@
 'use client';
 
-import { Facebook, Twitter, Instagram, ShieldCheck, Mail, Phone, MapPin, Send, ArrowRight, Lock } from 'lucide-react';
+import { Facebook, Twitter, Instagram, ShieldCheck, Mail, Phone, MapPin, Send, ArrowRight, Lock, Globe } from 'lucide-react';
 import Link from 'next/link';
 import Logo from '../shared/Logo';
 import { Button } from '@/components/ui/button';
@@ -41,16 +41,27 @@ export default function Footer() {
             <p className="text-white/60 text-sm leading-relaxed max-w-sm">
               A modern trusted marketplace for buying and selling second-hand goods locally. Built with security and community in mind.
             </p>
+            <p className="text-white/40 text-xs leading-relaxed max-w-sm mt-3">
+              Bagcom is a product by <span className="text-white/70 font-semibold">Dovepeak Technologies</span>.
+            </p>
             
             {/* Contact Info */}
             <div className="space-y-4 pt-2">
               <div className="flex items-center gap-3 text-white/60 text-sm">
                  <Phone className="h-4 w-4 text-primary" />
-                 <span>+254 700 000 000</span>
+                 <span>+254 755 433 050</span>
+              </div>
+              <div className="flex items-center gap-3 text-white/60 text-sm">
+                 <Mail className="h-4 w-4 text-primary" />
+                 <span>bagcom52@gmail.com</span>
               </div>
               <div className="flex items-center gap-3 text-white/60 text-sm">
                  <MapPin className="h-4 w-4 text-primary" />
                  <span>Nairobi, Kenya</span>
+              </div>
+              <div className="flex items-center gap-3 text-white/60 text-sm">
+                 <Globe className="h-4 w-4 text-primary" />
+                 <span><a href="https://dovepeakdigital.com" target="_blank" rel="noopener" className="hover:text-white transition-colors">Dovepeak Technologies</a></span>
               </div>
             </div>
 
@@ -97,23 +108,23 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-20 pt-8 border-t border-white/10 flex flex-col lg:flex-row justify-between items-center gap-6">
-          <div className="flex flex-col items-center lg:items-start gap-2">
-            <p className="text-white/40 text-[11px] font-medium">
-              © {new Date().getFullYear()} Bagcom Marketplace. All rights reserved.
-            </p>
-            <div className="flex items-center gap-2 text-white/30 text-[10px]">
+<div className="mt-20 pt-8 border-t border-white/10 flex flex-col lg:flex-row justify-between items-center gap-6">
+            <div className="flex flex-col items-center lg:items-start gap-2">
+              <p className="text-white/40 text-[11px] font-medium">
+                © {new Date().getFullYear()} Bagcom Marketplace by Dovepeak Technologies. All rights reserved.
+              </p>
+              <div className="flex items-center gap-2 text-white/30 text-[10px]">
                <Lock className="h-3 w-3" /> Secure SSL Encrypted Checkout
+              </div>
+            </div>
+            
+            {/* Trust Badges */}
+            <div className="flex items-center gap-4 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+               <img src="https://upload.wikimedia.org/wikipedia/commons/1/15/M-PESA_LOGO-01.svg" alt="M-Pesa" className="h-6 object-contain bg-white/90 px-2 py-1 rounded" />
+               <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6 object-contain bg-white/90 px-2 py-1 rounded" />
+               <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-6 object-contain bg-white/90 px-2 py-1 rounded" />
             </div>
           </div>
-          
-          {/* Trust Badges */}
-          <div className="flex items-center gap-4 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-             <img src="https://upload.wikimedia.org/wikipedia/commons/1/15/M-PESA_LOGO-01.svg" alt="M-Pesa" className="h-6 object-contain bg-white/90 px-2 py-1 rounded" />
-             <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6 object-contain bg-white/90 px-2 py-1 rounded" />
-             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-6 object-contain bg-white/90 px-2 py-1 rounded" />
-          </div>
-        </div>
       </div>
     </footer>
   );

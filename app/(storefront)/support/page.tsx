@@ -172,10 +172,10 @@ export default function SupportSystemPage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
            <div className="bg-gray-900 rounded-2xl p-8 md:p-12 text-center space-y-8 relative overflow-hidden">
-              <div className="relative z-10 space-y-3">
-                 <h2 className="text-2xl font-bold text-white tracking-tight">Need to speak with us?</h2>
-                 <p className="text-gray-400 text-sm max-w-sm mx-auto">Our support team is available from 8 AM to 10 PM daily for urgent issues.</p>
-              </div>
+<div className="relative z-10 space-y-3">
+                  <h2 className="text-2xl font-bold text-white tracking-tight">Need to speak with us?</h2>
+                  <p className="text-gray-400 text-sm max-w-sm mx-auto">Our support team is available from 8 AM to 10 PM daily. Bagcom is a product by <a href="https://dovepeakdigital.com" target="_blank" rel="noopener" className="text-white/70 hover:text-white font-medium underline">Dovepeak Technologies</a>.</p>
+                </div>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
                  <Link href="/contact">
                    <Button className="h-11 px-8 rounded-lg font-bold gap-2 bg-primary hover:bg-primary/90 text-white border-none">

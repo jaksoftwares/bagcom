@@ -26,7 +26,7 @@ export default function CookiePolicyPage() {
             </nav>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Cookie Policy</h1>
             <p className="text-sm text-gray-500 max-w-lg">
-              Last Updated: May 10, 2026. This policy explains how we use cookies to improve your marketplace experience.
+              Last Updated: May 10, 2026. This policy explains how we use cookies to improve your marketplace experience on Bagcom, operated by <a href="https://dovepeakdigital.com" target="_blank" rel="noopener" className="text-primary font-medium hover:underline">Dovepeak Technologies</a>.
             </p>
           </div>
         </section>

@@ -31,7 +31,7 @@ export default function SafetyHubPage() {
             <div className="space-y-4">
               <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Trust & Safety Center</h1>
               <p className="text-lg text-gray-500 max-w-2xl leading-relaxed">
-                Everything you need to trade securely on Bagcom. Learn about our protection systems and how to stay safe.
+                Everything you need to trade securely on Bagcom. Learn about our protection systems and how to stay safe. Bagcom is built by <a href="https://dovepeakdigital.com" target="_blank" rel="noopener" className="text-primary font-medium hover:underline">Dovepeak Technologies</a>.
               </p>
             </div>
           </div>

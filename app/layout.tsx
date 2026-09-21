@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Bagcom | Modern Trusted Marketplace',
-  description: 'A modern trusted marketplace for buying and selling second-hand goods locally.',
+  title: 'Bagcom by Dovepeak Technologies | Modern Trusted Marketplace',
+  description: 'Bagcom by Dovepeak Technologies — a modern trusted marketplace for buying and selling second-hand goods locally.',
 };
 
 export default function RootLayout({

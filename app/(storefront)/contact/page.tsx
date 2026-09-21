@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
-const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'support@bagcom.com';
+const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'bagcom52@gmail.com';
 
 function ContactPageContent() {
   const { toast } = useToast();
@@ -102,7 +102,7 @@ function ContactPageContent() {
                     </div>
                     <div className="space-y-1">
                        <h4 className="font-bold text-gray-900">WhatsApp Support</h4>
-                       <p className="text-sm text-gray-500 font-medium">+254 712 345 678</p>
+                       <p className="text-sm text-gray-500 font-medium">+254 755 433 050</p>
                        <p className="text-[10px] text-green-600 font-bold uppercase tracking-widest pt-1">Live Chat Available</p>
                     </div>
                  </div>

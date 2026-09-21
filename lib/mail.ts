@@ -106,7 +106,7 @@ export const EmailTemplates = {
           </div>
         </div>
         <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #f1f5f9;">
-          <p style="font-size: 12px; color: #94a3b8; margin: 0;">&copy; ${new Date().getFullYear()} Bagcom Marketplace. All rights reserved.</p>
+          <p style="font-size: 12px; color: #94a3b8; margin: 0;">&copy; ${new Date().getFullYear()} Bagcom Marketplace by Dovepeak Technologies. All rights reserved.</p>
         </div>
       </div>
     `
@@ -155,7 +155,7 @@ export const EmailTemplates = {
           </div>
         </div>
         <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #f1f5f9;">
-          <p style="font-size: 12px; color: #94a3b8; margin: 0;">&copy; ${new Date().getFullYear()} Bagcom Marketplace. All rights reserved.</p>
+          <p style="font-size: 12px; color: #94a3b8; margin: 0;">&copy; ${new Date().getFullYear()} Bagcom Marketplace by Dovepeak Technologies. All rights reserved.</p>
         </div>
       </div>
     `
@@ -551,7 +551,7 @@ export const EmailTemplates = {
           </div>
         </div>
         <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #f1f5f9;">
-          <p style="font-size: 12px; color: #94a3b8; margin: 0;">&copy; ${new Date().getFullYear()} Bagcom Marketplace. All rights reserved.</p>
+          <p style="font-size: 12px; color: #94a3b8; margin: 0;">&copy; ${new Date().getFullYear()} Bagcom Marketplace by Dovepeak Technologies. All rights reserved.</p>
         </div>
       </div>
     `
@@ -588,7 +588,7 @@ export const EmailTemplates = {
           </div>
         </div>
         <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #f1f5f9;">
-          <p style="font-size: 12px; color: #94a3b8; margin: 0;">&copy; ${new Date().getFullYear()} Bagcom Marketplace. All rights reserved.</p>
+          <p style="font-size: 12px; color: #94a3b8; margin: 0;">&copy; ${new Date().getFullYear()} Bagcom Marketplace by Dovepeak Technologies. All rights reserved.</p>
         </div>
       </div>
     `

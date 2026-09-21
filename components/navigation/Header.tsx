@@ -109,7 +109,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }: HeaderPr
       {/* 1. Announcement Bar (Top Utility Bar) */}
       <div className="bg-primary text-white text-[11px] font-bold uppercase tracking-[0.2em] py-2 px-4 text-center hidden md:flex items-center justify-center gap-2">
         <Zap className="h-3 w-3 fill-white" />
-        <span>Every order is covered by Bagcom Payment Protection — buy and sell with confidence!</span>
+        <span>Every order is covered by Bagcom Payment Protection — buy and sell with confidence! Bagcom is a product by <a href="https://dovepeakdigital.com" target="_blank" rel="noopener" className="text-white/90 hover:text-white font-bold underline">Dovepeak Technologies</a>.</span>
       </div>
 
       <header className="bg-background/80 backdrop-blur-md border-b sticky top-0 z-50 transition-all">

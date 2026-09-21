@@ -21,9 +21,9 @@ const faqData = [
   {
     category: "General",
     questions: [
-      { q: "What is Bagcom?", a: "Bagcom is a modern, trusted marketplace designed specifically for trading quality second-hand items. We provide secure payments, verified sellers, and a local community for safe transactions." },
+      { q: "What is Bagcom?", a: "Bagcom is a modern, trusted marketplace designed specifically for trading quality second-hand items. We provide secure payments, verified sellers, and a local community for safe transactions. Bagcom is a product by Dovepeak Technologies, a software company dedicated to building secure commerce tools." },
       { q: "Is it free to use?", a: "Joining and browsing Bagcom is completely free. We charge a small service fee on successful transactions to maintain our Escrow protection and platform security." },
-      { q: "Where does Bagcom operate?", a: "We currently focus on JKUAT and surrounding campuses, enabling secure student-to-student trades for second-hand items." }
+      { q: "Where does Bagcom operate?", a: "We currently focus on JKUAT and surrounding campuses, enabling secure student-to-student trades for second-hand items. Bagcom is developed and operated by Dovepeak Technologies, based in Nairobi, Kenya." }
     ]
   },
   {

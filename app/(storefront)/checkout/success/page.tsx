@@ -29,10 +29,10 @@ function SuccessContent() {
 
           <div className="space-y-4">
             <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Order Secured!</h1>
-            <p className="text-lg text-muted-foreground font-medium max-w-md mx-auto leading-relaxed">
-               Your payment is now safely held by <span className="text-primary font-bold">Bagcom</span>.
-               The seller has been notified and will reach out to arrange a campus meetup.
-            </p>
+<p className="text-lg text-muted-foreground font-medium max-w-md mx-auto leading-relaxed">
+                Your payment is now safely held by <span className="text-primary font-bold">Bagcom</span> (by <Link href="https://dovepeakdigital.com" target="_blank" rel="noopener" className="text-primary font-bold hover:underline">Dovepeak Technologies</Link>).
+                The seller has been notified and will reach out to arrange a campus meetup.
+              </p>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4 pt-6">
@@ -69,9 +69,9 @@ function SuccessContent() {
              </Button>
           </div>
 
-          <p className="text-[11px] text-muted-foreground font-medium pt-4">
-             Need help? <Link href="/support" className="text-primary hover:underline">Contact Bagcom Support</Link>
-          </p>
+<p className="text-[11px] text-muted-foreground font-medium pt-4">
+              Need help? <Link href="/support" className="text-primary hover:underline">Contact Bagcom Support</Link> (by <a href="https://dovepeakdigital.com" target="_blank" rel="noopener" className="text-primary hover:underline">Dovepeak Technologies</a>).
+            </p>
         </div>
       </div>
     </div>

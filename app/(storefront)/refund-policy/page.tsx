@@ -27,7 +27,7 @@ export default function RefundPolicyPage() {
             </nav>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Refund & Dispute Policy</h1>
             <p className="text-sm text-gray-500 max-w-lg">
-              Effective Date: May 10, 2026. This policy explains how we handle returns and escrow disputes.
+              Effective Date: May 10, 2026. This policy explains how we handle returns and escrow disputes on Bagcom, operated by <a href="https://dovepeakdigital.com" target="_blank" rel="noopener" className="text-primary font-medium hover:underline">Dovepeak Technologies</a>.
             </p>
           </div>
         </section>

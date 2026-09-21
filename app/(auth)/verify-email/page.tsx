@@ -70,9 +70,10 @@ export default function VerifyEmailPage() {
         </div>
 
         {/* Subtle Brand Watermark */}
-        <div className="pt-8 opacity-20 pointer-events-none">
+<div className="pt-8 opacity-20 pointer-events-none">
            <p className="text-[9px] font-black uppercase tracking-[0.5em] text-slate-300">Bagcom Secure Authentication</p>
-        </div>
+           <p className="text-[9px] font-black uppercase tracking-[0.5em] text-slate-300 mt-1">by Dovepeak Technologies</p>
+         </div>
       </div>
     </div>
   );

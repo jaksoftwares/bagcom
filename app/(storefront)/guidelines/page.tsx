@@ -29,7 +29,7 @@ export default function GuidelinesPage() {
             </nav>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Community Guidelines</h1>
             <p className="text-sm text-gray-500 max-w-lg leading-relaxed">
-              Professional standards and rules of conduct for all Bagcom marketplace members. Effective: {lastUpdated}.
+              Professional standards and rules of conduct for all Bagcom marketplace members, operated by <a href="https://dovepeakdigital.com" target="_blank" rel="noopener" className="text-primary font-medium hover:underline">Dovepeak Technologies</a>. Effective: {lastUpdated}.
             </p>
           </div>
         </section>

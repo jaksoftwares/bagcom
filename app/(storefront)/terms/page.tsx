@@ -26,7 +26,7 @@ export default function TermsOfServicePage() {
             </nav>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Terms of Service</h1>
             <p className="text-sm text-gray-500 max-w-lg">
-              Last Updated: May 10, 2026. These terms govern your use of the Bagcom marketplace.
+              Last Updated: May 10, 2026. These terms govern your use of the Bagcom marketplace, operated by <a href="https://dovepeakdigital.com" target="_blank" rel="noopener" className="text-primary font-medium hover:underline">Dovepeak Technologies</a>.
             </p>
           </div>
         </section>

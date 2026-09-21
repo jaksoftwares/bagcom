@@ -55,9 +55,9 @@ export default function CareersPage() {
             <h1 className="text-[32px] md:text-5xl font-bold tracking-tight text-gray-900 leading-tight">
                Build the future of <span className="text-primary italic">local commerce</span>
             </h1>
-            <p className="text-lg text-gray-500 font-medium leading-relaxed max-w-2xl">
-               We're a fast-growing team reimagining how communities trade. Join us in building Kenya's most trusted student marketplace.
-            </p>
+<p className="text-lg text-gray-500 font-medium leading-relaxed max-w-2xl">
+                We're a fast-growing team reimagining how communities trade. Join us in building Kenya's most trusted student marketplace. Bagcom is a product by <a href="https://dovepeakdigital.com" target="_blank" rel="noopener" className="text-primary font-medium hover:underline">Dovepeak Technologies</a>.
+              </p>
           </div>
         </section>
 
