@@ -1,6 +1,6 @@
 'use client';
 
-import { Facebook, Twitter, Instagram, ShieldCheck, Mail, Phone, MapPin, Send, ArrowRight, Lock, Globe } from 'lucide-react';
+import { Facebook, Twitter, Instagram, ShieldCheck, Mail, Phone, MapPin, Send, ArrowRight, Lock, Globe, Music } from 'lucide-react';
 import Link from 'next/link';
 import Logo from '../shared/Logo';
 import { Button } from '@/components/ui/button';
@@ -66,11 +66,15 @@ export default function Footer() {
             </div>
 
             <div className="flex space-x-4 pt-2">
-              {[Facebook, Twitter, Instagram].map((Icon, i) => (
-                <a key={i} href="#" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-white/60 hover:bg-primary hover:text-white transition-all">
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
+              <a href="https://www.facebook.com/profile.php?id=61594487102587" target="_blank" rel="noopener" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-white/60 hover:bg-primary hover:text-white transition-all">
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a href="https://threads.instagram.com/bagcom52/" target="_blank" rel="noopener" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-white/60 hover:bg-primary hover:text-white transition-all">
+                <Instagram className="h-4 w-4" />
+              </a>
+              <a href="https://www.tiktok.com/@bagcom1?lang=en" target="_blank" rel="noopener" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-white/60 hover:bg-primary hover:text-white transition-all">
+                <Music className="h-4 w-4" />
+              </a>
             </div>
           </div>
 

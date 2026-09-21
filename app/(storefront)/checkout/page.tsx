@@ -433,7 +433,7 @@ function CheckoutContent() {
         </div>
       </div>
     </div>
-  );
+  );    
 }
 
 export default function CheckoutPage() {
