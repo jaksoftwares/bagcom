@@ -28,10 +28,10 @@ const helpCategories = [
     ]
   },
   {
-    title: "Payments & Escrow",
+    title: "Payments & Protection",
     icon: CreditCard,
     topics: [
-      "How Escrow works",
+      "How Payment Protection works",
       "M-PESA payment issues",
       "When will the seller be paid?",
       "Transaction fees"
@@ -62,7 +62,7 @@ const helpCategories = [
 const quickActions = [
   { label: "Report a Scam", icon: AlertTriangle, color: "text-red-600", href: "/contact?topic=fraud" },
   { label: "Check Verification", icon: UserCheck, color: "text-blue-600", href: "/verification" },
-  { label: "Escrow Guide", icon: ShieldCheck, color: "text-green-600", href: "/escrow" },
+  { label: "Protection Guide", icon: ShieldCheck, color: "text-green-600", href: "/escrow" },
   { label: "Contact Chat", icon: MessageCircle, color: "text-primary", href: "/contact" }
 ];
 
@@ -81,7 +81,7 @@ export default function SupportSystemPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input 
                 type="text" 
-                placeholder="Search topics: 'payment', 'shipping', 'refunds'..." 
+                placeholder="Search topics: 'payment', 'meetup', 'refunds'..." 
                 className="w-full h-14 pl-12 pr-4 rounded-lg border border-gray-300 shadow-sm focus:ring-1 focus:ring-primary focus:border-primary text-base"
               />
            </div>

@@ -164,9 +164,9 @@ export default function SellerOrderDetails() {
                     <MapPin className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Pickup/Delivery Point</p>
+                     <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Meetup Point</p>
                     <p className="text-base font-semibold text-gray-900">
-                      {order.product?.location?.formatted_address || order.product?.location?.city || order.seller?.city || 'Default Pickup Location'}
+                       {order.product?.location?.formatted_address || order.product?.location?.city || order.seller?.city || 'Campus Meetup — contact buyer to confirm'}
                     </p>
                     <p className="text-sm text-gray-500 mt-1 italic">Note: "{order.delivery_notes || "Please contact the buyer to arrange meeting details."}"</p>
                   </div>

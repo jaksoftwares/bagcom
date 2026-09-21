@@ -23,7 +23,7 @@ const faqData = [
     questions: [
       { q: "What is Bagcom?", a: "Bagcom is a modern, trusted marketplace designed specifically for trading quality second-hand items. We provide secure payments, verified sellers, and a local community for safe transactions." },
       { q: "Is it free to use?", a: "Joining and browsing Bagcom is completely free. We charge a small service fee on successful transactions to maintain our Escrow protection and platform security." },
-      { q: "Where does Bagcom operate?", a: "We currently focus on local communities and campus hubs to ensure fast deliveries and safe meetup points." }
+      { q: "Where does Bagcom operate?", a: "We currently focus on JKUAT and surrounding campuses, enabling secure student-to-student trades for second-hand items." }
     ]
   },
   {
@@ -38,7 +38,7 @@ const faqData = [
     category: "Selling",
     questions: [
       { q: "How do I list an item?", a: "Simply click 'Start Selling' in the header, create an account, and fill in your product details. Your ad will be live once it's manually approved by our team." },
-      { q: "How do I get paid?", a: "Once the buyer confirms receipt, the funds are instantly released to your Bagcom wallet, from where you can withdraw to M-PESA." },
+      { q: "How do I get paid?", a: "Once the buyer confirms receipt by sharing their 6-digit code, the funds are queued for release and will be available in your Bagcom wallet within 24 hours." },
       { q: "What is a Verified Seller?", a: "A Verified Seller is someone who has completed our identity check. They receive a special badge, which builds trust and helps items sell up to 3x faster." }
     ]
   }

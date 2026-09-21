@@ -75,7 +75,7 @@ export default function RefundPolicyPage() {
                    <div className="space-y-4">
                       <h2 className="text-xl font-bold text-gray-900 tracking-tight">2. The Resolution Process</h2>
                       <p className="text-sm text-gray-600 leading-relaxed font-medium">
-                         When a dispute is raised, the Escrow payment is frozen. Our team will review photos, descriptions, and chat logs. If the dispute is upheld, the buyer must return the item (at their expense) before the refund is released.
+                          When a dispute is raised, the payment is frozen. Our team will review photos, descriptions, and chat logs. If the dispute is upheld, the buyer and seller will be asked to arrange a meetup to return the item before the payment is refunded.
                       </p>
                    </div>
 

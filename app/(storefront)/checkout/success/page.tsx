@@ -3,17 +3,20 @@
 import { CheckCircle2, ShoppingBag, ArrowRight, Package, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useSearchParams, Suspense } from 'next/navigation';
 
-export default function CheckoutSuccessPage() {
+function SuccessContent() {
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get('orderId');
+  const orderRef = orderId ? orderId.slice(0, 8).toUpperCase() : null;
+
   return (
     <div className="bg-muted/5 min-h-screen flex items-center justify-center py-20 px-4">
       <div className="max-w-2xl w-full">
         <div className="bg-white rounded-3xl border border-border/40 p-8 md:p-12 shadow-2xl text-center space-y-10 relative overflow-hidden">
           
-          {/* Decorative background element */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1.5 bg-gradient-to-r from-transparent via-primary to-transparent" />
 
-          {/* Success Icon */}
           <div className="relative inline-block">
              <div className="h-24 w-24 bg-green-50 rounded-full flex items-center justify-center mx-auto animate-in zoom-in duration-700">
                 <CheckCircle2 className="h-12 w-12 text-green-500" />
@@ -26,8 +29,8 @@ export default function CheckoutSuccessPage() {
           <div className="space-y-4">
             <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Order Secured!</h1>
             <p className="text-lg text-muted-foreground font-medium max-w-md mx-auto leading-relaxed">
-               Your payment is now held in <span className="text-primary font-bold">Escrow protection</span>. 
-               The seller has been notified and will begin preparing your delivery.
+               Your payment is now safely held by <span className="text-primary font-bold">Bagcom</span>.
+               The seller has been notified and will reach out to arrange a campus meetup.
             </p>
           </div>
 
@@ -36,22 +39,26 @@ export default function CheckoutSuccessPage() {
                 <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
                    <Package className="h-4 w-4" /> Order Info
                 </div>
-                <p className="text-sm font-bold text-foreground">Order ID: #BG-82941</p>
-                <p className="text-xs text-muted-foreground font-medium">Tracking link sent to your email</p>
+                {orderRef ? (
+                  <p className="text-sm font-bold text-foreground">Ref: #{orderRef}</p>
+                ) : (
+                  <p className="text-sm font-bold text-foreground">Order placed</p>
+                )}
+                <p className="text-xs text-muted-foreground font-medium">Confirmation sent to your email</p>
              </div>
              <div className="p-6 bg-muted/20 rounded-2xl border border-border/40 text-left space-y-2">
                 <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
-                   <ShieldCheck className="h-4 w-4" /> Escrow Status
+                   <ShieldCheck className="h-4 w-4" /> Payment Status
                 </div>
-                <p className="text-sm font-bold text-foreground">Awaiting Delivery</p>
-                <p className="text-xs text-muted-foreground font-medium">Release only after you confirm</p>
+                <p className="text-sm font-bold text-foreground">Awaiting Meetup</p>
+                <p className="text-xs text-muted-foreground font-medium">Funds release only after you confirm</p>
              </div>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
              <Button asChild className="w-full sm:w-auto h-14 px-10 rounded-xl text-base font-bold gap-2 shadow-lg shadow-primary/20">
-                <Link href="/buyer">
-                   Go to My Dashboard <ArrowRight className="h-5 w-5" />
+                <Link href={orderId ? `/buyer/orders/${orderId}` : '/buyer'}>
+                   {orderId ? 'Track My Order' : 'Go to My Dashboard'} <ArrowRight className="h-5 w-5" />
                 </Link>
              </Button>
              <Button variant="outline" asChild className="w-full sm:w-auto h-14 px-10 rounded-xl text-base font-bold gap-2 border-border/60">
@@ -69,3 +76,12 @@ export default function CheckoutSuccessPage() {
     </div>
   );
 }
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen animate-pulse bg-gray-50" />}>
+      <SuccessContent />
+    </Suspense>
+  );
+}
+

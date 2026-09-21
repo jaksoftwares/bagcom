@@ -68,7 +68,7 @@ export default function Hero() {
             <div className="flex flex-wrap items-center gap-8 pt-4">
               <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
                 <ShieldCheck className="h-5 w-5 text-primary" />
-                <span>Escrow protection</span>
+                <span>Payment Protection</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
                 <Tag className="h-5 w-5 text-primary" />

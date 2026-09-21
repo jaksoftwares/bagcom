@@ -71,7 +71,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { buyer_id, product_id, quantity = 1, items } = body;
+    const { buyer_id, product_id, quantity = 1, items, delivery_notes } = body;
 
     if (!buyer_id && !items) {
       return NextResponse.json({ error: 'Missing buyer_id' }, { status: 400 });
@@ -152,7 +152,8 @@ export async function POST(request: Request) {
           seller_receivable: sellerReceivable,
           status: 'PENDING_PAYMENT',
           delivery_code: verificationCode,
-          delivery_code_expires_at: deliveryCodeExpires.toISOString()
+          delivery_code_expires_at: deliveryCodeExpires.toISOString(),
+          delivery_notes: delivery_notes || null
         })
         .select()
         .single();

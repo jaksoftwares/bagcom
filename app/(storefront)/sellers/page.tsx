@@ -114,7 +114,7 @@ export default function SellersPage() {
                        <TrendingUp className="h-3 w-3" /> Growth
                     </div>
                     <h2 className="text-3xl font-bold tracking-tight">Ready to start selling?</h2>
-                    <p className="text-slate-400 font-medium leading-relaxed">Join our verified merchant network and reach thousands of customers securely with our built-in escrow system.</p>
+                    <p className="text-slate-400 font-medium leading-relaxed">Join our verified merchant network and reach thousands of customers securely with our built-in payment protection.</p>
                  </div>
                  <Link href="/register">
                     <Button size="lg" className="h-14 px-10 rounded-md bg-primary hover:bg-primary/90 text-white font-bold uppercase tracking-widest text-[10px] shadow-lg">

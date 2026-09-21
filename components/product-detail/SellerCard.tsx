@@ -89,7 +89,7 @@ export default function SellerCard({ seller, onContact }: SellerCardProps) {
       <div className="flex items-start gap-3 p-4 bg-emerald-50/50 rounded-md border border-emerald-100/50">
          <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
          <p className="text-[10px] font-semibold text-emerald-800 leading-relaxed uppercase tracking-tight">
-            Transactions with this seller are protected by our secure Escrow protocol.
+             Your payment is held safely by Bagcom and only released to the seller after you confirm your order.
          </p>
       </div>
     </div>

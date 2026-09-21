@@ -115,7 +115,7 @@ export const EmailTemplates = {
   /**
    * Seller New Order Notification
    */
-  newOrderForSeller: (sellerName: string, orderNumber: string, productName: string, amount: string) => ({
+  newOrderForSeller: (sellerName: string, orderNumber: string, productName: string, amount: string, deliveryNotes?: string) => ({
     subject: `Action Required: New Order #${orderNumber} for ${productName}`,
     html: `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden;">
@@ -133,10 +133,17 @@ export const EmailTemplates = {
             <p style="font-size: 20px; font-weight: 800; color: #0F172A; margin: 0;">#${orderNumber}</p>
           </div>
 
+          ${deliveryNotes ? `
+          <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 20px; margin-bottom: 32px;">
+            <p style="text-transform: uppercase; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: #3b82f6; margin-bottom: 12px;">Buyer Meetup Details</p>
+            <p style="font-size: 14px; color: #1e40af; font-weight: 500; line-height: 1.6; margin: 0;">${deliveryNotes.replace(/\|/g, '<br/>')}</p>
+          </div>
+          ` : ''}
+
           <div style="border-top: 1px solid #f1f5f9; padding-top: 24px;">
             <p style="font-size: 14px; font-weight: 700; color: #0F172A; margin-bottom: 12px;">Next Steps</p>
             <ol style="font-size: 14px; color: #64748b; padding-left: 20px; line-height: 1.6;">
-              <li>Contact the buyer to arrange delivery or pickup.</li>
+              <li>Contact the buyer to agree on a safe campus meetup point.</li>
               <li>Hand over the item to the buyer.</li>
               <li>Ask the buyer for their <strong>Delivery Verification Code</strong>.</li>
               <li>Enter the code in your seller dashboard to release the payment.</li>

@@ -67,9 +67,9 @@ export default function PurchasePanel({ product, onAddToCart, onBuyNow, isAvaila
       {/* Logistics & Security */}
       <div className="space-y-4 pt-4 border-t border-border/10">
         {[
-          { icon: Truck, title: 'Express Delivery', desc: 'Ships within 24-48 hours' },
-          { icon: MapPin, title: 'Pickup Available', desc: product.location || 'Central Nairobi' },
-          { icon: RotateCcw, title: '7-Day Protection', desc: 'Secure returns policy' }
+          { icon: Truck, title: 'Seller Meetup', desc: 'Seller contacts you to arrange exchange' },
+          { icon: MapPin, title: 'Meet at JKUAT', desc: product.location?.campus || 'Agree on a safe campus meeting point' },
+          { icon: RotateCcw, title: 'Dispute Protection', desc: 'Raise a dispute before confirming receipt' }
         ].map((item, i) => (
           <div key={i} className="flex items-start gap-3">
             <item.icon className="h-4 w-4 text-muted-foreground/30 shrink-0 mt-0.5" />
@@ -88,7 +88,7 @@ export default function PurchasePanel({ product, onAddToCart, onBuyNow, isAvaila
             <p className="text-[9px] font-bold uppercase tracking-widest text-primary">Secure Checkout</p>
          </div>
          <div className="flex flex-wrap gap-1.5">
-            {['M-PESA', 'ESCROW', 'VISA'].map(tag => (
+            {['M-PESA', 'PROTECTED', 'VISA'].map(tag => (
               <span key={tag} className="text-[8px] font-bold bg-white px-1.5 py-0.5 rounded-sm text-muted-foreground/40 border border-border/20">{tag}</span>
             ))}
          </div>

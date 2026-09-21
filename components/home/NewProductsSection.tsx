@@ -95,11 +95,11 @@ export default function NewProductsSection() {
         <div className="flex flex-wrap justify-center items-center gap-8 pt-12 mt-12 border-t border-border/40">
           <div className="flex items-center gap-2 text-xs text-muted-foreground font-bold uppercase tracking-widest">
             <Shield className="h-4 w-4 text-primary" />
-            <span>Escrow Protected</span>
+            <span>Buyer Protected</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground font-bold uppercase tracking-widest">
             <Truck className="h-4 w-4 text-primary" />
-            <span>Local Pickups</span>
+            <span>Campus Meetups</span>
           </div>
         </div>
       </div>

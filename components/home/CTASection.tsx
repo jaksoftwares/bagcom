@@ -43,7 +43,7 @@ export default function CTASection() {
                 { 
                   icon: Shield, 
                   title: 'Secure payments', 
-                  desc: 'We use escrow protection to ensure both buyers and sellers are safe.' 
+                  desc: 'We hold your payment safely and only release it after you confirm your order is correct.' 
                 },
                 { 
                   icon: Zap, 

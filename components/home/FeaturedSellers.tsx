@@ -139,7 +139,7 @@ export default function FeaturedSellers() {
            </div>
            <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Escrow protection active</span>
+              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Buyer protection active</span>
            </div>
         </div>
       </div>

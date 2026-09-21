@@ -50,13 +50,13 @@ export default function EscrowPage() {
                  },
                  { 
                    title: "Item Exchanged", 
-                   desc: "Buyer and seller meet or ship. Buyer inspects the item thoroughly.",
+                   desc: "Seller contacts the buyer to arrange a campus meetup. The buyer inspects the item before sharing the code.",
                    icon: PackageCheck,
                    color: "bg-orange-50 text-orange-600"
                  },
                  { 
                    title: "Funds Released", 
-                   desc: "Buyer confirms receipt in the app. Bagcom releases payment to the seller.",
+                   desc: "Buyer shares their 6-digit code with the seller. Bagcom releases payment to the seller within 24 hours.",
                    icon: Wallet,
                    color: "bg-green-50 text-green-600"
                  }
@@ -110,7 +110,7 @@ export default function EscrowPage() {
                       <div className="h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center shrink-0 mt-0.5">
                          <UserCheck className="h-3 w-3 text-white" />
                       </div>
-                      <p className="text-sm text-gray-600 font-medium">Verify that the buyer has the funds before you meet.</p>
+                      <p className="text-sm text-gray-600 font-medium">Receive guaranteed payment — funds are confirmed before you leave for the meetup.</p>
                    </div>
                    <div className="flex gap-4">
                       <div className="h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center shrink-0 mt-0.5">

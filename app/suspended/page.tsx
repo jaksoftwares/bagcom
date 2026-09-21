@@ -44,7 +44,7 @@ export default function SuspendedPage() {
           </div>
           <div className="flex gap-4">
              <div className="h-2 w-2 bg-rose-500 rounded-full mt-2 flex-shrink-0" />
-             <p className="text-sm text-slate-600 font-medium">Any pending escrow funds are securely frozen.</p>
+             <p className="text-sm text-slate-600 font-medium">Any pending payments are securely frozen while your account is under review.</p>
           </div>
         </div>
 

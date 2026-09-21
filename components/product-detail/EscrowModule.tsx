@@ -20,7 +20,7 @@ export default function EscrowModule() {
     {
       icon: Lock,
       title: "Secure Payment",
-      desc: "Funds held in Bagcom Escrow",
+      desc: "Your payment held securely by Bagcom",
       color: "text-blue-500"
     },
     {

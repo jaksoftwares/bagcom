@@ -118,7 +118,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                      </div>
                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                         <ShieldCheck className="h-4 w-4 text-emerald-500" />
-                        Protection: <span className="font-bold text-emerald-600">Escrow Protected</span>
+                         Protection: <span className="font-bold text-emerald-600">Payment Protected</span>
                      </div>
                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                         <Zap className="h-4 w-4 text-amber-500" />

@@ -21,8 +21,7 @@ export default function CartPage() {
   const { cart, updateQuantity, removeFromCart, getCartTotal } = useCartStore();
   const totalPrice = getCartTotal();
   const subtotal = totalPrice;
-  const serviceFee = subtotal * 0.02; // 2% Escrow/Service fee
-  const total = subtotal + serviceFee;
+  const total = subtotal;
 
   const handleUpdateQuantity = (id: string | number, delta: number) => {
     const item = cart.find(i => i.id === id);
@@ -131,15 +130,15 @@ export default function CartPage() {
               )}
             </div>
 
-            {/* Delivery Info Box */}
+            {/* Meetup Info Box */}
             <div className="bg-white rounded-2xl border border-border/40 p-6 flex items-start gap-4 shadow-soft">
                <div className="h-10 w-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary flex-shrink-0">
                   <Truck className="h-5 w-5" />
                </div>
                <div>
-                  <h4 className="font-bold text-foreground">Fast Delivery Selection</h4>
+                  <h4 className="font-bold text-foreground">Campus Meetup Exchange</h4>
                   <p className="text-sm text-muted-foreground font-medium mt-0.5">
-                     Choose your preferred delivery method during checkout. Most items are delivered within 24 hours to your campus units.
+                     After purchase, the seller will contact you to arrange a safe meetup on campus. You'll share your verification code once you're satisfied with the item.
                   </p>
                </div>
             </div>
@@ -151,32 +150,28 @@ export default function CartPage() {
               <h2 className="text-xl font-bold tracking-tight text-foreground">Order Summary</h2>
               
               <div className="space-y-4">
-                <div className="flex justify-between text-sm font-medium">
-                   <span className="text-muted-foreground">Subtotal</span>
-                   <span className="text-foreground font-bold">KSh {subtotal.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm font-medium">
-                   <span className="text-muted-foreground flex items-center gap-1">
-                      Service Fee <ShieldCheck className="h-3 w-3 text-primary" />
-                   </span>
-                   <span className="text-foreground font-bold">KSh {serviceFee.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm font-medium pb-4 border-b border-border/40">
-                   <span className="text-muted-foreground">Delivery</span>
-                   <span className="text-green-600 font-bold uppercase text-[10px] tracking-widest mt-1">Calculated at next step</span>
-                </div>
-                <div className="flex justify-between items-end pt-2">
-                   <span className="text-base font-bold text-foreground">Order Total</span>
-                   <span className="text-2xl font-black text-primary tracking-tighter">
-                      KSh {total.toLocaleString()}
-                   </span>
-                </div>
-              </div>
+                 <div className="flex justify-between text-sm font-medium">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="text-foreground font-bold">KSh {subtotal.toLocaleString()}</span>
+                 </div>
+                 <div className="flex justify-between text-sm font-medium pb-4 border-b border-border/40">
+                    <span className="text-muted-foreground flex items-center gap-1">
+                       Platform fee <ShieldCheck className="h-3 w-3 text-primary" />
+                    </span>
+                    <span className="text-green-600 font-bold uppercase text-[10px] tracking-widest mt-1">Applied at checkout</span>
+                 </div>
+                 <div className="flex justify-between items-end pt-2">
+                    <span className="text-base font-bold text-foreground">Order Total</span>
+                    <span className="text-2xl font-black text-primary tracking-tighter">
+                       KSh {total.toLocaleString()}
+                    </span>
+                 </div>
+               </div>
 
               <div className="bg-primary/5 p-4 rounded-xl space-y-3">
                  <div className="flex items-center gap-3 text-primary">
                     <ShieldCheck className="h-5 w-5 flex-shrink-0" />
-                    <span className="text-xs font-bold uppercase tracking-widest leading-tight">Secure Escrow Protection</span>
+                     <span className="text-xs font-bold uppercase tracking-widest leading-tight">Secure Payment Protection</span>
                  </div>
                  <p className="text-[11px] text-primary/70 font-medium leading-relaxed">
                     Your money is held securely and only released to the seller after you confirm receipt of the product.

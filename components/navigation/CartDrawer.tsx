@@ -190,8 +190,8 @@ export default function CartDrawer() {
                 <span>KSh {getCartTotal().toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-sm font-medium text-muted-foreground">
-                <span>Shipping</span>
-                <span>Calculated at checkout</span>
+                <span>Meetup</span>
+                <span>Arranged by seller after purchase</span>
               </div>
               <div className="pt-2 border-t border-border/40 flex justify-between text-lg font-bold text-foreground">
                 <span>Total</span>

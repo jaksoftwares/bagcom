@@ -62,13 +62,13 @@ export default function ActiveFilters() {
 
        {freeShipping && (
          <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs font-bold transition-all hover:bg-primary/20 cursor-pointer" onClick={() => removeFilter('freeShipping')}>
-            Free Shipping <X className="h-3 w-3" />
+            Free Meetup <X className="h-3 w-3" />
          </div>
        )}
 
        {escrowProtected && (
          <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs font-bold transition-all hover:bg-primary/20 cursor-pointer" onClick={() => removeFilter('escrowProtected')}>
-            Escrow Protected <X className="h-3 w-3" />
+            Buyer Protected <X className="h-3 w-3" />
          </div>
        )}
 

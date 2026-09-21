@@ -27,7 +27,7 @@ import { useToast } from '@/hooks/use-toast';
 import StorefrontLayout from '@/components/layout/StorefrontLayout';
 
 const ORDER_STATUS_STEPS = [
-  { key: 'PAYMENT_SUCCESS', label: 'Payment Confirmed', description: 'Funds are securely held in escrow.' },
+  { key: 'PAYMENT_SUCCESS', label: 'Payment Confirmed', description: 'Your payment is held safely until you confirm delivery.' },
   { key: 'PRODUCT_LOCKED', label: 'Item Reserved', description: 'Seller has been notified to prepare for delivery.' },
   { key: 'OUT_FOR_DELIVERY', label: 'In Transit', description: 'The item is on its way to you.' },
   { key: 'AWAITING_VERIFICATION', label: 'Ready for Pick-up', description: 'Verify the item and provide your code.' },
@@ -106,7 +106,7 @@ export default function GuestOrderTrackingPage() {
             </div>
             <div className="flex items-center gap-3">
                <Badge className="bg-emerald-100 text-emerald-700 border-none px-4 py-1.5 font-black text-[10px] uppercase tracking-widest">
-                  Escrow Active
+                  Payment Secured
                </Badge>
                <Button variant="outline" size="sm" className="rounded-xl border-gray-200 font-bold gap-2">
                   <ExternalLink className="h-4 w-4" /> Help Center
@@ -161,7 +161,7 @@ export default function GuestOrderTrackingPage() {
               <div className="p-8 bg-amber-50 rounded-3xl border border-amber-100 space-y-4">
                  <div className="flex items-center gap-3">
                     <ShieldCheck className="h-6 w-6 text-amber-600" />
-                    <h3 className="text-lg font-black text-amber-900 tracking-tight">Escrow Security Protocols</h3>
+                     <h3 className="text-lg font-black text-amber-900 tracking-tight">Your Payment is Protected</h3>
                  </div>
                  <p className="text-sm text-amber-800/80 font-medium leading-relaxed">
                     We've confirmed your payment of <span className="font-bold">KSh {(order.total_amount || 0).toLocaleString()}</span>. This amount will remain safely in our vault until you provide the verification code to the seller.
@@ -233,10 +233,10 @@ export default function GuestOrderTrackingPage() {
                         <span className="text-sm font-bold text-gray-900">{sellerName}</span>
                      </div>
                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Delivery Point</span>
+                         <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Meeting Point</span>
                         <div className="text-right">
                            <p className="text-sm font-bold text-gray-900 flex items-center justify-end gap-1.5">
-                              <MapPin className="h-3.5 w-3.5 text-gray-400" /> Local Pickup
+                               <MapPin className="h-3.5 w-3.5 text-gray-400" /> Campus Meetup
                            </p>
                         </div>
                      </div>
@@ -254,9 +254,9 @@ export default function GuestOrderTrackingPage() {
 
                {/* Footer Note */}
                <div className="px-6 text-center">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-loose">
-                     Protected by Bagcom Escrow Technology<br/>
-                     Encrypted Secure Transaction
+                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-loose">
+                      Protected by Bagcom Safe Pay<br/>
+                      Encrypted Secure Transaction
                   </p>
                </div>
 

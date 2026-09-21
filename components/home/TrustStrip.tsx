@@ -6,7 +6,7 @@ export default function TrustStrip() {
   const features = [
     {
       icon: <ShieldCheck className="h-6 w-6 text-primary" />,
-      title: 'Secure Escrow',
+      title: 'Payment Protection',
       description: 'Funds held safely until delivery'
     },
     {

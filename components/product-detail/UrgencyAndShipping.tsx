@@ -18,16 +18,7 @@ export default function UrgencyAndShipping({ product }: UrgencyAndShippingProps)
 
   const quantity = product.quantity_available || 1;
   const isLowStock = quantity > 0 && quantity <= 5;
-  const deliveryDays = 2; // Default campus delivery estimate
-
-  const deliveryDate = new Date();
-  deliveryDate.setDate(deliveryDate.getDate() + deliveryDays);
-  
-  const formattedDeliveryDate = deliveryDate.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric'
-  });
+  // No delivery dates — this is a campus meetup marketplace
 
   return (
     <div className="space-y-4 pt-4 border-t border-border/40">
@@ -45,20 +36,20 @@ export default function UrgencyAndShipping({ product }: UrgencyAndShippingProps)
         </div>
       )}
 
-      {/* Shipping Details */}
+      {/* Meetup Info */}
       <div className="flex gap-4 p-4 bg-muted/20 border border-border/40 rounded-xl">
         <Truck className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
         <div className="space-y-1">
           <p className="text-sm font-bold text-foreground">
-            {product.free_shipping ? 'Free Campus Delivery' : 'Standard Delivery'}
+            Campus Meetup Exchange
           </p>
           <p className="text-sm font-medium text-muted-foreground">
-            Get it by <span className="font-bold text-foreground">{formattedDeliveryDate}</span>
+            After purchase, the seller will contact you to arrange a safe meetup on campus.
           </p>
           <div className="flex items-center gap-1.5 mt-2 cursor-pointer group">
             <Info className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
             <span className="text-xs font-semibold text-muted-foreground group-hover:text-primary transition-colors underline underline-offset-2 decoration-border/50">
-              Delivery policies
+              How meetups work
             </span>
           </div>
         </div>

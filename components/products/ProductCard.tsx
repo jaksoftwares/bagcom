@@ -212,7 +212,7 @@ export default function ProductCard({ product, layout = 'grid' }: ProductCardPro
             {product.isEscrowProtected !== false && (
               <div className="flex items-center gap-1">
                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-                 <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-tighter hidden sm:inline-block">Escrow</span>
+                 <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-tighter hidden sm:inline-block">Safe Pay</span>
               </div>
             )}
           </div>

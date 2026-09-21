@@ -35,9 +35,9 @@ const helpCategories = [
     color: "bg-green-50 text-green-600"
   },
   { 
-    title: "Delivery & Returns", 
+    title: "Meetups & Returns", 
     icon: Truck, 
-    topics: ["Shipping options", "Unit delivery", "Returns guide", "Dispute resolution"],
+    topics: ["How meetups work", "Arranging a safe exchange", "Returns guide", "Dispute resolution"],
     color: "bg-purple-50 text-purple-600"
   }
 ];

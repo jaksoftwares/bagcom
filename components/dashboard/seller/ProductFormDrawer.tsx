@@ -418,7 +418,7 @@ export function ProductFormDrawer({ isOpen, onClose, product, sellerId, onSucces
               <div className={cn("space-y-6 animate-in slide-in-from-right-4 fade-in-50", currentStep !== 2 && "hidden")}>
                 <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm mb-6 flex gap-3">
                   <MapPin className="w-5 h-5 shrink-0 text-blue-600 mt-0.5" />
-                  <p>Buyers use location to estimate delivery or pickup. Provide a precise location to get more local buyers.</p>
+                  <p>Add your campus building or area so buyers can easily find you for the meetup. A precise location helps you attract more nearby students.</p>
                 </div>
 
                 <FormField

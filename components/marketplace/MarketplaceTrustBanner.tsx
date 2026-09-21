@@ -13,7 +13,7 @@ export default function MarketplaceTrustBanner() {
   const trustPoints = [
     {
       icon: ShieldCheck,
-      title: "Escrow Protection",
+      title: "Payment Protection",
       desc: "Funds held securely until delivery",
       color: "text-blue-500"
     },
@@ -25,8 +25,8 @@ export default function MarketplaceTrustBanner() {
     },
     {
       icon: Truck,
-      title: "Safe Pickup",
-      desc: "Campus & mall meeting points",
+      title: "Safe Meetup",
+      desc: "Arranged campus meeting point",
       color: "text-amber-500"
     },
     {

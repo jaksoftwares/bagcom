@@ -270,7 +270,7 @@ export default function RegisterPage() {
                     <Input id="store_description" name="store_description" placeholder="Tell us about what you offer..." className="h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="physical_address" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Physical Address / Pickup Location</Label>
+                    <Label htmlFor="physical_address" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Your Campus Location</Label>
                     <Input id="physical_address" name="physical_address" placeholder="Building, Street, Room Number" className="h-12 rounded-sm border-border/40 focus-visible:ring-primary/20 bg-muted/5 font-medium" required />
                   </div>
                 </div>

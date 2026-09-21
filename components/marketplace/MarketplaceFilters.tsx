@@ -162,7 +162,7 @@ export default function MarketplaceFilters() {
             <label className="flex items-center justify-between group cursor-pointer">
                <div className="flex items-center gap-2.5">
                   <Zap className="h-4 w-4 text-amber-500" />
-                  <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground">Escrow Protected</span>
+                  <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground">Buyer Protected</span>
                </div>
                <Checkbox 
                  checked={isEscrowProtected}
@@ -173,7 +173,7 @@ export default function MarketplaceFilters() {
             <label className="flex items-center justify-between group cursor-pointer">
                <div className="flex items-center gap-2.5">
                   <Truck className="h-4 w-4 text-emerald-500" />
-                  <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground">Free Shipping</span>
+                  <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground">Free Meetup</span>
                </div>
                <Checkbox 
                  checked={isFreeShipping}

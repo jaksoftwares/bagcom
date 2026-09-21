@@ -13,7 +13,7 @@ export default function MarketplaceTrust() {
               <ShieldCheck className="h-5 w-5 text-foreground" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-sm font-bold text-foreground">Escrow protection</h3>
+              <h3 className="text-sm font-bold text-foreground">Payment Protection</h3>
               <p className="text-[13px] text-muted-foreground leading-relaxed">
                 Your payment is held securely and only released to the seller once you confirm receipt.
               </p>
